@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
-import { CHURCH_DATA } from '../lib/constants';
+import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
 import { useAuth } from '../lib/AuthContext';
+import { Settings, ShieldCheck } from 'lucide-react';
 
 const Header = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -13,6 +14,7 @@ const Header = () => {
     const { user, login, logout } = useAuth();
     const pathname = usePathname();
     const isHome = pathname === '/';
+    const isAdmin = checkIfAdmin(user);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -57,9 +59,23 @@ const Header = () => {
                     {user ? (
                         <div className="flex items-center gap-4">
                             <div className="flex flex-col items-end">
-                                <span className={`text-[10px] font-black uppercase tracking-widest ${scrolled || !isHome ? 'text-stone-400' : 'text-white/60'}`}>Welcome</span>
+                                <div className="flex items-center gap-1.5">
+                                    {isAdmin && <ShieldCheck size={12} className="text-[#8B4513]" />}
+                                    <span className={`text-[10px] font-black uppercase tracking-widest ${scrolled || !isHome ? 'text-stone-400' : 'text-white/60'}`}>
+                                        {isAdmin ? 'Administrator' : 'Welcome'}
+                                    </span>
+                                </div>
                                 <span className={`text-xs font-bold ${scrolled || !isHome ? 'text-stone-900' : 'text-white'}`}>{user.displayName || '성도'}님</span>
                             </div>
+                            {isAdmin && (
+                                <Link
+                                    href="/admin"
+                                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${scrolled || !isHome ? 'bg-stone-100 text-[#8B4513] hover:bg-[#8B4513] hover:text-white' : 'bg-white/10 text-white hover:bg-white hover:text-[#8B4513]'}`}
+                                    title="관리자 대시보드"
+                                >
+                                    <Settings size={18} />
+                                </Link>
+                            )}
                             <button onClick={logout} className={`px-5 py-2 rounded-full text-xs font-bold transition-all border ${scrolled || !isHome ? 'border-stone-200 text-stone-600 hover:bg-stone-50' : 'border-white/30 text-white hover:bg-white/10'}`}>LOGOUT</button>
                         </div>
                     ) : (

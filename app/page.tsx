@@ -20,7 +20,7 @@ import {
   uploadBytes,
   getDownloadURL
 } from "firebase/storage";
-import { CHURCH_DATA } from './lib/constants';
+import { CHURCH_DATA, checkIfAdmin } from './lib/constants';
 import { useAuth } from './lib/AuthContext';
 
 // =================================================================
@@ -47,7 +47,7 @@ export default function JusungChurchPage() {
   const router = useRouter();
   const [cards, setCards] = useState<ContentCard[]>([]);
   const [communityPosts, setCommunityPosts] = useState<any[]>([]);
-  const isAdmin = user && user.email === CHURCH_DATA.contact.email;
+  const isAdmin = checkIfAdmin(user);
   const [isMainModalOpen, setMainModalOpen] = useState(false);
 
   useEffect(() => {
@@ -75,13 +75,32 @@ export default function JusungChurchPage() {
     };
   }, []);
 
+  // Fetch latest sermon from YouTube
+  const [youtubeSermon, setYoutubeSermon] = useState<ContentCard | null>(null);
+  useEffect(() => {
+    const fetchYoutubeSermon = async () => {
+      try {
+        const res = await fetch('/api/youtube?playlistId=PLiCiBKlwP2LHA5nPQt7aNn8i4xdZRlHHf');
+        if (res.ok) {
+          const videos = await res.json();
+          if (videos.length > 0) {
+            setYoutubeSermon(videos[0]);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch YouTube sermon", e);
+      }
+    };
+    fetchYoutubeSermon();
+  }, []);
+
   const handleAddMainContent = async (data: any) => {
     if (!db || !isAdmin) return;
     try {
       await addDoc(collection(db, "main_contents"), {
         ...data,
-        authorName: user.displayName,
-        authorId: user.uid,
+        authorName: user?.displayName || '관리자',
+        authorId: user?.uid || '',
         created_at: serverTimestamp()
       });
       alert("콘텐츠가 성공적으로 등록되었습니다.");
@@ -90,7 +109,7 @@ export default function JusungChurchPage() {
     }
   };
 
-  const latestSermon = cards.find(c => c.type === 'sermon');
+  const latestSermon = youtubeSermon || cards.find(c => c.type === 'sermon');
   const latestMeditation = cards.find(c => c.type === 'meditation');
 
   return (

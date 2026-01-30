@@ -1,10 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Mail, Phone, MapPin, Youtube, Instagram, Facebook, ChevronRight } from 'lucide-react';
-import { CHURCH_DATA } from '../lib/constants';
+import { Mail, Phone, MapPin, Youtube, Instagram, Facebook, ChevronRight, LogOut, Settings } from 'lucide-react';
+import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
+import { useAuth } from '../lib/AuthContext';
 
 const Footer = () => {
+    const { user, login, logout } = useAuth();
+    const isAdmin = checkIfAdmin(user);
+
     return (
         <footer className="bg-stone-50 border-t border-stone-100 pt-24 pb-12">
             <div className="container mx-auto px-6">
@@ -54,20 +58,44 @@ const Footer = () => {
 
                     <div className="space-y-8">
                         <h4 className="font-bold text-stone-900 text-sm uppercase tracking-widest">Location</h4>
-                        <div className="rounded-2xl overflow-hidden shadow-sm h-48 bg-stone-200 border border-stone-100">
-                            <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3213.3984534720937!2d127.457883!3d36.645041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3565287f3bfff651%3A0x6d9f0a2e5d7a7b8!2s24%20Bongmyeong-ro%20219beon-gil%2C%20Heungdeok-gu%2C%20Cheongju-si%2C%20Chungcheongbuk-do!5e0!3m2!1sen!2skr!4v1715878423456!5m2!1sen!2skr"
-                                width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"></iframe>
+                        <div
+                            onClick={() => window.open(CHURCH_DATA.contact.naverMap, '_blank')}
+                            className="rounded-2xl overflow-hidden shadow-sm h-48 bg-stone-100 border border-stone-100 cursor-pointer group relative"
+                        >
+                            <img src="/images/map_placeholder.png" alt="Map" className="w-full h-full object-cover group-hover:scale-105 transition-transform opacity-70" />
+                            <div className="absolute inset-0 bg-[#8B4513]/5 group-hover:bg-[#8B4513]/10 transition-colors flex items-center justify-center">
+                                <span className="bg-white/90 backdrop-blur-md text-[#8B4513] px-4 py-2 rounded-full font-bold text-xs shadow-md flex items-center gap-2 group-hover:scale-110 transition-transform">
+                                    <MapPin size={14} /> 네이버 지도로 보기
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="pt-12 border-t border-stone-100 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-stone-400 text-xs">© 2024 Joosung Holiness Church. All rights reserved.</p>
-                    <div className="flex gap-8 text-stone-400 text-xs">
+                    <div className="flex gap-8 text-stone-400 text-xs items-center">
                         <a href="#" className="hover:text-stone-900 transition-colors">이용약관</a>
                         <a href="#" className="hover:text-stone-900 transition-colors">개인정보처리방침</a>
-                        <a href="#" className="hover:text-stone-900 transition-colors">관리자 로그인</a>
+                        {user ? (
+                            <div className="flex items-center gap-4">
+                                <span className={`${isAdmin ? 'text-[#8B4513] font-bold' : ''}`}>
+                                    {isAdmin ? '[관리자] ' : ''}{user.displayName}님
+                                </span>
+                                <button onClick={() => logout()} className="hover:text-red-500 flex items-center gap-1">
+                                    <LogOut size={12} /> 로그아웃
+                                </button>
+                                {isAdmin && (
+                                    <a href="/admin" className="text-white bg-[#8B4513] px-3 py-1 rounded-full font-bold flex items-center gap-1 hover:bg-stone-900 transition-colors">
+                                        <Settings size={10} /> 대시보드
+                                    </a>
+                                )}
+                            </div>
+                        ) : (
+                            <button onClick={() => login()} className="hover:text-stone-900 flex items-center gap-1 font-bold">
+                                관리자 로그인
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { db, storage } from '../firebaseConfig';
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { CHURCH_DATA } from '../lib/constants';
+import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
 import { Plus, Trash2, Image, X, MessageCircle } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 
@@ -33,8 +33,8 @@ export default function CommunityPage() {
         try {
             await addDoc(collection(db, 'community_posts'), {
                 ...newPost,
-                authorId: user.uid,
-                authorName: user.displayName || '성도',
+                authorId: user?.uid || '',
+                authorName: user?.displayName || '관리자',
                 created_at: serverTimestamp(),
             });
         } catch (err) {
@@ -102,7 +102,7 @@ export default function CommunityPage() {
                                                     </p>
                                                 </div>
                                             </div>
-                                            {(user && (user.uid === post.authorId || user.email === CHURCH_DATA.contact.email)) && (
+                                            {(user && (user.uid === post.authorId || checkIfAdmin(user))) && (
                                                 <button onClick={() => handleDeletePost(post.id)} className="text-stone-200 hover:text-red-500 transition-colors p-3 hover:bg-red-50 rounded-full">
                                                     <Trash2 size={24} />
                                                 </button>

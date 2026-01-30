@@ -36,10 +36,7 @@ export default function WorshipPage() {
                                         <h3 className="text-xl font-bold text-stone-900 mb-2">{w.name}</h3>
                                         <p className="text-[#8B4513] font-serif text-3xl font-bold">{w.time}</p>
                                     </div>
-                                    <div className="text-right">
-                                        <span className="text-[10px] uppercase tracking-widest font-black text-stone-300 block mb-1">Location</span>
-                                        <span className="font-bold text-stone-600 text-sm">{w.place}</span>
-                                    </div>
+                                    {/* Location removed as per request */}
                                 </div>
                             ))}
                         </div>
@@ -73,10 +70,23 @@ export default function WorshipPage() {
                                 </div>
                             </div>
 
-                            <div className="aspect-square bg-stone-200 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3213.3984534720937!2d127.457883!3d36.645041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3565287f3bfff651%3A0x6d9f0a2e5d7a7b8!2s24%20Bongmyeong-ro%20219beon-gil%2C%20Heungdeok-gu%2C%20Cheongju-si%2C%20Chungcheongbuk-do!5e0!3m2!1sen!2skr!4v1715878423456!5m2!1sen!2skr"
-                                    width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"></iframe>
+                            <div
+                                onClick={() => window.open(CHURCH_DATA.contact.naverMap, '_blank')}
+                                className="aspect-square bg-stone-100 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white cursor-pointer group relative"
+                            >
+                                <img src="/images/map_placeholder.png" alt="Map" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 space-y-4">
+                                    <div className="w-16 h-16 bg-[#8B4513] text-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                                        <MapPin size={32} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-2xl font-bold text-stone-900">네이버 지도에서 보기</p>
+                                        <p className="text-stone-500 text-sm">지도를 클릭하시면 상세 위치와<br />길찾기 화면으로 연결됩니다.</p>
+                                    </div>
+                                    <div className="mt-4 px-8 py-3 bg-[#8B4513] text-white rounded-full font-bold shadow-lg group-hover:bg-stone-900 transition-colors">
+                                        길찾기 바로가기
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

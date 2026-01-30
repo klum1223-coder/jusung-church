@@ -40,11 +40,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const login = async () => {
-        if (!auth) return;
+        if (!auth || loading) return;
+        setLoading(true);
         try {
-            await signInWithPopup(auth, new GoogleAuthProvider());
-        } catch (error) {
-            console.error("Login failed:", error);
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            await signInWithPopup(auth, provider);
+        } catch (error: any) {
+            if (error.code !== 'auth/cancelled-popup-request') {
+                console.error("Login failed:", error);
+            }
+        } finally {
+            setLoading(false);
         }
     };
 

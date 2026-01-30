@@ -16,15 +16,16 @@ export const CHURCH_DATA = {
     contact: {
         address: "충북 청주시 흥덕구 봉명로219번길 24, 2층",
         phone: "010-8986-3965",
-        email: "klum3@naver.com",
+        email: "klum1223@gmail.com",
         blog: "https://blog.naver.com/joosung0416",
-        youtube: "https://www.youtube.com/@주성교회"
+        youtube: "https://www.youtube.com/@주성성결교회",
+        naverMap: "https://map.naver.com/p/search/충북%20청주시%20흥덕구%20봉명로219번길%2024"
     },
     worship: [
-        { name: "주일 1부 예배", time: "오전 09:00", place: "2층 본당" },
-        { name: "주일 2부 예배", time: "오전 11:00", place: "2층 본당" },
-        { name: "수요 기도회", time: "오후 07:30", place: "2층 본당" },
-        { name: "새벽 기도회", time: "오전 05:30 (월-금)", place: "2층 본당" }
+        { name: "주일예배", time: "오전 11:00" },
+        { name: "성장이 있는 소모임", time: "오후 01:00" },
+        { name: "수요 기도회", time: "오후 07:30" },
+        { name: "아침 기도회", time: "오전 06:30 (월-금)" }
     ],
     ministries: [
         {
@@ -52,4 +53,9 @@ export const CHURCH_DATA = {
             img: "https://images.unsplash.com/photo-1469571483357-598e0445eba7?auto=format&fit=crop&q=80"
         }
     ]
+};
+
+export const checkIfAdmin = (user: any) => {
+    if (!user || !user.email) return false;
+    return user.email.toLowerCase() === CHURCH_DATA.contact.email.toLowerCase();
 };

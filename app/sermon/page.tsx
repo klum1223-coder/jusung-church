@@ -13,15 +13,33 @@ export default function SermonPage() {
     useEffect(() => {
         const fetchSermons = async () => {
             try {
-                if (!db) return;
+                // Fetch from YouTube RSS API
+                const youtubeRes = await fetch('/api/youtube');
+                let youtubeVideos: any[] = [];
+                if (youtubeRes.ok) {
+                    youtubeVideos = await youtubeRes.json();
+                }
+
+                if (!db) {
+                    setSermons(youtubeVideos);
+                    return;
+                }
+
+                // Fetch from Firestore (legacy)
                 const q = query(
                     collection(db, 'main_contents'),
                     where('type', '==', 'sermon'),
                     orderBy('created_at', 'desc')
                 );
                 const querySnapshot = await getDocs(q);
-                const results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setSermons(results);
+                const firestoreSermons = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Merge: YouTube videos first, then Firestore ones avoiding duplicates if possible (by linkUrl)
+                // For simplicity, we just concat for now, or maybe just prefer YouTube if available.
+                // Let's combine them
+                const allSermons = [...youtubeVideos, ...firestoreSermons];
+                setSermons(allSermons);
+
             } catch (err) {
                 console.error("Fetch failed", err);
             } finally {
@@ -68,36 +86,60 @@ export default function SermonPage() {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                                {sermons.map((sermon) => (
-                                    <div
-                                        key={sermon.id}
-                                        className="bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl transition-all group border border-stone-100 cursor-pointer"
-                                        onClick={() => sermon.linkUrl && window.open(sermon.linkUrl, '_blank')}
-                                    >
-                                        <div className="aspect-video relative overflow-hidden bg-stone-900">
-                                            {sermon.imageUrl ? (
-                                                <img src={sermon.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-white/20">
-                                                    <Play size={48} />
+                                {sermons.map((sermon, idx) => {
+                                    const getYoutubeId = (url: string) => {
+                                        if (!url) return null;
+                                        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                                        const match = url.match(regExp);
+                                        return (match && match[2].length === 11) ? match[2] : null;
+                                    };
+                                    // Use ID from RSS if available, otherwise parse URL
+                                    const youtubeId = sermon.id?.length === 11 ? sermon.id : getYoutubeId(sermon.linkUrl);
+
+                                    return (
+                                        <div
+                                            key={sermon.id || idx}
+                                            className="bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl transition-all group border border-stone-100 cursor-pointer"
+                                            onClick={() => !youtubeId && sermon.linkUrl && window.open(sermon.linkUrl, '_blank')}
+                                        >
+                                            <div className="aspect-video relative overflow-hidden bg-stone-900">
+                                                {youtubeId ? (
+                                                    <iframe
+                                                        className="w-full h-full"
+                                                        src={`https://www.youtube.com/embed/${youtubeId}`}
+                                                        title={sermon.title}
+                                                        frameBorder="0"
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                        allowFullScreen
+                                                    />
+                                                ) : (
+                                                    <>
+                                                        {sermon.imageUrl || sermon.thumbnail ? (
+                                                            <img src={sermon.imageUrl || sermon.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center text-white/20">
+                                                                <Play size={48} />
+                                                            </div>
+                                                        )}
+                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                                                            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[#8B4513] shadow-xl">
+                                                                <Play size={24} className="ml-1" fill="currentColor" />
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                            <div className="p-10 space-y-4">
+                                                <div className="flex items-center gap-3 text-stone-400 text-[10px] font-black uppercase tracking-widest">
+                                                    <Calendar size={14} />
+                                                    {sermon.publishedAt ? new Date(sermon.publishedAt).toLocaleDateString() : (sermon.created_at ? new Date(sermon.created_at.seconds * 1000).toLocaleDateString() : 'Recent')}
                                                 </div>
-                                            )}
-                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[#8B4513] shadow-xl">
-                                                    <Play size={24} className="ml-1" fill="currentColor" />
-                                                </div>
+                                                <h3 className="font-serif text-2xl font-bold text-stone-900 line-clamp-2 leading-snug group-hover:text-[#8B4513] transition-colors">{sermon.title}</h3>
+                                                <p className="text-stone-500 text-sm line-clamp-2 font-light">{sermon.description}</p>
                                             </div>
                                         </div>
-                                        <div className="p-10 space-y-4">
-                                            <div className="flex items-center gap-3 text-stone-400 text-[10px] font-black uppercase tracking-widest">
-                                                <Calendar size={14} />
-                                                {sermon.created_at ? new Date(sermon.created_at.seconds * 1000).toLocaleDateString() : 'Recent'}
-                                            </div>
-                                            <h3 className="font-serif text-2xl font-bold text-stone-900 line-clamp-2 leading-snug group-hover:text-[#8B4513] transition-colors">{sermon.title}</h3>
-                                            <p className="text-stone-500 text-sm line-clamp-2 font-light">{sermon.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
