@@ -86,7 +86,7 @@ export default function PrayerPage() {
     return (
         <div
             ref={containerRef}
-            className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950 pt-24 overflow-hidden relative"
+            className="min-h-screen bg-gradient-to-b from-stone-950 via-stone-900 to-stone-950 pt-20 md:pt-24 overflow-hidden relative"
             onMouseMove={handleMouseMove}
         >
             {/* Ambient Background */}
@@ -96,21 +96,21 @@ export default function PrayerPage() {
             </div>
 
             {/* Header Section */}
-            <section className="relative z-10 py-16 px-6 text-center">
+            <section className="relative z-10 py-10 md:py-16 px-4 md:px-6 text-center">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="space-y-6 max-w-3xl mx-auto"
+                    className="space-y-4 md:space-y-6 max-w-3xl mx-auto"
                 >
-                    <span className="text-amber-400/80 font-black tracking-[0.4em] text-[11px] uppercase">
+                    <span className="text-amber-400/80 font-black tracking-[0.3em] md:tracking-[0.4em] text-[10px] md:text-[11px] uppercase">
                         Intercessory Prayer
                     </span>
-                    <h1 className="font-serif text-5xl md:text-7xl text-white font-bold leading-tight">
+                    <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl text-white font-bold leading-tight">
                         중보기도의 <span className="text-amber-400">빛</span>
                     </h1>
-                    <p className="text-stone-400 text-lg md:text-xl font-light max-w-xl mx-auto leading-relaxed">
-                        촛불 하나가 켜질 때마다, 우리의 기도가 하나님께 올라갑니다.<br />
+                    <p className="text-stone-400 text-base md:text-lg lg:text-xl font-light max-w-xl mx-auto leading-relaxed px-4">
+                        촋불 하나가 켜질 때마다, 우리의 기도가 하나님께 올라갑니다.<br className="hidden md:block" />
                         함께 빛이 되어 서로를 위해 기도해 주세요.
                     </p>
 
@@ -118,21 +118,21 @@ export default function PrayerPage() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsModalOpen(true)}
-                        className="mt-8 inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full font-bold text-lg shadow-2xl shadow-amber-500/30 hover:shadow-amber-500/50 transition-all"
+                        className="mt-6 md:mt-8 inline-flex items-center gap-2 md:gap-3 px-8 md:px-10 py-4 md:py-5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full font-bold text-base md:text-lg shadow-2xl shadow-amber-500/30 hover:shadow-amber-500/50 transition-all"
                     >
-                        <Flame className="w-6 h-6" />
+                        <Flame className="w-5 h-5 md:w-6 md:h-6" />
                         촛불 켜기
                     </motion.button>
 
-                    <p className="text-stone-500 text-sm">
+                    <p className="text-stone-500 text-xs md:text-sm">
                         현재 <span className="text-amber-400 font-bold">{candles.length}</span>개의 촛불이 타오르고 있습니다
                     </p>
                 </motion.div>
             </section>
 
             {/* Candles Display Area */}
-            <section className="relative z-10 min-h-[60vh] px-6">
-                <div className="relative w-full max-w-5xl mx-auto h-[500px]">
+            <section className="relative z-10 min-h-[50vh] md:min-h-[60vh] px-4 md:px-6">
+                <div className="relative w-full max-w-5xl mx-auto h-[350px] md:h-[500px]">
                     <AnimatePresence>
                         {candles.map((candle, idx) => (
                             <motion.div
@@ -391,8 +391,8 @@ const PrayerModal = ({ onClose }: { onClose: () => void }) => {
                                             type="button"
                                             onClick={() => setCategory(cat.id)}
                                             className={`p-3 rounded-xl text-center transition-all ${category === cat.id
-                                                    ? 'bg-amber-500/20 border-amber-500/50 border text-amber-400'
-                                                    : 'bg-stone-800/50 border border-stone-700/50 text-stone-400 hover:bg-stone-800'
+                                                ? 'bg-amber-500/20 border-amber-500/50 border text-amber-400'
+                                                : 'bg-stone-800/50 border border-stone-700/50 text-stone-400 hover:bg-stone-800'
                                                 }`}
                                         >
                                             <span className="text-lg block mb-1">{cat.icon}</span>

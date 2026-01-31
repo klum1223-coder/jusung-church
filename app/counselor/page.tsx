@@ -181,32 +181,32 @@ export default function CounselorPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-stone-50 pt-24">
+        <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-stone-50 pt-20 md:pt-24">
             {/* Header */}
-            <section className="py-16 px-6 text-center">
+            <section className="py-10 md:py-16 px-4 md:px-6 text-center">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="space-y-6 max-w-3xl mx-auto"
+                    className="space-y-4 md:space-y-6 max-w-3xl mx-auto"
                 >
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#8B4513] to-amber-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-amber-500/20">
-                        <Sparkles className="w-10 h-10 text-white" />
+                    <div className="w-16 h-16 md:w-20 md:h-20 mx-auto bg-gradient-to-br from-[#8B4513] to-amber-600 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-2xl shadow-amber-500/20">
+                        <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-white" />
                     </div>
-                    <span className="text-[#8B4513] font-black tracking-[0.4em] text-[11px] uppercase">
+                    <span className="text-[#8B4513] font-black tracking-[0.3em] md:tracking-[0.4em] text-[10px] md:text-[11px] uppercase">
                         AI Faith Counselor
                     </span>
-                    <h1 className="font-serif text-4xl md:text-6xl text-stone-900 font-bold leading-tight">
+                    <h1 className="font-serif text-3xl md:text-4xl lg:text-6xl text-stone-900 font-bold leading-tight">
                         오늘 기분이 <span className="text-[#8B4513]">어떠신가요?</span>
                     </h1>
-                    <p className="text-stone-500 text-lg font-light max-w-xl mx-auto">
-                        마음을 나눠주시면, 지금 당신에게 필요한<br />
+                    <p className="text-stone-500 text-base md:text-lg font-light max-w-xl mx-auto px-2">
+                        마음을 나눠주시면, 지금 당신에게 필요한<br className="hidden md:block" />
                         하나님의 말씀과 위로를 전해드립니다.
                     </p>
                 </motion.div>
             </section>
 
             {/* Chat Area */}
-            <section className="px-6 pb-32">
+            <section className="px-4 md:px-6 pb-32">
                 <div className="max-w-2xl mx-auto">
                     {/* Emotion Presets */}
                     <AnimatePresence>
@@ -215,7 +215,7 @@ export default function CounselorPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
-                                className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8"
+                                className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-8"
                             >
                                 {EMOTION_PRESETS.map((preset, idx) => (
                                     <motion.button
@@ -224,10 +224,10 @@ export default function CounselorPage() {
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ delay: idx * 0.1 }}
                                         onClick={() => handlePresetClick(preset.id)}
-                                        className={`p-6 rounded-3xl bg-gradient-to-br ${preset.color} text-white text-left group hover:scale-105 transition-all shadow-lg hover:shadow-xl`}
+                                        className={`p-4 md:p-6 rounded-2xl md:rounded-3xl bg-gradient-to-br ${preset.color} text-white text-left group hover:scale-105 transition-all shadow-lg hover:shadow-xl`}
                                     >
-                                        <preset.icon className="w-8 h-8 mb-4 opacity-80" />
-                                        <p className="font-bold text-sm leading-relaxed">{preset.label}</p>
+                                        <preset.icon className="w-6 h-6 md:w-8 md:h-8 mb-3 md:mb-4 opacity-80" />
+                                        <p className="font-bold text-xs md:text-sm leading-relaxed">{preset.label}</p>
                                     </motion.button>
                                 ))}
                             </motion.div>
@@ -254,8 +254,8 @@ export default function CounselorPage() {
                                             </div>
                                         )}
                                         <div className={`p-6 rounded-3xl ${msg.role === 'user'
-                                                ? 'bg-[#8B4513] text-white rounded-tr-lg'
-                                                : 'bg-white border border-stone-100 shadow-lg rounded-tl-lg'
+                                            ? 'bg-[#8B4513] text-white rounded-tr-lg'
+                                            : 'bg-white border border-stone-100 shadow-lg rounded-tl-lg'
                                             }`}>
                                             <p className={`leading-relaxed ${msg.role === 'user' ? 'font-medium' : 'text-stone-700'}`}>
                                                 {msg.content}
@@ -340,7 +340,7 @@ export default function CounselorPage() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white to-transparent"
+                        className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-white via-white to-transparent"
                     >
                         <div className="max-w-2xl mx-auto">
                             <form
@@ -356,14 +356,14 @@ export default function CounselorPage() {
                                     onChange={(e) => setInputValue(e.target.value)}
                                     placeholder="오늘의 마음을 나눠주세요..."
                                     disabled={isLoading}
-                                    className="w-full px-8 py-6 pr-16 bg-white border-2 border-stone-100 rounded-3xl text-lg placeholder:text-stone-300 focus:outline-none focus:border-[#8B4513]/30 focus:ring-4 focus:ring-[#8B4513]/10 transition-all shadow-xl"
+                                    className="w-full px-5 md:px-8 py-4 md:py-6 pr-14 md:pr-16 bg-white border-2 border-stone-100 rounded-2xl md:rounded-3xl text-base md:text-lg placeholder:text-stone-300 focus:outline-none focus:border-[#8B4513]/30 focus:ring-4 focus:ring-[#8B4513]/10 transition-all shadow-xl"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!inputValue.trim() || isLoading}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-[#8B4513] text-white rounded-2xl flex items-center justify-center disabled:opacity-30 hover:bg-stone-900 transition-all shadow-lg"
+                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-[#8B4513] text-white rounded-xl md:rounded-2xl flex items-center justify-center disabled:opacity-30 hover:bg-stone-900 transition-all shadow-lg"
                                 >
-                                    <Send size={20} />
+                                    <Send size={18} className="md:w-5 md:h-5" />
                                 </button>
                             </form>
                         </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Settings, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
 import { useAuth } from '../lib/AuthContext';
 
@@ -29,6 +30,20 @@ const Header = () => {
         { name: '중보기도', eng: 'Prayer', href: '/prayer' },
         { name: '마음쉼터', eng: 'Soul Rest', href: '/counselor' },
     ];
+
+    // Hamburger icon animation variants
+    const topLine = {
+        closed: { rotate: 0, y: 0 },
+        open: { rotate: 45, y: 6 }
+    };
+    const middleLine = {
+        closed: { opacity: 1 },
+        open: { opacity: 0 }
+    };
+    const bottomLine = {
+        closed: { rotate: 0, y: 0 },
+        open: { rotate: -45, y: -6 }
+    };
 
     return (
         <header className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-700 ${scrolled || !isHome
@@ -123,51 +138,126 @@ const Header = () => {
                             LOGIN
                         </button>
                     )}
+
+                    {/* Animated Hamburger Button */}
                     <button
-                        onClick={() => setIsMenuOpen(true)}
-                        className={`lg:hidden w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${scrolled || !isHome ? 'bg-stone-100 text-stone-900' : 'glass text-stone-900'
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className={`lg:hidden w-12 h-12 rounded-2xl flex flex-col items-center justify-center gap-1.5 transition-colors ${scrolled || !isHome ? 'bg-stone-100 text-stone-900' : 'glass text-stone-900'
                             }`}
                     >
-                        <Menu size={24} />
+                        <motion.span
+                            animate={isMenuOpen ? "open" : "closed"}
+                            variants={topLine}
+                            className={`block w-5 h-0.5 ${scrolled || !isHome ? 'bg-stone-900' : 'bg-white'}`}
+                        />
+                        <motion.span
+                            animate={isMenuOpen ? "open" : "closed"}
+                            variants={middleLine}
+                            className={`block w-5 h-0.5 ${scrolled || !isHome ? 'bg-stone-900' : 'bg-white'}`}
+                        />
+                        <motion.span
+                            animate={isMenuOpen ? "open" : "closed"}
+                            variants={bottomLine}
+                            className={`block w-5 h-0.5 ${scrolled || !isHome ? 'bg-stone-900' : 'bg-white'}`}
+                        />
                     </button>
                 </div>
             </div>
 
-            {isMenuOpen && (
-                <div className="fixed inset-0 z-[100] lg:hidden">
-                    <div className="absolute inset-0 bg-stone-950/40 backdrop-blur-md transition-opacity duration-500" onClick={() => setIsMenuOpen(false)} />
-                    <div className="absolute right-0 top-0 h-full w-full max-w-[360px] bg-white shadow-2xl p-12 flex flex-col transform transition-transform duration-500 animate-in slide-in-from-right">
-                        <div className="flex justify-between items-center mb-16">
-                            <div className="w-12 h-12 bg-[#8B4513] text-white rounded-2xl flex items-center justify-center text-2xl font-bold font-serif">✝</div>
-                            <button onClick={() => setIsMenuOpen(false)} className="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center text-stone-300 hover:text-stone-900 transition-colors">
-                                <X size={24} />
-                            </button>
-                        </div>
+            {/* Mobile Menu with Framer Motion */}
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <div className="fixed inset-0 z-[100] lg:hidden">
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="absolute inset-0 bg-stone-950/60 backdrop-blur-md"
+                            onClick={() => setIsMenuOpen(false)}
+                        />
 
-                        <nav className="flex flex-col gap-6">
-                            {navItems.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={item.href}
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className={`flex items-center justify-between py-4 border-b border-stone-50 group px-2 rounded-xl transition-all ${pathname === item.href ? 'bg-stone-50' : 'hover:bg-stone-50'
-                                        }`}
+                        {/* Menu Panel */}
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                            className="absolute right-0 top-0 h-full w-full max-w-[360px] bg-gradient-to-br from-white to-stone-50 shadow-2xl p-10 flex flex-col"
+                        >
+                            {/* Header */}
+                            <div className="flex justify-between items-center mb-12">
+                                <motion.div
+                                    initial={{ scale: 0.8, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ delay: 0.2 }}
+                                    className="flex items-center gap-3"
                                 >
-                                    <div className="flex flex-col">
-                                        <span className={`text-2xl font-serif font-black ${pathname === item.href ? 'text-[#8B4513]' : 'text-stone-800'
-                                            }`}>
-                                            {item.name}
-                                        </span>
-                                        <span className="text-[10px] uppercase font-black tracking-widest text-stone-400">{item.eng}</span>
+                                    <div className="w-12 h-12 bg-gradient-to-br from-[#8B4513] to-[#A0522D] text-white rounded-2xl flex items-center justify-center text-xl font-bold font-serif shadow-lg">J</div>
+                                    <div>
+                                        <p className="font-serif font-black text-stone-900">주성교회</p>
+                                        <p className="text-[8px] uppercase tracking-widest text-stone-400">Menu</p>
                                     </div>
-                                    <ArrowRight size={20} className={`transition-transform group-hover:translate-x-2 ${pathname === item.href ? 'text-[#8B4513]' : 'text-stone-200'
-                                        }`} />
-                                </Link>
-                            ))}
-                        </nav>
+                                </motion.div>
+                                <motion.button
+                                    initial={{ rotate: -90, opacity: 0 }}
+                                    animate={{ rotate: 0, opacity: 1 }}
+                                    transition={{ delay: 0.1 }}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="w-11 h-11 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-900 hover:bg-stone-200 transition-all"
+                                >
+                                    <X size={20} />
+                                </motion.button>
+                            </div>
+
+                            {/* Navigation */}
+                            <nav className="flex flex-col gap-3 flex-1">
+                                {navItems.map((item, index) => (
+                                    <motion.div
+                                        key={item.name}
+                                        initial={{ x: 50, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        transition={{ delay: 0.1 + index * 0.05 }}
+                                    >
+                                        <Link
+                                            href={item.href}
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className={`flex items-center justify-between py-4 px-4 rounded-2xl group transition-all ${pathname === item.href
+                                                ? 'bg-gradient-to-r from-[#8B4513]/10 to-transparent border-l-4 border-[#8B4513]'
+                                                : 'hover:bg-stone-100'
+                                                }`}
+                                        >
+                                            <div className="flex flex-col">
+                                                <span className={`text-xl font-serif font-black ${pathname === item.href ? 'text-[#8B4513]' : 'text-stone-800'
+                                                    }`}>
+                                                    {item.name}
+                                                </span>
+                                                <span className="text-[9px] uppercase font-black tracking-widest text-stone-400">{item.eng}</span>
+                                            </div>
+                                            <ArrowRight size={18} className={`transition-all group-hover:translate-x-1 ${pathname === item.href ? 'text-[#8B4513]' : 'text-stone-300 group-hover:text-stone-500'
+                                                }`} />
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </nav>
+
+                            {/* Footer */}
+                            <motion.div
+                                initial={{ y: 20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.4 }}
+                                className="pt-6 border-t border-stone-100"
+                            >
+                                <p className="text-center text-xs text-stone-400">
+                                    <Sparkles size={10} className="inline mr-1 text-amber-500" />
+                                    세상을 비추는 거룩한 울림
+                                </p>
+                            </motion.div>
+                        </motion.div>
                     </div>
-                </div>
-            )}
+                )}
+            </AnimatePresence>
         </header>
     );
 };
