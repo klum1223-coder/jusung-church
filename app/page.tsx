@@ -157,7 +157,9 @@ export default function JusungChurchPage() {
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover"
+              webkit-playsinline="true"
+              preload="auto"
+              className="absolute inset-0 w-full h-full object-cover hidden md:block"
             >
               <source src="https://cdn.pixabay.com/video/2020/05/22/40297-424319516_large.mp4" type="video/mp4" />
             </video>
@@ -199,14 +201,23 @@ export default function JusungChurchPage() {
               </motion.p>
             </div>
 
-            {/* 3D Interactive Cross */}
+            {/* 3D Interactive Heart - Desktop only */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 1 }}
-              className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-4"
+              className="hidden md:block w-32 h-32 md:w-40 md:h-40 mx-auto mb-4"
             >
               <Interactive3D type="heart" scale={1.2} className="w-full h-full" />
+            </motion.div>
+            {/* Mobile Heart Fallback */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5, duration: 1 }}
+              className="md:hidden text-6xl mb-4"
+            >
+              ❤️
             </motion.div>
 
             <motion.div
