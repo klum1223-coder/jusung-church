@@ -1,6 +1,12 @@
 import { CHURCH_DATA as ORIGINAL_DATA } from './constants';
 
-export const SCRIPTURES = [
+export interface Scripture {
+    text: string;
+    source: string;
+    category: string;
+}
+
+export const SCRIPTURES: Scripture[] = [
     { text: "두려워하지 말라 내가 너와 함께 함이라 놀라지 말라 나는 네 하나님이 됨이라 내가 너를 굳세게 하리라 참으로 너를 도와 주리라 참으로 나의 의로운 오른손으로 너를 붙들리라", source: "이사야 41:10", category: "strength" },
     { text: "여호와는 나의 목자시니 내게 부족함이 없으리로다 그가 나를 푸른 풀밭에 누이시며 쉴 만한 물 가로 인도하시는도다", source: "시편 23:1-2", category: "comfort" },
     { text: "너희는 마음에 근심하지 말라 하나님을 믿으니 또 나를 믿으라", source: "요한복음 14:1", category: "comfort" },
