@@ -148,28 +148,45 @@ export default function JusungChurchPage() {
         <section className="relative h-[100vh] md:h-[95vh] flex items-center justify-center overflow-hidden">
           {/* Beautiful Gradient Background */}
           <div className="absolute inset-0 z-0">
-            {/* Animated gradient background - richer colors */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-transparent to-transparent" />
+            {/* Animated gradient background - richer colors with enhanced depth */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0612] via-[#1a1448] to-[#0f0c29]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#140c1c] via-[#1f1c38]/60 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,69,19,0.15)_0%,transparent_70%)]" />
 
-            {/* Aurora-like effect */}
+            {/* Aurora-like effect - Enhanced */}
             <motion.div
               className="absolute inset-0"
               animate={{
                 background: [
-                  'radial-gradient(ellipse at 20% 30%, rgba(120,119,198,0.3) 0%, transparent 50%)',
-                  'radial-gradient(ellipse at 80% 70%, rgba(120,119,198,0.3) 0%, transparent 50%)',
-                  'radial-gradient(ellipse at 40% 60%, rgba(120,119,198,0.3) 0%, transparent 50%)',
+                  'radial-gradient(ellipse at 20% 30%, rgba(212,175,55,0.25) 0%, rgba(139,69,19,0.15) 30%, transparent 60%)',
+                  'radial-gradient(ellipse at 80% 70%, rgba(120,119,198,0.25) 0%, rgba(100,80,180,0.15) 30%, transparent 60%)',
+                  'radial-gradient(ellipse at 40% 60%, rgba(212,175,55,0.25) 0%, rgba(139,69,19,0.15) 30%, transparent 60%)',
                 ]
               }}
-              transition={{ duration: 10, repeat: Infinity }}
+              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
             />
 
-            {/* Decorative glowing orbs - more vibrant */}
-            <div className="absolute top-1/4 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-gradient-to-r from-amber-500/30 to-orange-500/20 rounded-full blur-[80px] md:blur-[120px] animate-pulse" />
-            <div className="absolute bottom-1/3 right-1/4 w-48 md:w-80 h-48 md:h-80 bg-gradient-to-r from-blue-500/25 to-cyan-500/20 rounded-full blur-[60px] md:blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-gradient-to-r from-purple-500/15 to-pink-500/10 rounded-full blur-[100px] md:blur-[150px]" />
-            <div className="absolute top-[10%] right-[10%] w-32 md:w-48 h-32 md:h-48 bg-rose-500/20 rounded-full blur-[50px] animate-pulse" style={{ animationDelay: '2s' }} />
+            {/* Decorative glowing orbs - more sophisticated */}
+            <motion.div
+              className="absolute top-1/4 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-gradient-to-r from-[#d4af37]/40 to-[#cd7f32]/25 rounded-full blur-[80px] md:blur-[120px]"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute bottom-1/3 right-1/4 w-48 md:w-80 h-48 md:h-80 bg-gradient-to-r from-indigo-500/30 to-purple-500/20 rounded-full blur-[60px] md:blur-[100px]"
+              animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.45, 0.25] }}
+              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            />
+            <motion.div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-gradient-to-r from-purple-600/20 to-pink-500/15 rounded-full blur-[100px] md:blur-[150px]"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className="absolute top-[10%] right-[10%] w-32 md:w-48 h-32 md:h-48 bg-gradient-to-br from-rose-400/25 to-orange-400/20 rounded-full blur-[50px]"
+              animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.35, 0.2] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            />
 
             {/* Floating particles - more varied sizes */}
             <div className="absolute inset-0 overflow-hidden">
@@ -279,10 +296,19 @@ export default function JusungChurchPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="font-serif text-5xl md:text-9xl text-white font-bold leading-none tracking-tight"
-                style={{ textShadow: '0 0 60px rgba(255,255,255,0.3), 0 4px 20px rgba(0,0,0,0.5)' }}
+                className="font-serif text-5xl md:text-9xl text-white font-bold leading-none tracking-tight relative"
+                style={{
+                  textShadow: '0 0 80px rgba(212,175,55,0.4), 0 0 40px rgba(255,255,255,0.3), 0 4px 30px rgba(0,0,0,0.6)',
+                }}
               >
-                {CHURCH_DATA.name}
+                <span className="relative inline-block">
+                  {CHURCH_DATA.name}
+                  <motion.span
+                    className="absolute -inset-1 bg-gradient-to-r from-[#d4af37]/20 via-transparent to-[#cd7f32]/20 blur-xl"
+                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                </span>
               </motion.h1>
 
               <motion.p
@@ -328,22 +354,37 @@ export default function JusungChurchPage() {
               transition={{ delay: 0.8, duration: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2"
             >
-              <button
+              <motion.button
                 onClick={() => router.push('/worship')}
-                className="group relative px-10 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full font-bold transition-all shadow-2xl hover:scale-105 overflow-hidden"
-                style={{ boxShadow: '0 10px 40px rgba(245,158,11,0.4)' }}
+                className="group relative px-10 py-4 bg-gradient-to-r from-[#d4af37] via-[#cd7f32] to-[#8b4513] text-white rounded-full font-bold transition-all shadow-2xl hover:scale-105 overflow-hidden"
+                style={{ boxShadow: '0 10px 50px rgba(212,175,55,0.5), 0 0 30px rgba(212,175,55,0.2)' }}
+                whileHover={{ scale: 1.05, boxShadow: '0 15px 60px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.3)' }}
+                whileTap={{ scale: 0.95 }}
               >
+                <motion.span
+                  className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
+                />
                 <span className="relative z-10 flex items-center gap-2">
-                  <Sparkles size={16} />
+                  <Sparkles size={16} className="animate-pulse" />
                   예배 안내
                 </span>
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={() => router.push('/sermon')}
-                className="px-10 py-4 bg-white/10 border-2 border-white/30 text-white rounded-full font-bold hover:bg-white hover:text-stone-900 transition-all shadow-xl backdrop-blur-md"
+                className="px-10 py-4 bg-white/10 border-2 border-white/30 text-white rounded-full font-bold hover:bg-white hover:text-stone-900 transition-all shadow-xl backdrop-blur-md relative overflow-hidden group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                온라인 예배
-              </button>
+                <motion.span
+                  className="absolute inset-0 bg-white/20"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{ duration: 0.5 }}
+                />
+                <span className="relative z-10">온라인 예배</span>
+              </motion.button>
             </motion.div>
           </motion.div>
 
@@ -352,15 +393,20 @@ export default function JusungChurchPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
           >
             <motion.div
               animate={{ y: [0, 8, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="flex flex-col items-center gap-2"
+              className="flex flex-col items-center gap-2 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-full border border-white/20"
             >
-              <span className="text-white/50 text-xs uppercase tracking-widest">Scroll</span>
-              <ChevronDown size={20} className="text-white/50" />
+              <span className="text-white/70 text-xs uppercase tracking-widest font-bold">Scroll</span>
+              <motion.div
+                animate={{ y: [0, 4, 0], opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <ChevronDown size={20} className="text-[#d4af37]" />
+              </motion.div>
             </motion.div>
           </motion.div>
         </section>
@@ -371,17 +417,28 @@ export default function JusungChurchPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="py-32 px-4 md:px-6"
+          className="py-32 px-4 md:px-6 relative"
         >
+          {/* Subtle background decoration */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-20 left-10 w-72 h-72 bg-[#d4af37]/5 rounded-full blur-[120px]" />
+            <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#8b4513]/5 rounded-full blur-[150px]" />
+          </div>
           <div className="container mx-auto max-w-7xl">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[600px]">
 
               {/* Left Column: Featured Sermon (Span 7) */}
-              <div className="col-span-1 lg:col-span-7 h-[400px] lg:h-full">
+              <motion.div
+                className="col-span-1 lg:col-span-7 h-[400px] lg:h-full"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
                 <TiltCard className="h-full">
                   <div
                     onClick={() => (latestSermon?.linkUrl) && window.open(latestSermon.linkUrl, '_blank')}
-                    className="w-full h-full premium-card relative overflow-hidden group cursor-pointer bg-[#1a3c34] border-none shadow-2xl h-full"
+                    className="w-full h-full premium-card relative overflow-hidden group cursor-pointer bg-gradient-to-br from-[#1a3c34] to-[#0f2922] border-none shadow-2xl h-full"
                   >
                     <div className="absolute inset-0 z-0">
                       <img
@@ -394,8 +451,12 @@ export default function JusungChurchPage() {
 
                     <div className="relative z-10 p-8 md:p-12 flex flex-col justify-between h-full">
                       <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
-                          <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
+                        <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full border border-white/20 shadow-lg">
+                          <motion.span
+                            className="w-2 h-2 rounded-full bg-[#d4af37]"
+                            animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          />
                           <span className="text-[10px] font-black uppercase text-white tracking-widest">Featured Sermon</span>
                         </div>
                       </div>
@@ -409,97 +470,163 @@ export default function JusungChurchPage() {
                             {latestSermon.description}
                           </p>
                         )}
-                        <div className="inline-flex items-center gap-3 px-6 py-3 bg-[#c5a065] text-[#0f2922] rounded-full font-bold text-xs hover:bg-white transition-colors mt-4 shadow-lg shadow-black/20">
+                        <motion.div
+                          className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#d4af37] to-[#cd7f32] text-white rounded-full font-bold text-xs hover:from-white hover:to-white hover:text-[#0f2922] transition-all mt-4 shadow-lg shadow-black/30"
+                          whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(212, 175, 55, 0.4)' }}
+                          whileTap={{ scale: 0.95 }}
+                        >
                           <Play size={14} fill="currentColor" /> WATCH NOW
-                        </div>
+                        </motion.div>
                       </div>
                     </div>
                   </div>
                 </TiltCard>
-              </div>
+              </motion.div>
 
               {/* Right Column: Quick Actions (Span 5) */}
-              <div className="col-span-1 lg:col-span-5 flex flex-col gap-6 h-full">
+              <motion.div
+                className="col-span-1 lg:col-span-5 flex flex-col gap-6 h-full"
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
                 <div className="grid grid-cols-2 gap-4 flex-1">
-                  <TiltCard>
-                    <button
-                      onClick={() => setIsGraceModalOpen(true)}
-                      className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-amber-50 border-amber-100 hover:bg-amber-100 transition-colors"
-                    >
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-amber-600 mb-4 shadow-sm group-hover:scale-110 transition-transform">
-                        <Gift size={20} fill="currentColor" className="text-amber-500 animate-bounce" />
-                      </div>
-                      <div className="text-left">
-                        <h3 className="font-bold text-stone-900 mb-1">말씀 뽑기</h3>
-                        <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Grace Draw</p>
-                      </div>
-                    </button>
-                  </TiltCard>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <TiltCard>
+                      <button
+                        onClick={() => setIsGraceModalOpen(true)}
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100 hover:border-amber-200 transition-all relative overflow-hidden"
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-br from-amber-100/0 to-orange-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        />
+                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                          <Gift size={20} fill="currentColor" />
+                        </div>
+                        <div className="text-left relative z-10">
+                          <h3 className="font-bold text-stone-900 mb-1">말씀 뽑기</h3>
+                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Grace Draw</p>
+                        </div>
+                      </button>
+                    </TiltCard>
+                  </motion.div>
 
-                  <TiltCard>
-                    <button
-                      onClick={() => router.push('/worship')}
-                      className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-blue-50 border-blue-100 hover:bg-blue-100 transition-colors"
-                    >
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600 mb-4 shadow-sm">
-                        <BookOpen size={20} />
-                      </div>
-                      <div className="text-left">
-                        <h3 className="font-bold text-stone-900 mb-1">예배 안내</h3>
-                        <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Worship Info</p>
-                      </div>
-                    </button>
-                  </TiltCard>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.35 }}
+                  >
+                    <TiltCard>
+                      <button
+                        onClick={() => router.push('/worship')}
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 hover:border-blue-200 transition-all relative overflow-hidden"
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-br from-blue-100/0 to-indigo-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        />
+                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
+                          <BookOpen size={20} />
+                        </div>
+                        <div className="text-left relative z-10">
+                          <h3 className="font-bold text-stone-900 mb-1">예배 안내</h3>
+                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Worship Info</p>
+                        </div>
+                      </button>
+                    </TiltCard>
+                  </motion.div>
 
-                  <TiltCard>
-                    <button
-                      onClick={() => {
-                        const b = cards.find(c => c.type === 'bulletin');
-                        if (b?.linkUrl) window.open(b.linkUrl, '_blank');
-                      }}
-                      className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-emerald-50 border-emerald-100 hover:bg-emerald-100 transition-colors text-left"
-                    >
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-emerald-600 mb-4 shadow-sm">
-                        <FileText size={20} />
-                      </div>
-                      <div className="text-left">
-                        <h3 className="font-bold text-stone-900 mb-1">주보 보기</h3>
-                        <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Weekly Bulletin</p>
-                      </div>
-                    </button>
-                  </TiltCard>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <TiltCard>
+                      <button
+                        onClick={() => {
+                          const b = cards.find(c => c.type === 'bulletin');
+                          if (b?.linkUrl) window.open(b.linkUrl, '_blank');
+                        }}
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100 hover:border-emerald-200 transition-all text-left relative overflow-hidden"
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-br from-emerald-100/0 to-teal-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        />
+                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                          <FileText size={20} />
+                        </div>
+                        <div className="text-left relative z-10">
+                          <h3 className="font-bold text-stone-900 mb-1">주보 보기</h3>
+                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Weekly Bulletin</p>
+                        </div>
+                      </button>
+                    </TiltCard>
+                  </motion.div>
 
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.45 }}
+                  >
+                    <TiltCard>
+                      <button
+                        onClick={() => router.push('/community')}
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-violet-50 to-purple-50 border-violet-100 hover:border-violet-200 transition-all relative overflow-hidden"
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-br from-violet-100/0 to-purple-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        />
+                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
+                          <Bell size={20} />
+                        </div>
+                        <div className="text-left relative z-10">
+                          <h3 className="font-bold text-stone-900 mb-1">공지사항</h3>
+                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Notice & News</p>
+                        </div>
+                      </button>
+                    </TiltCard>
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 }}
+                >
                   <TiltCard>
                     <button
                       onClick={() => router.push('/community')}
-                      className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-violet-50 border-violet-100 hover:bg-violet-100 transition-colors"
+                      className="w-full h-full rounded-[32px] shadow-premium hover:shadow-premium-hover p-8 flex items-center justify-between group bg-gradient-to-br from-[#d4af37] via-[#c5a065] to-[#8b4513] border-none relative overflow-hidden"
                     >
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-violet-600 mb-4 shadow-sm">
-                        <Bell size={20} />
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0"
+                        animate={{ x: ['-100%', '200%'] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear", repeatDelay: 2 }}
+                      />
+                      <div className="text-left relative z-10">
+                        <h3 className="font-serif text-2xl font-bold text-white mb-2 drop-shadow-lg">나눔의 정원</h3>
+                        <p className="text-white/90 text-xs font-medium tracking-wide drop-shadow">Community Lounge & Sharing</p>
                       </div>
-                      <div className="text-left">
-                        <h3 className="font-bold text-stone-900 mb-1">공지사항</h3>
-                        <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Notice & News</p>
-                      </div>
+                      <motion.div
+                        className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-[#8b4513] transition-all shadow-lg relative z-10"
+                        whileHover={{ scale: 1.1, rotate: 360 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <Users size={28} />
+                      </motion.div>
                     </button>
                   </TiltCard>
-                </div>
-
-                <TiltCard>
-                  <button
-                    onClick={() => router.push('/community')}
-                    className="w-full h-full rounded-[32px] shadow-premium hover:shadow-premium-hover p-8 flex items-center justify-between group bg-[#c5a065] border-none"
-                  >
-                    <div className="text-left">
-                      <h3 className="font-serif text-2xl font-bold text-white mb-2">나눔의 정원</h3>
-                      <p className="text-white/80 text-xs font-medium tracking-wide">Community Lounge & Sharing</p>
-                    </div>
-                    <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-[#c5a065] transition-all">
-                      <Users size={28} />
-                    </div>
-                  </button>
-                </TiltCard>
-              </div>
+                </motion.div>
+              </motion.div>
 
             </div>
           </div>
@@ -511,25 +638,37 @@ export default function JusungChurchPage() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="py-32 px-6 bg-[#1a1a1a] text-white overflow-hidden relative"
+          className="py-32 px-6 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#0a0a0a] text-white overflow-hidden relative"
         >
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-[#8B4513]/5 blur-[150px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-[#d4af37]/10 blur-[150px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-[#8b4513]/10 blur-[120px] pointer-events-none" />
 
           <div className="container mx-auto max-w-7xl relative z-10">
             <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
-              <div className="space-y-4">
-                <span className="text-[#c5a065] text-[10px] font-black tracking-[0.4em] uppercase">Our Journal</span>
-                <h2 className="font-serif text-5xl md:text-7xl font-bold leading-tight">주성 소식</h2>
-                <p className="text-white/40 text-lg font-light max-w-xl leading-relaxed pt-2">네이버 블로그와 커뮤니티를 통해 전하는 주성교회의 따뜻한 일상을 전해드립니다.</p>
-              </div>
-              <a
+              <motion.div
+                className="space-y-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="text-[#d4af37] text-[10px] font-black tracking-[0.4em] uppercase inline-block animate-pulse">Our Journal</span>
+                <h2 className="font-serif text-5xl md:text-7xl font-bold leading-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">주성 소식</h2>
+                <p className="text-white/50 text-lg font-light max-w-xl leading-relaxed pt-2">네이버 블로그와 커뮤니티를 통해 전하는 주성교회의 따뜻한 일상을 전해드립니다.</p>
+              </motion.div>
+              <motion.a
                 href={CHURCH_DATA.contact.blog}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-4 text-white font-bold text-sm px-8 py-4 bg-white/5 hover:bg-white hover:text-stone-900 rounded-full transition-all border border-white/10"
+                className="group flex items-center gap-4 text-white font-bold text-sm px-8 py-4 bg-white/5 hover:bg-gradient-to-r hover:from-[#d4af37] hover:to-[#cd7f32] hover:text-white rounded-full transition-all border border-white/10 hover:border-transparent backdrop-blur-md"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                whileHover={{ scale: 1.05 }}
               >
                 블로그 전체보기 <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
-              </a>
+              </motion.a>
             </div>
 
             {blogPosts.length > 0 ? (

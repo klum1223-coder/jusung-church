@@ -47,15 +47,19 @@ const Header = () => {
 
     return (
         <header className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-700 ${scrolled || !isHome
-            ? 'glass py-4 shadow-xl shadow-black/5'
+            ? 'glass py-4 shadow-2xl shadow-black/10 border-b border-white/20'
             : 'bg-transparent py-8'
             }`}>
             <div className="container mx-auto px-6 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-4 group">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-serif font-black text-2xl transition-all duration-500 ${scrolled || !isHome
-                        ? 'bg-[#8B4513] text-white shadow-lg'
+                    <motion.div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center font-serif font-black text-2xl transition-all duration-500 ${scrolled || !isHome
+                        ? 'bg-gradient-to-br from-[#d4af37] to-[#8B4513] text-white shadow-lg shadow-[#8B4513]/30'
                         : 'bg-white/10 backdrop-blur-md text-white border border-white/20'
-                        }`}>J</div>
+                        }`}
+                      whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+                      transition={{ duration: 0.3 }}
+                    >J</motion.div>
                     <div className="flex flex-col">
                         <h1 className={`text-2xl font-serif font-black tracking-tight transition-colors duration-500 ${scrolled || !isHome ? 'text-stone-900' : 'text-white drop-shadow-lg'
                             }`}>
@@ -74,8 +78,8 @@ const Header = () => {
                             key={item.name}
                             href={item.href}
                             className={`px-5 py-2 rounded-full flex flex-col items-center group relative transition-all duration-300 ${pathname === item.href
-                                ? (scrolled || !isHome ? 'bg-[#8B4513]/5' : 'bg-white/10')
-                                : 'hover:bg-white/5'
+                                ? (scrolled || !isHome ? 'bg-gradient-to-r from-[#8B4513]/10 to-[#d4af37]/10' : 'bg-white/15 backdrop-blur-md')
+                                : 'hover:bg-white/10'
                                 }`}
                         >
                             <span className={`text-[13px] font-bold transition-colors ${pathname === item.href
@@ -127,16 +131,23 @@ const Header = () => {
                             </button>
                         </div>
                     ) : (
-                        <button
+                        <motion.button
                             onClick={login}
-                            className={`px-10 py-3.5 rounded-full font-black text-[11px] tracking-widest transition-all transform active:scale-95 flex items-center gap-2 ${scrolled || !isHome
-                                ? 'bg-stone-900 text-white hover:bg-[#8B4513] shadow-2xl'
+                            className={`px-10 py-3.5 rounded-full font-black text-[11px] tracking-widest transition-all flex items-center gap-2 relative overflow-hidden ${scrolled || !isHome
+                                ? 'bg-gradient-to-r from-[#8b4513] to-[#d4af37] text-white shadow-2xl shadow-[#8b4513]/30'
                                 : 'glass text-stone-900 hover:bg-white shadow-lg'
                                 }`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                         >
-                            <Sparkles size={14} />
-                            LOGIN
-                        </button>
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
+                              animate={{ x: ['-100%', '200%'] }}
+                              transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
+                            />
+                            <Sparkles size={14} className="relative z-10" />
+                            <span className="relative z-10">LOGIN</span>
+                        </motion.button>
                     )}
 
                     {/* Animated Hamburger Button */}
