@@ -148,21 +148,40 @@ export default function JusungChurchPage() {
         <section className="relative h-[100vh] md:h-[95vh] flex items-center justify-center overflow-hidden">
           {/* Beautiful Gradient Background */}
           <div className="absolute inset-0 z-0">
-            {/* Animated gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f2d] via-transparent to-transparent" />
+            {/* Animated gradient background - richer colors */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1a2e] via-transparent to-transparent" />
 
-            {/* Decorative glowing orbs */}
-            <div className="absolute top-1/4 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-amber-500/20 rounded-full blur-[80px] md:blur-[120px] animate-pulse" />
-            <div className="absolute bottom-1/3 right-1/4 w-48 md:w-80 h-48 md:h-80 bg-blue-500/15 rounded-full blur-[60px] md:blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-purple-500/10 rounded-full blur-[100px] md:blur-[150px]" />
+            {/* Aurora-like effect */}
+            <motion.div
+              className="absolute inset-0"
+              animate={{
+                background: [
+                  'radial-gradient(ellipse at 20% 30%, rgba(120,119,198,0.3) 0%, transparent 50%)',
+                  'radial-gradient(ellipse at 80% 70%, rgba(120,119,198,0.3) 0%, transparent 50%)',
+                  'radial-gradient(ellipse at 40% 60%, rgba(120,119,198,0.3) 0%, transparent 50%)',
+                ]
+              }}
+              transition={{ duration: 10, repeat: Infinity }}
+            />
 
-            {/* Floating particles for mobile */}
+            {/* Decorative glowing orbs - more vibrant */}
+            <div className="absolute top-1/4 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-gradient-to-r from-amber-500/30 to-orange-500/20 rounded-full blur-[80px] md:blur-[120px] animate-pulse" />
+            <div className="absolute bottom-1/3 right-1/4 w-48 md:w-80 h-48 md:h-80 bg-gradient-to-r from-blue-500/25 to-cyan-500/20 rounded-full blur-[60px] md:blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-gradient-to-r from-purple-500/15 to-pink-500/10 rounded-full blur-[100px] md:blur-[150px]" />
+            <div className="absolute top-[10%] right-[10%] w-32 md:w-48 h-32 md:h-48 bg-rose-500/20 rounded-full blur-[50px] animate-pulse" style={{ animationDelay: '2s' }} />
+
+            {/* Floating particles - more varied sizes */}
             <div className="absolute inset-0 overflow-hidden">
-              {[...Array(20)].map((_, i) => (
+              {[...Array(30)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-1 h-1 bg-white/40 rounded-full"
+                  className="absolute rounded-full"
+                  style={{
+                    width: `${2 + Math.random() * 4}px`,
+                    height: `${2 + Math.random() * 4}px`,
+                    background: i % 3 === 0 ? '#fbbf24' : i % 3 === 1 ? '#60a5fa' : '#ffffff',
+                  }}
                   initial={{
                     x: `${Math.random() * 100}%`,
                     y: `${Math.random() * 100}%`,
@@ -170,25 +189,59 @@ export default function JusungChurchPage() {
                   }}
                   animate={{
                     y: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
-                    opacity: [0, 0.6, 0]
+                    opacity: [0, 0.8, 0],
+                    scale: [1, 1.5, 1]
                   }}
                   transition={{
-                    duration: 4 + Math.random() * 4,
+                    duration: 3 + Math.random() * 5,
                     repeat: Infinity,
-                    delay: Math.random() * 3
+                    delay: Math.random() * 4
                   }}
                 />
               ))}
             </div>
 
-            {/* Cross light rays */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-full bg-gradient-to-b from-amber-400/20 via-transparent to-transparent" />
-            <div className="absolute top-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-amber-400/10 to-transparent" />
+            {/* Twinkling stars */}
+            <div className="absolute inset-0">
+              {[...Array(15)].map((_, i) => (
+                <motion.div
+                  key={`star-${i}`}
+                  className="absolute"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                  }}
+                  animate={{
+                    opacity: [0.2, 1, 0.2],
+                    scale: [1, 1.3, 1]
+                  }}
+                  transition={{
+                    duration: 2 + Math.random() * 2,
+                    repeat: Infinity,
+                    delay: Math.random() * 3
+                  }}
+                >
+                  <Sparkles size={8 + Math.random() * 8} className="text-amber-300/60" />
+                </motion.div>
+              ))}
+            </div>
 
-            {/* Subtle pattern overlay */}
-            <div className="absolute inset-0 opacity-30" style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
-              backgroundSize: '30px 30px'
+            {/* Cross light rays - enhanced */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-gradient-to-b from-amber-400/40 via-amber-400/10 to-transparent" />
+            <div className="absolute top-1/3 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-amber-400/20 to-transparent" />
+
+            {/* Diagonal light streaks */}
+            <motion.div
+              className="absolute top-0 -left-1/4 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              style={{ transform: 'rotate(45deg)', transformOrigin: 'center' }}
+              animate={{ x: ['0%', '200%'], opacity: [0, 1, 0] }}
+              transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+            />
+
+            {/* Subtle pattern overlay - denser */}
+            <div className="absolute inset-0 opacity-25" style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)`,
+              backgroundSize: '24px 24px'
             }} />
 
             {/* Video for desktop only */}
@@ -197,12 +250,12 @@ export default function JusungChurchPage() {
               loop
               muted
               playsInline
-              className="absolute inset-0 w-full h-full object-cover opacity-30 hidden md:block"
+              className="absolute inset-0 w-full h-full object-cover opacity-20 hidden md:block"
             >
               <source src="https://cdn.pixabay.com/video/2020/05/22/40297-424319516_large.mp4" type="video/mp4" />
             </video>
 
-            <div className="absolute inset-0 bg-black/20 z-10" />
+            <div className="absolute inset-0 bg-black/10 z-10" />
           </div>
 
           <motion.div
