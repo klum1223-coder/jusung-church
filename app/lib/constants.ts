@@ -5,6 +5,7 @@ export const CHURCH_DATA = {
     engName: "Joosung Holiness Church",
     slogan: "세상을 비추는 거룩한 울림, 평안과 회복이 있는 신앙 공동체",
     images: {
+        logo: "/logo_new.jpg",
         hero: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80",
         pastor: "https://images.unsplash.com/photo-1544717297-fa95b9ee9623?auto=format&fit=crop&q=80"
     },
@@ -23,7 +24,7 @@ export const CHURCH_DATA = {
     },
     worship: [
         { name: "주일예배", time: "오전 11:00" },
-        { name: "성장이 있는 소모임", time: "오후 01:00" },
+        { name: "성장이 있는 소모임(주일)", time: "오후 01:00" },
         { name: "수요 기도회", time: "오후 07:30" },
         { name: "아침 기도회", time: "오전 06:30 (월-금)" }
     ],

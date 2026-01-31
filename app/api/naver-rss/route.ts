@@ -24,17 +24,19 @@ export async function GET() {
 
             // CDATA 및 일반 태그 대응
             const titleMatch = content.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) || content.match(/<title>([\s\S]*?)<\/title>/);
-            const linkMatch = content.match(/<link>([\s\S]*?)<\/link>/);
+            const linkMatch = content.match(/<link><!\[CDATA\[([\s\S]*?)\]\]><\/link>/) || content.match(/<link>([\s\S]*?)<\/link>/);
             const dateMatch = content.match(/<pubDate>([\s\S]*?)<\/pubDate>/);
             const descMatch = content.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) || content.match(/<description>([\s\S]*?)<\/description>/);
 
             if (titleMatch && linkMatch) {
+                const rawLink = linkMatch[1].trim();
+                const link = rawLink.startsWith('http') ? rawLink : `https://blog.naver.com${rawLink.startsWith('/') ? '' : '/'}${rawLink}`;
                 items.push({
-                    id: linkMatch[1],
-                    title: titleMatch[1],
-                    link: linkMatch[1],
-                    pubDate: dateMatch ? dateMatch[1] : "",
-                    description: descMatch ? descMatch[1].replace(/<[^>]*>?/gm, '').slice(0, 120) + '...' : ""
+                    id: link,
+                    title: titleMatch[1].trim(),
+                    link: link,
+                    pubDate: dateMatch ? dateMatch[1].trim() : "",
+                    description: descMatch ? descMatch[1].replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim().slice(0, 120) + '...' : ""
                 });
             }
         }

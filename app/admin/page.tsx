@@ -12,8 +12,11 @@ import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
 import {
     Plus, Trash2, Edit2, Image as ImageIcon,
     X, LayoutDashboard, Users, MessageSquare,
-    Home, Loader2, Save, ArrowLeft
+    Home, Loader2, Save, ArrowLeft, BarChart3
 } from 'lucide-react';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 import { useRouter } from 'next/navigation';
 
 export default function AdminDashboard() {
@@ -21,11 +24,12 @@ export default function AdminDashboard() {
     const router = useRouter();
     const isAdmin = checkIfAdmin(user);
 
-    const [activeTab, setActiveTab] = useState<'main' | 'ministry' | 'activity' | 'community' | 'settings'>('main');
+    const [activeTab, setActiveTab] = useState<'main' | 'ministry' | 'activity' | 'community' | 'settings' | 'stats'>('main');
     const [contents, setContents] = useState<any[]>([]);
     const [ministries, setMinistries] = useState<any[]>([]);
     const [activities, setActivities] = useState<any[]>([]);
     const [posts, setPosts] = useState<any[]>([]);
+    const [stats, setStats] = useState<any[]>([]);
     const [settings, setSettings] = useState<any>({});
     const [loading, setLoading] = useState(true);
 
@@ -57,6 +61,14 @@ export default function AdminDashboard() {
 
         const unsubSett = onSnapshot(doc(db, 'settings', 'site'), (s) => {
             if (s.exists()) setSettings(s.data());
+        });
+
+        const unsubStats = onSnapshot(query(collection(db, 'daily_stats'), orderBy('date', 'desc')), (s) => {
+            // Take recent 30 days
+            const data = s.docs.map(d => d.data());
+            // Recharts needs array in correct order (oldest to newest for X-axis usually, or just mapping)
+            // Let's reverse it to show timeline left-to-right
+            setStats(data.slice(0, 30).reverse());
         });
 
         setLoading(false);
@@ -131,6 +143,12 @@ export default function AdminDashboard() {
                     >
                         <Save size={20} /> 사이트 설정
                     </button>
+                    <button
+                        onClick={() => setActiveTab('stats')}
+                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'stats' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
+                    >
+                        <BarChart3 size={20} /> 방문자 통계
+                    </button>
                 </nav>
 
                 <div className="p-6 border-t border-stone-100">
@@ -153,6 +171,7 @@ export default function AdminDashboard() {
                             {activeTab === 'activity' && '사역 현장 (갤러리)'}
                             {activeTab === 'community' && '나눔의 정원'}
                             {activeTab === 'settings' && '사이트 환경 설정'}
+                            {activeTab === 'stats' && '방문자 통계'}
                         </h2>
                         <p className="text-stone-400 mt-2">홈페이지 내용을 관리자 권한으로 직접 수정합니다.</p>
                     </div>
@@ -257,6 +276,109 @@ export default function AdminDashboard() {
                                     />
                                 </div>
                             </div>
+
+                            <div className="space-y-8">
+                                <h3 className="font-serif text-2xl font-bold text-stone-900 border-b border-stone-100 pb-4">교회 소개(About) 설정</h3>
+                                <div className="grid grid-cols-1 gap-6">
+                                    <SettingsForm
+                                        label="담임목사 성함"
+                                        name="pastor_name"
+                                        defaultValue={settings.pastor_name || CHURCH_DATA.pastor.name}
+                                    />
+                                    <SettingsForm
+                                        label="인사말 제목"
+                                        name="about_welcome_title"
+                                        defaultValue={settings.about_welcome_title || '말씀과 기도로 세상을 변화시킵니다.'}
+                                    />
+                                    <SettingsForm
+                                        label="인사말 본문"
+                                        name="about_welcome_text"
+                                        defaultValue={settings.about_welcome_text || '하나님이 기뻐하시는 교회, 성도가 행복한 교회...'}
+                                        textarea
+                                    />
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">목사님 프로필 사진</label>
+                                        <div className="flex items-center gap-4">
+                                            {settings.pastor_img && (
+                                                <img src={settings.pastor_img} className="w-16 h-16 rounded-full object-cover border border-stone-200" />
+                                            )}
+                                            <label className="cursor-pointer bg-stone-100 px-4 py-2 rounded-xl text-xs font-bold hover:bg-stone-200 transition-all">
+                                                사진 업로드
+                                                <input type="file" className="hidden" onChange={async (e) => {
+                                                    const f = e.target.files?.[0];
+                                                    if (!f) return;
+                                                    const storageRef = ref(storage, `settings/pastor_${Date.now()}`);
+                                                    const snap = await uploadBytes(storageRef, f);
+                                                    const url = await getDownloadURL(snap.ref);
+                                                    await updateDoc(doc(db, 'settings', 'site'), { pastor_img: url });
+                                                    alert("사진이 업데이트되었습니다.");
+                                                    window.location.reload();
+                                                }} />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {activeTab === 'stats' && (
+                        <div className="space-y-6">
+                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-stone-100">
+                                <h3 className="font-serif text-xl font-bold text-stone-900 mb-6">최근 30일 방문자 추이</h3>
+                                <div className="h-[400px] w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={stats}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f5f4" />
+                                            <XAxis
+                                                dataKey="date"
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tick={{ fill: '#a8a29e', fontSize: 12 }}
+                                                tickFormatter={(value) => value.slice(5)} // Show MM-DD
+                                            />
+                                            <YAxis
+                                                axisLine={false}
+                                                tickLine={false}
+                                                tick={{ fill: '#a8a29e', fontSize: 12 }}
+                                            />
+                                            <Tooltip
+                                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                            />
+                                            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                                            <Bar name="총 조회수" dataKey="total_views" fill="#f5f5f4" radius={[4, 4, 0, 0]} />
+                                            <Bar name="순수 방문자" dataKey="unique_visitors" fill="#8B4513" radius={[4, 4, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-6">
+                                <div className="bg-white p-8 rounded-3xl border border-stone-100">
+                                    <p className="text-stone-400 text-xs font-black uppercase tracking-widest mb-2">오늘의 방문자</p>
+                                    <h4 className="text-3xl font-bold text-stone-900">
+                                        {stats.length > 0 && stats[stats.length - 1].date === new Date().toISOString().split('T')[0]
+                                            ? stats[stats.length - 1].unique_visitors
+                                            : 0}
+                                        <span className="text-sm text-stone-400 font-normal ml-1">명</span>
+                                    </h4>
+                                </div>
+                                <div className="bg-white p-8 rounded-3xl border border-stone-100">
+                                    <p className="text-stone-400 text-xs font-black uppercase tracking-widest mb-2">오늘의 조회수</p>
+                                    <h4 className="text-3xl font-bold text-stone-900">
+                                        {stats.length > 0 && stats[stats.length - 1].date === new Date().toISOString().split('T')[0]
+                                            ? stats[stats.length - 1].total_views
+                                            : 0}
+                                        <span className="text-sm text-stone-400 font-normal ml-1">회</span>
+                                    </h4>
+                                </div>
+                                <div className="bg-white p-8 rounded-3xl border border-stone-100">
+                                    <p className="text-stone-400 text-xs font-black uppercase tracking-widest mb-2">최근 30일 누적 방문</p>
+                                    <h4 className="text-3xl font-bold text-stone-900">
+                                        {stats.reduce((acc, curr) => acc + (curr.unique_visitors || 0), 0).toLocaleString()}
+                                        <span className="text-sm text-stone-400 font-normal ml-1">명</span>
+                                    </h4>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -317,17 +439,26 @@ const AdminModal = ({ type, item, onClose }: any) => {
             const data: any = Object.fromEntries(formData.entries());
 
             let imageUrl = item?.imageUrl || item?.img || '';
+            let linkUrl = data.linkUrl || item?.linkUrl || '';
 
             if (file) {
                 const folder = type === 'main' ? 'contents' : type === 'activity' ? 'ministry_activities' : 'ministries';
                 const storageRef = ref(storage, `${folder}/${Date.now()}_${file.name}`);
                 const snapshot = await uploadBytes(storageRef, file);
-                imageUrl = await getDownloadURL(snapshot.ref);
+                const downloadUrl = await getDownloadURL(snapshot.ref);
+
+                // If type is main and category is bulletin, we might want to store the file URL in linkUrl
+                if (type === 'main' && data.type === 'bulletin') {
+                    linkUrl = downloadUrl;
+                } else {
+                    imageUrl = downloadUrl;
+                }
             }
 
             const colName = type === 'main' ? 'main_contents' : type === 'activity' ? 'ministry_activities' : 'ministries';
             const payload = {
                 ...data,
+                linkUrl: linkUrl,
                 [type === 'main' || type === 'activity' ? 'imageUrl' : 'img']: imageUrl,
                 updated_at: serverTimestamp(),
                 ...(item ? {} : { created_at: serverTimestamp() })

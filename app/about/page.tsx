@@ -1,10 +1,47 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CHURCH_DATA } from '../lib/constants';
-import { Quote } from 'lucide-react';
+import { Quote, Loader2 } from 'lucide-react';
+import { db } from '../firebaseConfig';
+import { doc, onSnapshot } from 'firebase/firestore';
 
 export default function AboutPage() {
+    const [settings, setSettings] = useState<any>({});
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+        const unsub = onSnapshot(doc(db, 'settings', 'site'), (s) => {
+            if (s.exists()) setSettings(s.data());
+            setLoading(false);
+        });
+        return () => unsub();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-stone-50">
+                <Loader2 className="animate-spin text-[#8B4513]" size={48} />
+            </div>
+        );
+    }
+
+    const pastorName = "김선우";
+    const pastorImg = "/images/pastor-kim.png";
+    const welcomeTitle = "'은혜로 되어지는 인생, 하나님이 이끄시는 삶'";
+    const welcomeText = settings.about_welcome_text || (
+        <>
+            <p>우리교회 이름은 <strong>주성교회</strong>입니다. 한자로 <span className="text-[#8B4513] font-bold">주인 주(主)</span>자에 <span className="text-[#8B4513] font-bold">이를 성(成)</span>자를 씁니다. '하나님이 이루어 가시는 교회'를 꿈꾸며 세워진 교회이기에 붙여진 이름입니다.</p>
+            <p className="mt-6">은혜를 경험하는 삶의 다른 표현은 '주어지는 것'이라 생각됩니다. 우리의 태어남도 주어진 것입니다. 우리의 죽음도 주어진 결과입니다. 우리의 인생 여정은 아무리 발버둥쳐도 탄생과 죽음 안에서 이루어져 갑니다. 예수님은 성도가 자신 안에서 살아갈 때 삶의 열매가 이루어져 감을 말씀하십니다.</p>
+            <p className="mt-6">물질 만능주의의 파도가 우리의 삶과 영혼을 덮친 시대를 살아가고 있습니다. 이런 시대이지만 하나님의 은혜를 경험하는 성도와 교회가 되고 싶습니다. 성삼위 하나님의 은혜 가운데 <strong>'되어지는 인생, 되어지는 성도'</strong>가 되시길 바랍니다.</p>
+            <p className="mt-10 font-serif text-xl font-bold text-stone-900 text-right">- 주성교회 담임목사 김선우 -</p>
+        </>
+    );
+
     return (
         <div className="bg-[#faf9f6] min-h-screen pt-24 font-sans selection:bg-[#8B4513] selection:text-white">
             <main>
@@ -13,11 +50,17 @@ export default function AboutPage() {
                     <div className="container mx-auto max-w-6xl">
                         <div className="flex flex-col items-center text-center space-y-8">
                             <span className="text-[#8B4513] font-black tracking-[0.4em] text-[12px] uppercase animate-in fade-in slide-in-from-bottom-4 duration-700">Deep Tradition & Future Vision</span>
-                            <h1 className="font-serif text-5xl md:text-8xl text-stone-900 font-bold leading-none tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                                우리는 하나님을<br />사랑하는 <span className="text-[#8B4513]">주성교회</span>입니다.
+                            <h1 className="font-serif text-5xl md:text-7xl text-stone-900 font-bold leading-tight tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                                하나님이 <span className="text-[#8B4513] inline-block relative">
+                                    이루어 가시는
+                                    <svg className="absolute -bottom-2 left-0 w-full h-3 text-[#8B4513]/20" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                        <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+                                    </svg>
+                                </span><br />
+                                주성교회
                             </h1>
-                            <p className="text-stone-500 text-xl md:text-2xl max-w-3xl font-light leading-relaxed animate-in fade-in duration-1000 delay-500">
-                                1990년 시작된 주성교회는 지금까지 복음의 본질을 지키며 지역사회와 함께 성장해 왔습니다. 하나님의 사랑이 흐르는 건강한 공동체를 꿈꿉니다.
+                            <p className="text-stone-500 text-lg md:text-xl max-w-2xl font-light leading-relaxed animate-in fade-in duration-1000 delay-500 pt-6">
+                                <strong>주(主)님이 이루시는(成) 교회</strong>, 주성교회는 하나님의 은혜로<br className="hidden md:block" /> '되어지는 인생'을 고백하는 믿음의 공동체입니다.
                             </p>
                         </div>
                     </div>
@@ -29,21 +72,19 @@ export default function AboutPage() {
                         <div className="flex flex-col lg:flex-row gap-20 items-center">
                             <div className="w-full lg:w-1/2">
                                 <div className="relative aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl">
-                                    <img src={CHURCH_DATA.pastor.imgUrl} className="w-full h-full object-cover" />
+                                    <img src={pastorImg} className="w-full h-full object-contain bg-gradient-to-b from-stone-100 to-stone-200" alt="Pastor Kim Sunwoo" />
                                     <div className="absolute inset-0 bg-stone-900/10"></div>
                                 </div>
                             </div>
                             <div className="w-full lg:w-1/2 space-y-12">
                                 <div className="space-y-6">
                                     <span className="text-[#8B4513] font-bold text-sm uppercase tracking-widest block">Pastor's Welcome</span>
-                                    <h2 className="font-serif text-4xl md:text-6xl text-stone-900 font-bold leading-tight">말씀과 기도로<br />세상을 변화시킵니다.</h2>
+                                    <h2 className="font-serif text-4xl md:text-6xl text-stone-900 font-bold leading-tight">{welcomeTitle}</h2>
                                     <div className="w-20 h-1 bg-[#8B4513]"></div>
                                 </div>
 
-                                <div className="space-y-8 text-stone-600 text-lg leading-relaxed font-light">
-                                    <p>안녕하십니까. 주성교회 담임목사 {CHURCH_DATA.pastor.name}입니다. </p>
-                                    <p>우리 주성교회는 '하나님이 기뻐하시는 교회, 성도가 행복한 교회'를 지향합니다. 갈수록 소란하고 복잡해지는 세상 속에서 그리스도의 평안을 누리는 안식처가 되고자 합니다.</p>
-                                    <p>이곳에 오시는 모든 분들이 살아있는 하나님의 말씀을 경험하고, 성령의 충만함으로 삶의 진정한 의미와 사명을 발견하시기를 간절히 소원합니다.</p>
+                                <div className="space-y-8 text-stone-600 text-lg leading-relaxed font-light whitespace-pre-wrap">
+                                    {typeof welcomeText === 'string' ? welcomeText : welcomeText}
                                 </div>
 
                                 <div className="p-10 bg-stone-50 rounded-[40px] border border-stone-100 relative">

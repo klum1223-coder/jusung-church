@@ -7,6 +7,7 @@ import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
 import { ArrowRight, Loader2, Image as ImageIcon, Plus, Edit2, Settings } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function MinistryPage() {
     const { user } = useAuth();
@@ -55,19 +56,20 @@ export default function MinistryPage() {
         <div className="bg-[#faf9f6] min-h-screen pt-24 font-sans selection:bg-[#8B4513] selection:text-white">
             <main>
                 {/* Header Section */}
-                <section className="py-24 px-6 bg-[#8B4513] text-white relative overflow-hidden">
-                    <div className="container mx-auto max-w-5xl text-center space-y-6 relative z-10">
-                        <span className="text-[#F5E6D3] font-black tracking-[0.4em] text-[12px] uppercase">Service & Mission</span>
-                        <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight">
-                            {settings.ministry_title || '사역 안내'}
+                <section className="relative py-32 px-6 overflow-hidden bg-white">
+                    <div className="absolute top-0 right-0 w-1/2 h-full bg-[#8B4513]/5 blur-[120px] pointer-events-none" />
+                    <div className="container mx-auto max-w-6xl text-center space-y-8 relative z-10">
+                        <span className="text-[#8B4513] font-black tracking-[0.4em] text-[12px] uppercase animate-in fade-in slide-in-from-bottom-4 duration-700">Service & Mission</span>
+                        <h1 className="font-serif text-5xl md:text-8xl text-stone-900 font-bold leading-tight tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                            {settings.ministry_title || '세상을 섬기는 사역'}
                         </h1>
-                        <p className="text-white/60 text-lg md:text-xl font-light">
+                        <p className="text-stone-500 text-xl md:text-2xl max-w-3xl mx-auto font-light leading-relaxed animate-in fade-in duration-1000 delay-500">
                             {settings.ministry_desc || '주성교회는 모든 세대와 이웃을 향해 하나님의 사랑을 전하는 다양한 사역을 펼치고 있습니다.'}
                         </p>
                         {isAdmin && (
                             <button
                                 onClick={() => router.push('/admin')}
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-xs font-bold hover:bg-white/20 transition-all mt-4"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-stone-100 rounded-full text-stone-500 text-xs font-bold hover:bg-stone-200 transition-all mt-8"
                             >
                                 <Settings size={14} /> 헤더 문구 수정하기
                             </button>
@@ -75,46 +77,69 @@ export default function MinistryPage() {
                     </div>
                 </section>
 
-                {/* Ministry Categories */}
+                {/* Ministry Categories - Editorial Style */}
                 <section className="py-24 px-6">
                     <div className="container mx-auto max-w-6xl">
-                        <div className="mb-16 border-b border-stone-100 pb-8 flex items-end justify-between">
-                            <div>
-                                <h2 className="font-serif text-4xl font-bold text-stone-900">사역 소개</h2>
-                                <p className="text-stone-400 mt-2">우리의 부름받은 사명에 대해 안내해 드립니다.</p>
+                        <div className="mb-24 border-b border-stone-100 pb-12 flex flex-col md:flex-row items-end justify-between gap-6">
+                            <div className="space-y-4">
+                                <span className="text-[#8B4513] font-black tracking-[0.4em] text-[10px] uppercase">Our Mission</span>
+                                <h2 className="font-serif text-5xl font-bold text-stone-900">사역 소개</h2>
+                                <p className="text-stone-400 font-light text-lg">우리의 부름받은 사명에 대해 안내해 드립니다.</p>
                             </div>
                             {isAdmin && (
                                 <button
                                     onClick={() => router.push('/admin')}
-                                    className="flex items-center gap-2 text-[#8B4513] font-bold text-sm hover:gap-3 transition-all"
+                                    className="flex items-center gap-2 text-[#8B4513] font-bold text-sm hover:gap-3 transition-all underline underline-offset-8"
                                 >
                                     사역 항목 관리하기 <ArrowRight size={16} />
                                 </button>
                             )}
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                        <div className="space-y-48">
                             {ministries.map((m, idx) => (
-                                <div key={m.id || idx} className="bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl transition-all group flex flex-col border border-stone-100 relative">
-                                    <div className="aspect-[4/3] overflow-hidden">
-                                        <img src={m.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={m.name} />
-                                    </div>
-                                    <div className="p-10 flex flex-col flex-1 space-y-6">
-                                        <div className="space-y-1">
-                                            <span className="text-[#8B4513] font-bold text-[10px] uppercase tracking-widest">{m.engName}</span>
-                                            <h2 className="font-serif text-3xl font-bold text-stone-900">{m.name}</h2>
+                                <motion.div
+                                    key={m.id || idx}
+                                    initial={{ opacity: 0, y: 50 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-100px" }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    className={`flex flex-col lg:items-center gap-16 lg:gap-40 ${idx % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
+                                >
+                                    <div className="w-full lg:w-1/2">
+                                        <div className="relative aspect-[4/5] lg:aspect-[3/4] rounded-[40px] overflow-hidden shadow-2xl group border border-stone-100">
+                                            <motion.img
+                                                whileHover={{ scale: 1.05 }}
+                                                transition={{ duration: 1.5 }}
+                                                src={m.img}
+                                                className="w-full h-full object-cover"
+                                                alt={m.name}
+                                            />
+                                            <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-700"></div>
+                                            {isAdmin && (
+                                                <button
+                                                    onClick={() => router.push('/admin')}
+                                                    className="absolute top-10 right-10 w-14 h-14 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-stone-400 hover:text-[#8B4513] shadow-2xl opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100"
+                                                >
+                                                    <Edit2 size={24} />
+                                                </button>
+                                            )}
                                         </div>
-                                        <p className="text-stone-500 text-lg leading-relaxed font-light">{m.desc}</p>
                                     </div>
-                                    {isAdmin && (
-                                        <button
-                                            onClick={() => router.push('/admin')}
-                                            className="absolute top-6 right-6 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-stone-400 hover:text-[#8B4513] shadow-lg opacity-0 group-hover:opacity-100 transition-all"
-                                        >
-                                            <Edit2 size={16} />
-                                        </button>
-                                    )}
-                                </div>
+                                    <div className="w-full lg:w-1/2 space-y-12">
+                                        <div className="space-y-8">
+                                            <div className="flex items-center gap-6">
+                                                <span className="w-20 h-[1px] bg-[#8B4513]"></span>
+                                                <span className="text-[#8B4513] font-black text-[11px] uppercase tracking-[0.4em]">{m.engName}</span>
+                                            </div>
+                                            <h2 className="font-serif text-5xl md:text-7xl font-bold text-stone-900 leading-tight tracking-tight">{m.name}</h2>
+                                        </div>
+                                        <div className="space-y-8 text-stone-600 text-xl font-light leading-relaxed max-w-lg">
+                                            <p>{m.desc}</p>
+                                            {m.detail && <p className="text-stone-500 text-lg leading-relaxed pt-4 border-t border-stone-100">{m.detail}</p>}
+                                        </div>
+                                    </div>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
@@ -146,29 +171,36 @@ export default function MinistryPage() {
                                 <Loader2 className="w-10 h-10 text-[#8B4513] animate-spin" />
                             </div>
                         ) : activities.length === 0 ? (
-                            <div className="bg-stone-50 rounded-[40px] py-32 text-center border-2 border-dashed border-stone-100 group">
-                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto text-stone-200 mb-6 group-hover:scale-110 transition-transform">
+                            <div className="bg-stone-50 rounded-[60px] py-32 text-center border border-stone-100 group">
+                                <div className="w-24 h-24 bg-white rounded-full shadow-sm flex items-center justify-center mx-auto text-stone-200 mb-6 group-hover:scale-110 transition-transform duration-500">
                                     <ImageIcon size={40} />
                                 </div>
                                 <p className="text-stone-400 font-bold tracking-widest uppercase text-xs">등록된 활동 사진이 없습니다.</p>
                                 {isAdmin && (
                                     <button
                                         onClick={() => router.push('/admin')}
-                                        className="mt-8 px-10 py-4 bg-[#8B4513] text-white rounded-full font-bold shadow-2xl hover:bg-stone-900 transition-all flex items-center justify-center gap-2 mx-auto"
+                                        className="mt-8 px-10 py-5 bg-[#8B4513] text-white rounded-full font-bold shadow-2xl hover:bg-stone-900 transition-all flex items-center justify-center gap-2 mx-auto"
                                     >
                                         <Plus size={20} /> 첫 번째 소식 작성하기
                                     </button>
                                 )}
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
                                 {activities.map((act) => (
-                                    <div key={act.id} className="group relative aspect-square bg-stone-100 rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl transition-all cursor-pointer">
-                                        <img src={act.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={act.title} />
+                                    <motion.div
+                                        key={act.id}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.5 }}
+                                        className="break-inside-avoid group relative rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl transition-all cursor-pointer"
+                                    >
+                                        <img src={act.imageUrl} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" alt={act.title} />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
                                             <span className="text-white/60 text-[10px] font-black tracking-widest uppercase mb-2">{act.category} | {act.date}</span>
                                             <h3 className="text-white text-2xl font-bold mb-2">{act.title}</h3>
-                                            <p className="text-white/80 text-sm line-clamp-2 font-light">{act.description}</p>
+                                            <p className="text-white/80 text-sm line-clamp-3 font-light leading-relaxed">{act.description}</p>
                                         </div>
                                         {isAdmin && (
                                             <button
@@ -178,7 +210,7 @@ export default function MinistryPage() {
                                                 <Edit2 size={16} />
                                             </button>
                                         )}
-                                    </div>
+                                    </motion.div>
                                 ))}
                             </div>
                         )}
