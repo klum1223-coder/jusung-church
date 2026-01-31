@@ -145,33 +145,43 @@ export default function JusungChurchPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="relative h-[90vh] md:h-[95vh] flex items-center justify-center overflow-hidden">
+        <section className="relative h-[100vh] md:h-[95vh] flex items-center justify-center overflow-hidden">
+          {/* Beautiful Gradient Background */}
           <div className="absolute inset-0 z-0">
-            <img
-              src="https://images.unsplash.com/photo-1507692049790-de58293a4697?auto=format&fit=crop&q=80"
-              alt="Background"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            {/* Animated gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0d1f2d] via-transparent to-transparent" />
+
+            {/* Decorative elements */}
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[150px]" />
+
+            {/* Subtle pattern overlay */}
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)`,
+              backgroundSize: '40px 40px'
+            }} />
+
+            {/* Video for desktop only */}
             <video
               autoPlay
               loop
               muted
               playsInline
-              webkit-playsinline="true"
-              preload="auto"
-              className="absolute inset-0 w-full h-full object-cover hidden md:block"
+              className="absolute inset-0 w-full h-full object-cover opacity-30 hidden md:block"
             >
               <source src="https://cdn.pixabay.com/video/2020/05/22/40297-424319516_large.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 bg-black/60 z-10" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0f2922] via-transparent to-black/30 z-10" />
+
+            <div className="absolute inset-0 bg-black/30 z-10" />
           </div>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="relative z-10 text-center px-6 max-w-5xl space-y-10"
+            className="relative z-10 text-center px-6 max-w-5xl space-y-8 pt-24 md:pt-0"
           >
             <div className="space-y-6">
               <motion.div
