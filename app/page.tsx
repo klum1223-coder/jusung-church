@@ -58,6 +58,8 @@ export default function JusungChurchPage() {
   const isAdmin = checkIfAdmin(user);
   const [isMainModalOpen, setMainModalOpen] = useState(false);
   const [isGraceModalOpen, setIsGraceModalOpen] = useState(false);
+  const [particles, setParticles] = useState<any[]>([]);
+  const [stars, setStars] = useState<any[]>([]);
 
   useEffect(() => {
     if (!db) return;
@@ -96,6 +98,31 @@ export default function JusungChurchPage() {
       unsubscribe1();
       unsubscribe2();
     };
+  }, []);
+
+  // Initialize random particles and stars on client side to prevent hydration mismatches
+  useEffect(() => {
+    setParticles([...Array(30)].map((_, i) => ({
+      id: i,
+      width: 2 + Math.random() * 4,
+      height: 2 + Math.random() * 4,
+      bg: i % 3 === 0 ? '#fbbf24' : i % 3 === 1 ? '#60a5fa' : '#ffffff',
+      initialX: Math.random() * 100,
+      initialY: Math.random() * 100,
+      duration: 3 + Math.random() * 5,
+      delay: Math.random() * 4,
+      moveY1: Math.random() * 100,
+      moveY2: Math.random() * 100
+    })));
+
+    setStars([...Array(15)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      size: 8 + Math.random() * 8,
+      duration: 2 + Math.random() * 2,
+      delay: Math.random() * 3
+    })));
   }, []);
 
   // Fetch latest sermon from YouTube
@@ -190,29 +217,29 @@ export default function JusungChurchPage() {
 
             {/* Floating particles - more varied sizes */}
             <div className="absolute inset-0 overflow-hidden">
-              {[...Array(30)].map((_, i) => (
+              {particles.map((p) => (
                 <motion.div
-                  key={i}
+                  key={p.id}
                   className="absolute rounded-full"
                   style={{
-                    width: `${2 + Math.random() * 4}px`,
-                    height: `${2 + Math.random() * 4}px`,
-                    background: i % 3 === 0 ? '#fbbf24' : i % 3 === 1 ? '#60a5fa' : '#ffffff',
+                    width: `${p.width}px`,
+                    height: `${p.height}px`,
+                    background: p.bg,
                   }}
                   initial={{
-                    x: `${Math.random() * 100}%`,
-                    y: `${Math.random() * 100}%`,
+                    x: `${p.initialX}%`,
+                    y: `${p.initialY}%`,
                     opacity: 0
                   }}
                   animate={{
-                    y: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
+                    y: [`${p.moveY1}%`, `${p.moveY2}%`],
                     opacity: [0, 0.8, 0],
                     scale: [1, 1.5, 1]
                   }}
                   transition={{
-                    duration: 3 + Math.random() * 5,
+                    duration: p.duration,
                     repeat: Infinity,
-                    delay: Math.random() * 4
+                    delay: p.delay
                   }}
                 />
               ))}
@@ -220,25 +247,25 @@ export default function JusungChurchPage() {
 
             {/* Twinkling stars */}
             <div className="absolute inset-0">
-              {[...Array(15)].map((_, i) => (
+              {stars.map((s) => (
                 <motion.div
-                  key={`star-${i}`}
+                  key={`star-${s.id}`}
                   className="absolute"
                   style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
+                    left: `${s.left}%`,
+                    top: `${s.top}%`,
                   }}
                   animate={{
                     opacity: [0.2, 1, 0.2],
                     scale: [1, 1.3, 1]
                   }}
                   transition={{
-                    duration: 2 + Math.random() * 2,
+                    duration: s.duration,
                     repeat: Infinity,
-                    delay: Math.random() * 3
+                    delay: s.delay
                   }}
                 >
-                  <Sparkles size={8 + Math.random() * 8} className="text-amber-300/60" />
+                  <Sparkles size={s.size} className="text-amber-300/60" />
                 </motion.div>
               ))}
             </div>
