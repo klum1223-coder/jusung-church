@@ -467,58 +467,21 @@ export default function JusungChurchPage() {
                     onClick={() => (latestSermon?.linkUrl) && window.open(latestSermon.linkUrl, '_blank')}
                     className="w-full h-full premium-card relative overflow-hidden group cursor-pointer bg-gradient-to-br from-[#1a1033] via-[#2d1b4e] to-[#0f0c29] border-none shadow-2xl"
                   >
-                    {/* Abstract Geometric Background */}
+                    {/* Pastor/Sermon Background Image */}
                     <div className="absolute inset-0 z-0 overflow-hidden">
-                      {/* Gradient Mesh Background */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-purple-800/30 to-amber-900/20" />
-
-                      {/* Decorative Circles */}
-                      <motion.div
-                        className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-[#d4af37]/20"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                      />
-                      <motion.div
-                        className="absolute -top-10 -right-10 w-60 h-60 rounded-full border border-[#d4af37]/15"
-                        animate={{ rotate: -360 }}
-                        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                      />
-                      <motion.div
-                        className="absolute bottom-10 -left-20 w-72 h-72 rounded-full border border-white/10"
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+                      {/* Background Image */}
+                      <img
+                        src="https://firebasestorage.googleapis.com/v0/b/church-homepage-antigravity.firebasestorage.app/o/%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%EA%B8%B0%EB%B3%B8%20%EC%82%AC%EC%A7%84%2F%EB%84%A4%EC%9D%B4%EB%B9%84%20%EB%AA%A8%EB%8D%98%20%EB%AF%B8%EB%8B%88%EB%A9%80%EB%A6%AC%EC%8A%A4%ED%8A%B8%20%EA%B5%90%ED%9A%8C%20%EC%84%B1%EB%8B%B9%20%EA%B8%B0%EB%8F%84%20%EC%9C%A0%ED%8A%9C%EB%B8%8C%20%EC%8D%B8%EB%84%A4%EC%9D%BC.png?alt=media"
+                        alt="주일예배설교"
+                        className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                       />
 
-                      {/* Bible/Cross Icon - Large decorative element */}
-                      <div className="absolute top-1/2 right-12 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
-                        <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-[#d4af37]">
-                          <path d="M12 2L12 22M2 12L22 12" />
-                          <path d="M4 4l16 16M20 4L4 20" />
-                        </svg>
-                      </div>
+                      {/* Dark overlay for text readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
 
-                      {/* Book Icon */}
-                      <div className="absolute bottom-20 right-32 opacity-15 group-hover:opacity-25 transition-opacity duration-700">
-                        <BookOpen size={80} className="text-amber-400/50" />
-                      </div>
-
-                      {/* Ambient Glow Effects */}
-                      <motion.div
-                        className="absolute -top-24 -left-24 w-64 h-64 bg-[#d4af37]/25 rounded-full blur-[100px]"
-                        animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.2, 1] }}
-                        transition={{ duration: 5, repeat: Infinity }}
-                      />
-                      <motion.div
-                        className="absolute bottom-0 right-0 w-80 h-80 bg-purple-500/15 rounded-full blur-[120px]"
-                        animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
-                        transition={{ duration: 7, repeat: Infinity, delay: 2 }}
-                      />
-
-                      {/* Subtle pattern overlay */}
-                      <div className="absolute inset-0 opacity-30" style={{
-                        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(212,175,55,0.15) 1px, transparent 0)`,
-                        backgroundSize: '40px 40px'
-                      }} />
+                      {/* Decorative golden accent */}
+                      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#d4af37] via-[#cd7f32] to-transparent" />
                     </div>
 
                     <div className="relative z-10 p-8 md:p-12 flex flex-col justify-between h-full">
