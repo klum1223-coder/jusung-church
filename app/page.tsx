@@ -725,8 +725,8 @@ export default function JusungChurchPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <span className="text-[#d4af37] text-[10px] font-black tracking-[0.4em] uppercase inline-block animate-pulse">Our Journal</span>
-                <h2 className="font-serif text-5xl md:text-7xl font-bold leading-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">주성 소식</h2>
+                <span className="text-[#d4af37] text-[10px] font-black tracking-[0.4em] uppercase inline-block animate-pulse">Garden of Grace</span>
+                <h2 className="font-serif text-5xl md:text-7xl font-bold leading-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">은혜의 정원</h2>
                 <p className="text-white/50 text-lg font-light max-w-xl leading-relaxed pt-2">네이버 블로그와 커뮤니티를 통해 전하는 주성교회의 따뜻한 일상을 전해드립니다.</p>
               </motion.div>
               <motion.a
@@ -752,12 +752,22 @@ export default function JusungChurchPage() {
                     "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c?auto=format&fit=crop&q=80",
                     "https://images.unsplash.com/photo-1507692049790-de58293a4697?auto=format&fit=crop&q=80"
                   ];
-                  const displayImage = idx < 3 ? placeholderImages[idx] : placeholderImages[0];
+
+                  // '기도' 관련 포스트 커스텀 처리
+                  const isPrayerPost = post.title.includes('기도');
+                  // 기도 포스트일 경우 커스텀 이미지와 링크 사용, 아닐 경우 기존 로직 유지
+                  const displayImage = isPrayerPost
+                    ? "https://images.unsplash.com/photo-1544465544-1b71aee9dfa3?auto=format&fit=crop&q=80"
+                    : (idx < 3 ? placeholderImages[idx] : placeholderImages[0]);
+
+                  const linkUrl = isPrayerPost
+                    ? "https://blog.naver.com/joosung0416/223997530763"
+                    : post.link;
 
                   return (
                     <motion.a
                       key={idx}
-                      href={post.link}
+                      href={linkUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       initial={{ opacity: 0, y: 20 }}
