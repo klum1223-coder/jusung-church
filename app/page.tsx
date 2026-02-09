@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ArrowRight, Pause, Volume2, VolumeX, ChevronDown, Calendar, Clock, MapPin, Search, Menu as MenuIcon, X, Instagram, Youtube, ArrowUpRight, Heart, FileText, Bell, Users, Loader2, Link as LinkIcon, ExternalLink, BookOpen, Sparkles, Plus, Image as ImageIcon, Gift } from 'lucide-react';
+import { Play, ArrowRight, Pause, Volume2, VolumeX, ChevronDown, Calendar, Clock, MapPin, Search, Menu as MenuIcon, X, Instagram, Youtube, ArrowUpRight, Heart, FileText, Bell, Users, Loader2, Link as LinkIcon, ExternalLink, BookOpen, Sparkles, Plus, Image as ImageIcon, Gift, Mic } from 'lucide-react';
 import GraceCardModal from './components/GraceCardModal';
 import TiltCard from './components/TiltCard';
 import dynamic from 'next/dynamic';
@@ -531,6 +531,14 @@ export default function JusungChurchPage() {
                             transition={{ duration: 2, repeat: Infinity }}
                           />
                           <span className="text-[10px] font-black uppercase text-white tracking-[0.2em]">Featured Sermon</span>
+                        </div>
+
+                        {/* Sermon Icon - 오른쪽 카드들과 통일감 */}
+                        <div
+                          className="w-14 h-14 rounded-xl flex items-center justify-center shadow-2xl"
+                          style={{ background: 'linear-gradient(135deg, #d4af37 0%, #cd7f32 50%, #8b4513 100%)' }}
+                        >
+                          <Mic size={28} className="text-white" />
                         </div>
                       </div>
 
