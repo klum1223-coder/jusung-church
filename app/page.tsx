@@ -753,14 +753,15 @@ export default function JusungChurchPage() {
                     "https://images.unsplash.com/photo-1507692049790-de58293a4697?auto=format&fit=crop&q=80"
                   ];
 
-                  // '기도' 관련 포스트 커스텀 처리
-                  const isPrayerPost = post.title.includes('기도');
-                  // 기도 포스트일 경우 커스텀 이미지와 링크 사용, 아닐 경우 기존 로직 유지
-                  const displayImage = isPrayerPost
-                    ? "https://images.unsplash.com/photo-1544465544-1b71aee9dfa3?auto=format&fit=crop&q=80"
+                  // '기도' 관련 포스트 커스텀 처리 (제목이 정확히 '기도'인 경우만)
+                  const isTargetPrayerPost = post.title.trim() === '기도';
+
+                  // 기도 포스트일 경우 커스텀 이미지(성경책/묵상) 사용
+                  const displayImage = isTargetPrayerPost
+                    ? "https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?auto=format&fit=crop&q=80"
                     : (idx < 3 ? placeholderImages[idx] : placeholderImages[0]);
 
-                  const linkUrl = isPrayerPost
+                  const linkUrl = isTargetPrayerPost
                     ? "https://blog.naver.com/joosung0416/223997530763"
                     : post.link;
 
