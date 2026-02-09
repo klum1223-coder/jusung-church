@@ -19,8 +19,8 @@ export default function AboutPage() {
     }, []);
 
     const pastorName = "김선우";
-    // 담임목사님 사진 링크 적용
-    const pastorImg = "https://firebasestorage.googleapis.com/v0/b/church-homepage-antigravity.firebasestorage.app/o/%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%EA%B8%B0%EB%B3%B8%20%EC%82%AC%EC%A7%84%2F%EB%84%A4%EC%9D%B4%EB%B9%84%20%EB%AA%A8%EB%8D%98%20%EB%AF%B8%EB%8B%88%EB%A9%80%EB%A6%AC%EC%8A%A4%ED%8A%B8%20%EA%B5%90%ED%9A%8C%20%EC%84%B1%EB%8B%B9%20%EA%B8%B0%EB%8F%84%20%EC%9C%A0%ED%8A%9C%EB%B8%8C%20%EC%8D%B8%EB%84%A4%EC%9D%BC.png?alt=media";
+    // 담임목사님 사진 링크 적용 (gs:// 경로 -> https:// 변환)
+    const pastorImg = "https://firebasestorage.googleapis.com/v0/b/church-homepage-antigravity.firebasestorage.app/o/%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%EA%B8%B0%EB%B3%B8%20%EC%82%AC%EC%A7%84%2Fpastor.png?alt=media";
     const welcomeTitle = "담임목사 인사";
     const welcomeText = settings.about_welcome_text || (
         <>
@@ -88,19 +88,32 @@ export default function AboutPage() {
                 </section>
 
                 {/* Vision Section - Compact & Text Updated */}
-                <section className="py-20 px-6">
-                    <div className="container mx-auto max-w-6xl text-center space-y-16">
-                        <h2 className="font-serif text-3xl md:text-4xl font-bold">교회 비전과 핵심 가치</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <section className="py-24 px-6 bg-stone-100">
+                    <div className="container mx-auto max-w-7xl text-center space-y-20">
+                        <div className="space-y-6">
+                            <span className="text-[#8B4513] font-bold tracking-[0.3em] uppercase block">Core Values</span>
+                            <h2 className="font-serif text-5xl md:text-6xl font-bold text-stone-900">교회 비전과 핵심 가치</h2>
+                            <p className="text-xl text-stone-500 max-w-2xl mx-auto">하나님의 말씀 위에 굳게 서서 세상을 섬기는 교회</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                             {[
                                 { title: '말씀의 본질', desc: '타협하지 않는 성경적 가치관을 세우고 실천합니다.', num: '01' },
                                 { title: '사랑의 교제', desc: '그리스도 안에서 한 가족 됨을 경험하는 공동체입니다.', num: '02' },
                                 { title: '세상의 빛', desc: '컨텐츠를 생산하는 성도가 되어 세상의 리더가 됩니다.', num: '03' },
                             ].map((v, i) => (
-                                <div key={i} className="group p-10 bg-white rounded-[32px] shadow-sm hover:shadow-xl transition-all border border-stone-100 flex flex-col items-center space-y-4">
-                                    <span className="text-4xl font-serif text-stone-100 group-hover:text-[#8B4513]/10 transition-colors font-black leading-none">{v.num}</span>
-                                    <h3 className="text-xl font-bold text-stone-900 font-serif">{v.title}</h3>
-                                    <p className="text-stone-500 leading-relaxed font-light text-sm md:text-md break-keep">{v.desc}</p>
+                                <div key={i} className="group relative p-12 bg-white rounded-[40px] shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-stone-200/60 overflow-hidden">
+                                    {/* Deco Background */}
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#8B4513]/5 rounded-bl-[100px] transition-transform group-hover:scale-150 duration-700"></div>
+
+                                    <div className="relative z-10 flex flex-col items-center space-y-6">
+                                        <div className="w-20 h-20 rounded-2xl bg-stone-100 flex items-center justify-center mb-4 group-hover:bg-[#8B4513] transition-colors duration-500">
+                                            <span className="text-3xl font-black text-[#8B4513] group-hover:text-white transition-colors duration-500">{v.num}</span>
+                                        </div>
+                                        <h3 className="text-3xl font-bold text-stone-900 font-serif group-hover:text-[#8B4513] transition-colors">{v.title}</h3>
+                                        <div className="w-12 h-1 bg-stone-200 group-hover:bg-[#8B4513] transition-colors duration-500"></div>
+                                        <p className="text-stone-600 leading-relaxed font-medium text-lg break-keep px-4">{v.desc}</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
