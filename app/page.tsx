@@ -465,47 +465,110 @@ export default function JusungChurchPage() {
                 <TiltCard className="h-full">
                   <div
                     onClick={() => (latestSermon?.linkUrl) && window.open(latestSermon.linkUrl, '_blank')}
-                    className="w-full h-full premium-card relative overflow-hidden group cursor-pointer bg-gradient-to-br from-[#1a3c34] to-[#0f2922] border-none shadow-2xl h-full"
+                    className="w-full h-full premium-card relative overflow-hidden group cursor-pointer bg-gradient-to-br from-[#1a1033] via-[#2d1b4e] to-[#0f0c29] border-none shadow-2xl"
                   >
-                    <div className="absolute inset-0 z-0">
-                      <img
-                        src={latestSermon?.imageUrl || latestSermon?.thumbnail || CHURCH_DATA.images.hero}
-                        className="w-full h-full object-cover opacity-60 group-hover:scale-110 group-hover:opacity-40 transition-all duration-1000"
-                        alt="Sermon"
+                    {/* Abstract Geometric Background */}
+                    <div className="absolute inset-0 z-0 overflow-hidden">
+                      {/* Gradient Mesh Background */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-purple-800/30 to-amber-900/20" />
+
+                      {/* Decorative Circles */}
+                      <motion.div
+                        className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-[#d4af37]/20"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0f2922] via-[#1a3c34]/40 to-transparent" />
+                      <motion.div
+                        className="absolute -top-10 -right-10 w-60 h-60 rounded-full border border-[#d4af37]/15"
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                      />
+                      <motion.div
+                        className="absolute bottom-10 -left-20 w-72 h-72 rounded-full border border-white/10"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+                      />
+
+                      {/* Bible/Cross Icon - Large decorative element */}
+                      <div className="absolute top-1/2 right-12 -translate-y-1/2 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
+                        <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-[#d4af37]">
+                          <path d="M12 2L12 22M2 12L22 12" />
+                          <path d="M4 4l16 16M20 4L4 20" />
+                        </svg>
+                      </div>
+
+                      {/* Book Icon */}
+                      <div className="absolute bottom-20 right-32 opacity-15 group-hover:opacity-25 transition-opacity duration-700">
+                        <BookOpen size={80} className="text-amber-400/50" />
+                      </div>
+
+                      {/* Ambient Glow Effects */}
+                      <motion.div
+                        className="absolute -top-24 -left-24 w-64 h-64 bg-[#d4af37]/25 rounded-full blur-[100px]"
+                        animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.2, 1] }}
+                        transition={{ duration: 5, repeat: Infinity }}
+                      />
+                      <motion.div
+                        className="absolute bottom-0 right-0 w-80 h-80 bg-purple-500/15 rounded-full blur-[120px]"
+                        animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
+                        transition={{ duration: 7, repeat: Infinity, delay: 2 }}
+                      />
+
+                      {/* Subtle pattern overlay */}
+                      <div className="absolute inset-0 opacity-30" style={{
+                        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(212,175,55,0.15) 1px, transparent 0)`,
+                        backgroundSize: '40px 40px'
+                      }} />
                     </div>
 
                     <div className="relative z-10 p-8 md:p-12 flex flex-col justify-between h-full">
                       <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-xl rounded-full border border-white/20 shadow-lg">
+                        {/* Glass Badge */}
+                        <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-xl">
                           <motion.span
                             className="w-2 h-2 rounded-full bg-[#d4af37]"
-                            animate={{ scale: [1, 1.3, 1], opacity: [0.7, 1, 0.7] }}
+                            animate={{ scale: [1, 1.5, 1], opacity: [0.7, 1, 0.7] }}
                             transition={{ duration: 2, repeat: Infinity }}
                           />
-                          <span className="text-[10px] font-black uppercase text-white tracking-widest">Featured Sermon</span>
+                          <span className="text-[10px] font-black uppercase text-white tracking-[0.2em]">Featured Sermon</span>
                         </div>
                       </div>
 
                       <div className="space-y-6">
-                        <h2 className="font-serif text-3xl md:text-5xl text-white font-bold leading-tight group-hover:translate-x-2 transition-transform duration-500 drop-shadow-lg">
-                          {latestSermon?.title || "이번 주 설교 말씀"}
-                        </h2>
+                        <div className="space-y-2">
+                          <motion.p
+                            className="text-[#d4af37] text-xs font-bold tracking-widest uppercase mb-2"
+                            initial={{ opacity: 0, x: -10 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                          >
+                            New Update
+                          </motion.p>
+                          <h2 className="font-serif text-3xl md:text-5xl text-white font-bold leading-tight group-hover:translate-x-1 transition-transform duration-500 drop-shadow-2xl">
+                            {latestSermon?.title || "이번 주 설교 말씀"}
+                          </h2>
+                        </div>
+
                         {latestSermon?.description && (
-                          <p className="text-white/80 text-base md:text-lg line-clamp-2 font-light leading-relaxed max-w-lg drop-shadow-md">
+                          <p className="text-white/70 text-base md:text-lg line-clamp-2 font-light leading-relaxed max-w-lg drop-shadow-md border-l-2 border-[#d4af37]/30 pl-4">
                             {latestSermon.description}
                           </p>
                         )}
+
                         <motion.div
-                          className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#d4af37] to-[#cd7f32] text-white rounded-full font-bold text-xs hover:from-white hover:to-white hover:text-[#0f2922] transition-all mt-4 shadow-lg shadow-black/30"
-                          whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(212, 175, 55, 0.4)' }}
+                          className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#d4af37] to-[#cd7f32] text-white rounded-full font-bold text-xs hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all mt-4"
+                          whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          <Play size={14} fill="currentColor" /> WATCH NOW
+                          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-1">
+                            <Play size={14} fill="currentColor" />
+                          </div>
+                          WATCH SERMON
                         </motion.div>
                       </div>
                     </div>
+
+                    {/* Decorative glass border on hover */}
+                    <div className="absolute inset-0 border border-white/0 group-hover:border-white/10 transition-colors duration-500 pointer-events-none rounded-[32px]" />
                   </div>
                 </TiltCard>
               </motion.div>
@@ -528,17 +591,18 @@ export default function JusungChurchPage() {
                     <TiltCard>
                       <button
                         onClick={() => setIsGraceModalOpen(true)}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100 hover:border-amber-200 transition-all relative overflow-hidden"
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400 border-none hover:shadow-2xl transition-all relative overflow-hidden"
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-amber-100/0 to-orange-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                         />
-                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                           <Gift size={20} fill="currentColor" />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-stone-900 mb-1">말씀 뽑기</h3>
-                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Grace Draw</p>
+                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">말씀 뽑기</h3>
+                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Grace Draw</p>
                         </div>
                       </button>
                     </TiltCard>
@@ -553,17 +617,18 @@ export default function JusungChurchPage() {
                     <TiltCard>
                       <button
                         onClick={() => router.push('/worship')}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 hover:border-blue-200 transition-all relative overflow-hidden"
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 border-none hover:shadow-2xl transition-all relative overflow-hidden"
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-blue-100/0 to-indigo-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                         />
-                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
                           <BookOpen size={20} />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-stone-900 mb-1">예배 안내</h3>
-                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Worship Info</p>
+                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">예배 안내</h3>
+                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Worship Info</p>
                         </div>
                       </button>
                     </TiltCard>
@@ -581,17 +646,18 @@ export default function JusungChurchPage() {
                           const b = cards.find(c => c.type === 'bulletin');
                           if (b?.linkUrl) window.open(b.linkUrl, '_blank');
                         }}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100 hover:border-emerald-200 transition-all text-left relative overflow-hidden"
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 border-none hover:shadow-2xl transition-all text-left relative overflow-hidden"
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-emerald-100/0 to-teal-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                         />
-                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                           <FileText size={20} />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-stone-900 mb-1">주보 보기</h3>
-                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Weekly Bulletin</p>
+                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">주보 보기</h3>
+                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Weekly Bulletin</p>
                         </div>
                       </button>
                     </TiltCard>
@@ -606,17 +672,18 @@ export default function JusungChurchPage() {
                     <TiltCard>
                       <button
                         onClick={() => router.push('/community')}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-violet-50 to-purple-50 border-violet-100 hover:border-violet-200 transition-all relative overflow-hidden"
+                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 border-none hover:shadow-2xl transition-all relative overflow-hidden"
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-violet-100/0 to-purple-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                         />
-                        <div className="relative z-10 w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
                           <Bell size={20} />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-stone-900 mb-1">공지사항</h3>
-                          <p className="text-[10px] text-stone-500 uppercase tracking-wider font-bold">Notice & News</p>
+                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">공지사항</h3>
+                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Notice & News</p>
                         </div>
                       </button>
                     </TiltCard>

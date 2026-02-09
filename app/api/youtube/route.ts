@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 
         if (playlistId) {
             const PLAYLIST_API_URL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=10&key=${API_KEY}`;
-            const response = await fetch(PLAYLIST_API_URL, { next: { revalidate: 3600 } });
+            const response = await fetch(PLAYLIST_API_URL, { next: { revalidate: 300 } });
             const data = await response.json();
 
             if (data.items) {
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
             const CHANNEL_ID = 'UCbSlsx3Ww8lLF2nvOexteEQ';
             const RSS_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
 
-            const response = await fetch(RSS_URL, { next: { revalidate: 3600 } });
+            const response = await fetch(RSS_URL, { next: { revalidate: 300 } });
             const xmlText = await response.text();
 
             const parser = new XMLParser({
