@@ -591,18 +591,20 @@ export default function JusungChurchPage() {
                     <TiltCard>
                       <button
                         onClick={() => setIsGraceModalOpen(true)}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-amber-400 via-orange-400 to-rose-400 border-none hover:shadow-2xl transition-all relative overflow-hidden"
+                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all relative overflow-hidden"
+                        style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 50%, #dc2626 100%)' }}
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
                         />
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
-                          <Gift size={20} fill="currentColor" />
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                          <Gift size={24} fill="currentColor" />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">말씀 뽑기</h3>
-                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Grace Draw</p>
+                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>말씀 뽑기</h3>
+                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Grace Draw</p>
                         </div>
                       </button>
                     </TiltCard>
@@ -617,18 +619,20 @@ export default function JusungChurchPage() {
                     <TiltCard>
                       <button
                         onClick={() => router.push('/worship')}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 border-none hover:shadow-2xl transition-all relative overflow-hidden"
+                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all relative overflow-hidden"
+                        style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%)' }}
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
                         />
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
-                          <BookOpen size={20} />
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
+                          <BookOpen size={24} />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">예배 안내</h3>
-                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Worship Info</p>
+                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>예배 안내</h3>
+                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Worship Info</p>
                         </div>
                       </button>
                     </TiltCard>
@@ -646,18 +650,20 @@ export default function JusungChurchPage() {
                           const b = cards.find(c => c.type === 'bulletin');
                           if (b?.linkUrl) window.open(b.linkUrl, '_blank');
                         }}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 border-none hover:shadow-2xl transition-all text-left relative overflow-hidden"
+                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all text-left relative overflow-hidden"
+                        style={{ background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #06b6d4 100%)' }}
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
                         />
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
-                          <FileText size={20} />
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                          <FileText size={24} />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">주보 보기</h3>
-                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Weekly Bulletin</p>
+                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>주보 보기</h3>
+                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Weekly Bulletin</p>
                         </div>
                       </button>
                     </TiltCard>
@@ -672,18 +678,20 @@ export default function JusungChurchPage() {
                     <TiltCard>
                       <button
                         onClick={() => router.push('/community')}
-                        className="w-full h-full premium-card p-6 flex flex-col justify-between group bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 border-none hover:shadow-2xl transition-all relative overflow-hidden"
+                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all relative overflow-hidden"
+                        style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #d946ef 100%)' }}
                       >
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
                         />
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
-                          <Bell size={20} />
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
+                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
+                          <Bell size={24} />
                         </div>
                         <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white mb-1 drop-shadow-sm">공지사항</h3>
-                          <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">Notice & News</p>
+                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>공지사항</h3>
+                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Notice & News</p>
                         </div>
                       </button>
                     </TiltCard>
