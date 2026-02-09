@@ -23,7 +23,7 @@ const Header = () => {
     }, []);
 
     const navItems = [
-        { name: '교회소개', eng: 'History', href: '/about' },
+        { name: '교회소개', eng: 'History', href: '/intro' },
         { name: '예배안내', eng: 'Worship', href: '/worship' },
         { name: '설교말씀', eng: 'Sermons', href: '/sermon' },
         { name: '사역안내', eng: 'Ministry', href: '/ministry' },
@@ -53,12 +53,12 @@ const Header = () => {
             <div className="container mx-auto px-6 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-4 group">
                     <motion.div
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center font-serif font-black text-2xl transition-all duration-500 ${scrolled || !isHome
-                        ? 'bg-gradient-to-br from-[#d4af37] to-[#8B4513] text-white shadow-lg shadow-[#8B4513]/30'
-                        : 'bg-white/10 backdrop-blur-md text-white border border-white/20'
-                        }`}
-                      whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
-                      transition={{ duration: 0.3 }}
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center font-serif font-black text-2xl transition-all duration-500 ${scrolled || !isHome
+                            ? 'bg-gradient-to-br from-[#d4af37] to-[#8B4513] text-white shadow-lg shadow-[#8B4513]/30'
+                            : 'bg-white/10 backdrop-blur-md text-white border border-white/20'
+                            }`}
+                        whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+                        transition={{ duration: 0.3 }}
                     >J</motion.div>
                     <div className="flex flex-col">
                         <h1 className={`text-2xl font-serif font-black tracking-tight transition-colors duration-500 ${scrolled || !isHome ? 'text-stone-900' : 'text-white drop-shadow-lg'
@@ -141,9 +141,9 @@ const Header = () => {
                             whileTap={{ scale: 0.95 }}
                         >
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
-                              animate={{ x: ['-100%', '200%'] }}
-                              transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
+                                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
+                                animate={{ x: ['-100%', '200%'] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
                             />
                             <Sparkles size={14} className="relative z-10" />
                             <span className="relative z-10">LOGIN</span>
