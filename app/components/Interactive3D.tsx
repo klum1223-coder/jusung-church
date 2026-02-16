@@ -246,6 +246,16 @@ export default function Interactive3D({
             <Canvas
                 camera={{ position: [0, 0, 4], fov: 50 }}
                 style={{ background: 'transparent' }}
+                onCreated={({ gl }) => {
+                    const canvas = gl.domElement;
+                    canvas.addEventListener('webglcontextlost', (e) => {
+                        e.preventDefault();
+                        console.warn('WebGL context lost - will restore when possible');
+                    });
+                    canvas.addEventListener('webglcontextrestored', () => {
+                        console.log('WebGL context restored');
+                    });
+                }}
             >
                 {/* Ambient Light for soft overall lighting */}
                 <ambientLight intensity={0.6} />

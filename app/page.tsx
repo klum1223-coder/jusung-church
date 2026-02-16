@@ -288,16 +288,16 @@ export default function JusungChurchPage() {
               backgroundSize: '24px 24px'
             }} />
 
-            {/* Video for desktop only */}
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover opacity-20 hidden md:block"
-            >
-              <source src="https://cdn.pixabay.com/video/2020/05/22/40297-424319516_large.mp4" type="video/mp4" />
-            </video>
+            {/* Subtle animated gradient for desktop (replaces unreliable external video) */}
+            <div className="absolute inset-0 hidden md:block opacity-30">
+              <div
+                className="absolute inset-0 animate-pulse"
+                style={{
+                  background: 'radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(139,69,19,0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(205,127,50,0.1) 0%, transparent 50%)',
+                  animationDuration: '4s',
+                }}
+              />
+            </div>
 
             <div className="absolute inset-0 bg-black/10 z-10" />
           </div>
