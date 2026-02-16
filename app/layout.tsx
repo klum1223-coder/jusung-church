@@ -7,6 +7,7 @@ import { AuthProvider } from "./lib/AuthContext";
 import PageTransition from "./components/PageTransition";
 import VisitorTracker from "./components/VisitorTracker";
 import SplashScreen from "./components/SplashScreen";
+import PWAInstallBanner from "./components/PWAInstallBanner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
@@ -37,20 +38,11 @@ export const metadata: Metadata = {
     siteName: "주성교회",
     locale: "ko_KR",
     type: "website",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "주성교회 - Joosung Holiness Church",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "주성교회 | Joosung Holiness Church",
     description: "세상을 비추는 거룩한 울림, 평안과 회복이 있는 신앙 공동체",
-    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -63,8 +55,6 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
   },
 };
 
@@ -87,6 +77,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {children}
           </PageTransition>
           <Footer />
+          <PWAInstallBanner />
         </AuthProvider>
       </body>
     </html>

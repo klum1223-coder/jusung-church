@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_KEY = 'AIzaSyA0TME5f5g7ViZ7WpxI1R2qru8rh3_TPZg';
+const API_KEY = process.env.YOUTUBE_API_KEY || '';
 
 // 재생목록 정의
 const PLAYLISTS = [

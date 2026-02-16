@@ -10,7 +10,7 @@ export default function WorshipPage() {
             <main>
                 <section className="py-24 px-6 bg-stone-900 text-white relative overflow-hidden">
                     <div className="absolute inset-0 opacity-40">
-                        <img src="https://images.unsplash.com/photo-1548625361-195fe576b7bc?auto=format&fit=crop&q=80" className="w-full h-full object-cover" />
+                        <img src="https://images.unsplash.com/photo-1548625361-195fe576b7bc?w=1200&q=80" className="w-full h-full object-cover" />
                     </div>
                     <div className="container mx-auto max-w-5xl relative z-10 text-center space-y-8">
                         <span className="text-[#F5E6D3] font-black tracking-[0.4em] text-[12px] uppercase">Worship & Meeting</span>
@@ -66,23 +66,29 @@ export default function WorshipPage() {
                                 </div>
                             </div>
 
-                            <div
-                                onClick={() => window.open(CHURCH_DATA.contact.naverMap, '_blank')}
-                                className="aspect-square bg-stone-100 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white cursor-pointer group relative"
-                            >
-                                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80" alt="Map" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60" />
-                                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 space-y-4">
-                                    <div className="w-16 h-16 bg-[#8B4513] text-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                                        <MapPin size={32} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <p className="text-2xl font-bold text-stone-900">네이버 지도에서 보기</p>
-                                        <p className="text-stone-500 text-sm">지도를 클릭하시면 상세 위치와<br />길찾기 화면으로 연결됩니다.</p>
-                                    </div>
-                                    <div className="mt-4 px-8 py-3 bg-[#8B4513] text-white rounded-full font-bold shadow-lg group-hover:bg-stone-900 transition-colors">
-                                        길찾기 바로가기
-                                    </div>
+                            <div className="space-y-4">
+                                {/* 카카오 지도 임베드 */}
+                                <div className="aspect-square bg-stone-100 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white">
+                                    <iframe
+                                        src="https://map.kakao.com/?urlX=482066&urlY=863285&name=%EC%A3%BC%EC%84%B1%EA%B5%90%ED%9A%8C&map_type=TYPE_MAP&map_hybrid=false"
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen
+                                        loading="lazy"
+                                        title="주성교회 위치"
+                                    />
                                 </div>
+                                {/* 네이버 지도 길찾기 버튼 */}
+                                <a
+                                    href={CHURCH_DATA.contact.naverMap}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-3 w-full py-4 bg-[#8B4513] text-white rounded-2xl font-bold text-sm shadow-lg hover:bg-stone-900 transition-colors"
+                                >
+                                    <MapPin size={18} />
+                                    네이버 지도에서 길찾기
+                                </a>
                             </div>
                         </div>
                     </div>

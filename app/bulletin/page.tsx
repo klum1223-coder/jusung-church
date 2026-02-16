@@ -40,7 +40,7 @@ export default function BulletinPage() {
                 <section className="py-24 px-6 bg-stone-900 text-white relative overflow-hidden">
                     <div className="absolute inset-0 opacity-30">
                         <img
-                            src="https://images.unsplash.com/photo-1507692049790-de58293a4697?auto=format&fit=crop&q=80"
+                            src="https://images.unsplash.com/photo-1507692049790-de58293a4697?w=1200&q=80"
                             className="w-full h-full object-cover"
                             alt="Weekly Bulletin"
                         />
