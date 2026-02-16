@@ -54,12 +54,17 @@ export default function CommunityPage() {
     return (
         <div className="bg-[#faf9f6] min-h-screen pt-24 font-sans selection:bg-[#8B4513] selection:text-white">
             <main>
-                <section className="py-24 px-6 bg-white border-b border-stone-100">
-                    <div className="container mx-auto max-w-5xl flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <section className="py-24 px-6 bg-stone-900 relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-40">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80" className="w-full h-full object-cover" alt="Community" />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent" />
+
+                    <div className="container mx-auto max-w-5xl flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
                         <div className="space-y-6">
-                            <span className="text-[#8B4513] font-black tracking-[0.4em] text-[12px] uppercase">Community Flow</span>
-                            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-stone-900">나눔의 정원</h1>
-                            <p className="text-stone-500 text-lg md:text-xl font-light max-w-xl">성도님들의 일상과 기도 제목, 받은 은혜를 자유롭게 나누는 따뜻한 공간입니다.</p>
+                            <span className="text-amber-400 font-black tracking-[0.4em] text-[12px] uppercase">Community Flow</span>
+                            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-white">나눔의 정원</h1>
+                            <p className="text-white/80 text-lg md:text-xl font-light max-w-xl">성도님들의 일상과 기도 제목, 받은 은혜를 자유롭게 나누는 따뜻한 공간입니다.</p>
                         </div>
                         <button
                             onClick={() => user ? setIsModalOpen(true) : login()}

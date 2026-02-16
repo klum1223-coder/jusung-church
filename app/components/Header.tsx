@@ -29,6 +29,7 @@ const Header = () => {
         { name: '사역안내', eng: 'Ministry', href: '/ministry' },
         { name: '중보기도', eng: 'Prayer', href: '/prayer' },
         { name: '마음쉼터', eng: 'Soul Rest', href: '/counselor' },
+        { name: '오시는 길', eng: 'Location', href: '/contact' },
     ];
 
     // Hamburger icon animation variants

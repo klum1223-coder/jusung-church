@@ -471,9 +471,9 @@ export default function JusungChurchPage() {
                     <div className="absolute inset-0 z-0 overflow-hidden">
                       {/* Background Image */}
                       <img
-                        src="https://firebasestorage.googleapis.com/v0/b/church-homepage-antigravity.firebasestorage.app/o/%ED%99%88%ED%8E%98%EC%9D%B4%EC%A7%80%20%EA%B8%B0%EB%B3%B8%20%EC%82%AC%EC%A7%84%2F%EB%84%A4%EC%9D%B4%EB%B9%84%20%EB%AA%A8%EB%8D%98%20%EB%AF%B8%EB%8B%88%EB%A9%80%EB%A6%AC%EC%8A%A4%ED%8A%B8%20%EA%B5%90%ED%9A%8C%20%EC%84%B1%EB%8B%B9%20%EA%B8%B0%EB%8F%84%20%EC%9C%A0%ED%8A%9C%EB%B8%8C%20%EC%8D%B8%EB%84%A4%EC%9D%BC.png?alt=media"
+                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80"
                         alt="주일예배설교"
-                        className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                        className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-60"
                       />
 
                       {/* Dark overlay for text readability */}
@@ -617,10 +617,7 @@ export default function JusungChurchPage() {
                   >
                     <TiltCard>
                       <button
-                        onClick={() => {
-                          const b = cards.find(c => c.type === 'bulletin');
-                          if (b?.linkUrl) window.open(b.linkUrl, '_blank');
-                        }}
+                        onClick={() => router.push('/bulletin')}
                         className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all text-left relative overflow-hidden"
                         style={{ background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #06b6d4 100%)' }}
                       >

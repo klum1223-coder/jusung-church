@@ -108,9 +108,11 @@ export default function SermonPage() {
                                                         {sermon.imageUrl || sermon.thumbnail ? (
                                                             <img src={sermon.imageUrl || sermon.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80" />
                                                         ) : (
-                                                            <div className="w-full h-full flex items-center justify-center text-white/20">
-                                                                <Play size={48} />
-                                                            </div>
+                                                            <img
+                                                                src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80"
+                                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-50 grayscale"
+                                                                alt="기본 설교 이미지"
+                                                            />
                                                         )}
                                                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
                                                             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[#8B4513] shadow-xl">
