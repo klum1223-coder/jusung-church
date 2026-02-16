@@ -471,7 +471,7 @@ export default function JusungChurchPage() {
                     <div className="absolute inset-0 z-0 overflow-hidden">
                       {/* Background Image */}
                       <img
-                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80"
+                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1200&q=80"
                         alt="주일예배설교"
                         className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-60"
                       />

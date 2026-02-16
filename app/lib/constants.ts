@@ -4,12 +4,12 @@ export const CHURCH_DATA = {
     slogan: "세상을 비추는 거룩한 울림, 평안과 회복이 있는 신앙 공동체",
     images: {
         logo: "/logo_new.jpg",
-        hero: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80",
-        pastor: "https://images.unsplash.com/photo-1544717297-fa95b9ee9623?auto=format&fit=crop&q=80"
+        hero: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1200&q=80",
+        pastor: "https://images.unsplash.com/photo-1544717297-fa95b9ee9623?w=800&q=80"
     },
     pastor: {
         name: "박주성 목사",
-        imgUrl: "https://images.unsplash.com/photo-1544717297-fa95b9ee9623?auto=format&fit=crop&q=80",
+        imgUrl: "https://images.unsplash.com/photo-1544717297-fa95b9ee9623?w=800&q=80",
         message: "주님의 평강이 여러분과 함께하시길 기도합니다."
     },
     contact: {
@@ -33,7 +33,7 @@ export const CHURCH_DATA = {
             engName: "Next Generation",
             desc: "꿈과 희망으로 자라나는 아이들을 위한 영적 성장을 돕습니다.",
             detail: "유치부, 초등부, 청소년부가 각 연령에 맞는 예배와 분반 공부를 통해 하나님의 말씀을 배우고, 비전을 품는 기독교 교육을 실천합니다.",
-            img: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80"
+            img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80"
         },
         {
             id: "worship",
@@ -41,7 +41,7 @@ export const CHURCH_DATA = {
             engName: "Worship & Arts",
             desc: "영과 진리로 드리는 예배를 통해 하나님의 임재를 경험합니다.",
             detail: "성가대와 찬양팀이 매 주일 예배의 찬양을 맡아 성도들의 영적 은혜를 돕고, 절기별 음악 예배를 기획하여 풍성한 예배 문화를 만들어갑니다.",
-            img: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&q=80"
+            img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&q=80"
         },
         {
             id: "mission",
@@ -49,7 +49,7 @@ export const CHURCH_DATA = {
             engName: "Mission & Outreach",
             desc: "세상의 아픔을 돌보고 복음의 증인이 되는 삶을 실천합니다.",
             detail: "지역 사회의 소외된 이웃을 돕는 구제 활동과 해외 선교사 후원을 통해 땅 끝까지 복음을 전하라는 주님의 지상 명령을 수행합니다.",
-            img: "https://images.unsplash.com/photo-1469571483357-598e0445eba7?auto=format&fit=crop&q=80"
+            img: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80"
         }
     ]
 };
