@@ -12,7 +12,7 @@ import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
 import {
     Plus, Trash2, Edit2, Image as ImageIcon,
     X, LayoutDashboard, Users, MessageSquare,
-    Home, Loader2, Save, ArrowLeft, BarChart3
+    Home, Loader2, Save, ArrowLeft, BarChart3, AlertTriangle
 } from 'lucide-react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
 
-    const { login } = useAuth(); // ensure login is destructured
+    const { login, error } = useAuth(); // ensure login and error are destructured
 
     // Redirect only if user is logged in but not admin
     useEffect(() => {
@@ -88,6 +88,26 @@ export default function AdminDashboard() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-stone-50">
                 <Loader2 className="animate-spin text-[#8B4513]" size={48} />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-4">
+                <div className="bg-white p-10 rounded-3xl shadow-xl max-w-md w-full text-center space-y-6">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto">
+                        <AlertTriangle size={32} />
+                    </div>
+                    <div>
+                        <h1 className="font-serif text-2xl font-bold text-stone-900">설정 오류</h1>
+                        <p className="text-red-500 mt-2 font-medium">{error}</p>
+                        <p className="text-stone-500 mt-2 text-sm">Vercel 환경 변수 설정을 확인해주세요.</p>
+                    </div>
+                    <button onClick={() => window.location.reload()} className="px-6 py-2 bg-stone-200 rounded-xl hover:bg-stone-300 transition-all font-bold text-stone-700">
+                        페이지 새로고침
+                    </button>
+                </div>
             </div>
         );
     }
