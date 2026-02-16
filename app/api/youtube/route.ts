@@ -2,29 +2,32 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const API_KEY = 'AIzaSyA0TME5f5g7ViZ7WpxI1R2qru8rh3_TPZg';
 
-// 3개 재생목록 정의
+// 재생목록 정의
 const PLAYLISTS = [
     {
         id: 'PLiCiBKlwP2LHA5nPQt7aNn8i4xdZRlHHf',
         label: '주일설교',
         engLabel: 'Sunday Sermon',
+        maxResults: 3,
     },
     {
         id: 'PLiCiBKlwP2LGjVXrvD7E7cWG1Axdvqiqf',
         label: '주일설교 Shorts',
         engLabel: 'Sermon Shorts',
+        maxResults: 6,
     },
     {
         id: 'PLiCiBKlwP2LF6_v5q7okASEcl02_KpFBD',
         label: '기독교에 관한 질문',
         engLabel: 'Faith Q&A',
+        maxResults: 3,
     },
 ];
 
-async function fetchPlaylist(playlistId: string, maxResults: number = 3) {
+async function fetchPlaylist(playlistId: string, maxResults: number) {
     try {
         const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=${maxResults}&key=${API_KEY}`;
-        const response = await fetch(url, { next: { revalidate: 600 } }); // 10분 캐시
+        const response = await fetch(url, { next: { revalidate: 600 } });
         const data = await response.json();
 
         if (!data.items) return [];
@@ -52,17 +55,18 @@ export async function GET(request: NextRequest) {
     const maxResults = parseInt(searchParams.get('maxResults') || '3', 10);
 
     try {
-        // 단일 재생목록 요청
         if (playlistId) {
             const videos = await fetchPlaylist(playlistId, maxResults);
             return NextResponse.json(videos);
         }
 
-        // 전체 재생목록 요청 (병렬)
+        // 전체: 각 재생목록별 지정된 maxResults 사용
         const results = await Promise.all(
             PLAYLISTS.map(async (pl) => ({
-                ...pl,
-                videos: await fetchPlaylist(pl.id, maxResults),
+                id: pl.id,
+                label: pl.label,
+                engLabel: pl.engLabel,
+                videos: await fetchPlaylist(pl.id, pl.maxResults),
             }))
         );
 
