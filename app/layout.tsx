@@ -8,6 +8,7 @@ import PageTransition from "./components/PageTransition";
 import VisitorTracker from "./components/VisitorTracker";
 import SplashScreen from "./components/SplashScreen";
 import PWAInstallBanner from "./components/PWAInstallBanner";
+import MeditationPopup from "./components/MeditationPopup";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </PageTransition>
           <Footer />
           <PWAInstallBanner />
+          <MeditationPopup />
         </AuthProvider>
       </body>
     </html>

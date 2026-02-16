@@ -12,7 +12,7 @@ import { CHURCH_DATA, checkIfAdmin } from '../lib/constants';
 import {
     Plus, Trash2, Edit2, Image as ImageIcon,
     X, LayoutDashboard, Users, MessageSquare,
-    Home, Loader2, Save, ArrowLeft, BarChart3, AlertTriangle
+    Home, Loader2, Save, ArrowLeft, BarChart3, AlertTriangle, BookOpen
 } from 'lucide-react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -24,7 +24,8 @@ export default function AdminDashboard() {
     const router = useRouter();
     const isAdmin = checkIfAdmin(user);
 
-    const [activeTab, setActiveTab] = useState<'main' | 'ministry' | 'activity' | 'community' | 'settings' | 'stats'>('main');
+    const [activeTab, setActiveTab] = useState<'main' | 'meditation' | 'ministry' | 'activity' | 'community' | 'settings' | 'stats'>('main');
+    const [meditations, setMeditations] = useState<any[]>([]);
     const [contents, setContents] = useState<any[]>([]);
     const [ministries, setMinistries] = useState<any[]>([]);
     const [activities, setActivities] = useState<any[]>([]);
@@ -49,7 +50,9 @@ export default function AdminDashboard() {
         if (!isAdmin || !db) return;
 
         const unsubMain = onSnapshot(query(collection(db, 'main_contents'), orderBy('created_at', 'desc')), (s) => {
-            setContents(s.docs.map(d => ({ id: d.id, ...d.data() })));
+            const allDocs = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            setContents(allDocs.filter((d: any) => d.type !== 'meditation'));
+            setMeditations(allDocs.filter((d: any) => d.type === 'meditation'));
         });
 
         const unsubMin = onSnapshot(query(collection(db, 'ministries'), orderBy('created_at', 'desc')), (s) => {
@@ -195,6 +198,12 @@ export default function AdminDashboard() {
                         <Home size={20} /> 메인 콘텐츠
                     </button>
                     <button
+                        onClick={() => setActiveTab('meditation')}
+                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'meditation' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
+                    >
+                        <BookOpen size={20} /> 매일 묵상
+                    </button>
+                    <button
                         onClick={() => setActiveTab('ministry')}
                         className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'ministry' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
                     >
@@ -241,6 +250,7 @@ export default function AdminDashboard() {
                     <div>
                         <h2 className="text-4xl font-serif font-bold text-stone-900">
                             {activeTab === 'main' && '메인 콘텐츠'}
+                            {activeTab === 'meditation' && '매일 묵상'}
                             {activeTab === 'ministry' && '사역 소개'}
                             {activeTab === 'activity' && '사역 현장 (갤러리)'}
                             {activeTab === 'community' && '나눔의 정원'}
@@ -249,12 +259,12 @@ export default function AdminDashboard() {
                         </h2>
                         <p className="text-stone-400 mt-2">홈페이지 내용을 관리자 권한으로 직접 수정합니다.</p>
                     </div>
-                    {(activeTab === 'main' || activeTab === 'ministry' || activeTab === 'activity') && (
+                    {(activeTab === 'main' || activeTab === 'meditation' || activeTab === 'ministry' || activeTab === 'activity') && (
                         <button
                             onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
                             className="bg-[#8B4513] text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 shadow-2xl hover:bg-stone-900 transition-all active:scale-95 whitespace-nowrap"
                         >
-                            <Plus size={20} /> 새로운 {activeTab === 'main' ? '콘텐츠' : activeTab === 'ministry' ? '사역' : '활동/사진'} 등록하기
+                            <Plus size={20} /> 새로운 {activeTab === 'main' ? '콘텐츠' : activeTab === 'meditation' ? '묵상' : activeTab === 'ministry' ? '사역' : '활동/사진'} 등록하기
                         </button>
                     )}
                 </header>
@@ -265,6 +275,20 @@ export default function AdminDashboard() {
                             <EmptyState type="콘텐츠" onAdd={() => { setEditingItem(null); setIsModalOpen(true); }} />
                         ) : (
                             contents.map(item => (
+                                <AdminCard
+                                    key={item.id}
+                                    item={item}
+                                    onEdit={() => { setEditingItem(item); setIsModalOpen(true); }}
+                                    onDelete={() => handleDelete('main_contents', item.id)}
+                                />
+                            ))
+                        )
+                    )}
+                    {activeTab === 'meditation' && (
+                        meditations.length === 0 ? (
+                            <EmptyState type="묵상" onAdd={() => { setEditingItem(null); setIsModalOpen(true); }} />
+                        ) : (
+                            meditations.map(item => (
                                 <AdminCard
                                     key={item.id}
                                     item={item}
@@ -564,10 +588,16 @@ const AdminModal = ({ type, item, onClose }: any) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                    {type === 'main' ? (
+                    {type === 'meditation' ? (
+                        <>
+                            <input type="hidden" name="type" value="meditation" />
+                            <FormInput label="제목 (예: 시편 23:1-3)" name="title" defaultValue={item?.title} required />
+                            <FormInput label="묵상 내용" name="description" defaultValue={item?.description} textarea required />
+                        </>
+                    ) : type === 'main' ? (
                         <>
                             <div className="grid grid-cols-2 gap-4">
-                                <FormInput label="분류" name="type" defaultValue={item?.type} required select options={['sermon', 'meditation', 'notice', 'bullet', 'newcomer']} />
+                                <FormInput label="분류" name="type" defaultValue={item?.type} required select options={['sermon', 'notice', 'bullet', 'newcomer']} />
                                 <FormInput label="제목" name="title" defaultValue={item?.title} required />
                             </div>
                             <FormInput label="설명" name="description" defaultValue={item?.description} textarea />
@@ -593,14 +623,16 @@ const AdminModal = ({ type, item, onClose }: any) => {
                         </>
                     )}
 
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">사진 등록</label>
-                        <label className="flex items-center gap-4 p-6 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-200 cursor-pointer hover:bg-stone-100 transition-all">
-                            <ImageIcon className="text-[#8B4513]" size={24} />
-                            <span className="text-stone-500 font-bold">{file ? file.name : (item?.imageUrl || item?.img ? '사진 변경하기' : '사진 선택')}</span>
-                            <input type="file" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
-                        </label>
-                    </div>
+                    {type !== 'meditation' && (
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">사진 등록</label>
+                            <label className="flex items-center gap-4 p-6 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-200 cursor-pointer hover:bg-stone-100 transition-all">
+                                <ImageIcon className="text-[#8B4513]" size={24} />
+                                <span className="text-stone-500 font-bold">{file ? file.name : (item?.imageUrl || item?.img ? '사진 변경하기' : '사진 선택')}</span>
+                                <input type="file" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+                            </label>
+                        </div>
+                    )}
 
                     <button
                         disabled={loading}
