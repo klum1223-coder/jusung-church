@@ -36,12 +36,17 @@ export default function AdminDashboard() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
 
+    const { login } = useAuth(); // ensure login is destructured
+
+    // Redirect only if user is logged in but not admin
     useEffect(() => {
-        if (!isAdmin && !authLoading) {
-            router.push('/');
-            return;
+        if (!authLoading && user && !isAdmin) {
+            // Optional: Redirect to home or show access denied. 
         }
-        if (!db) return;
+    }, [user, isAdmin, authLoading]);
+    // Data fetching for Admin
+    useEffect(() => {
+        if (!isAdmin || !db) return;
 
         const unsubMain = onSnapshot(query(collection(db, 'main_contents'), orderBy('created_at', 'desc')), (s) => {
             setContents(s.docs.map(d => ({ id: d.id, ...d.data() })));
@@ -75,13 +80,67 @@ export default function AdminDashboard() {
             unsubAct();
             unsubComm();
             unsubSett();
+            unsubStats();
         };
-    }, [isAdmin, authLoading, router]);
+    }, [isAdmin]);
 
-    if (authLoading || !isAdmin) {
+    if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-stone-50">
                 <Loader2 className="animate-spin text-[#8B4513]" size={48} />
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-4">
+                <div className="bg-white p-10 rounded-3xl shadow-xl max-w-md w-full text-center space-y-8">
+                    <div className="w-16 h-16 bg-[#8B4513] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg">
+                        <LayoutDashboard size={32} />
+                    </div>
+                    <div>
+                        <h1 className="font-serif text-3xl font-bold text-stone-900">Admin Login</h1>
+                        <p className="text-stone-500 mt-2">관리자 페이지에 접근하려면 로그인이 필요합니다.</p>
+                    </div>
+                    <button
+                        onClick={login}
+                        className="w-full py-4 bg-[#8B4513] text-white rounded-2xl font-bold text-lg shadow-lg hover:bg-stone-900 transition-all flex items-center justify-center gap-3"
+                    >
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6 bg-white rounded-full p-0.5" alt="G" />
+                        Google 계정으로 로그인
+                    </button>
+                    <button onClick={() => router.push('/')} className="text-stone-400 text-sm hover:text-stone-600 underline">
+                        홈페이지로 돌아가기
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isAdmin) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-4">
+                <div className="bg-white p-10 rounded-3xl shadow-xl max-w-md w-full text-center space-y-6">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500 mx-auto">
+                        <X size={32} />
+                    </div>
+                    <div>
+                        <h1 className="font-serif text-2xl font-bold text-stone-900">접근 권한이 없습니다</h1>
+                        <p className="text-stone-500 mt-2">현재 로그인된 계정({user.email})은<br />관리자 권한이 없습니다.</p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={login}
+                            className="w-full py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition-all"
+                        >
+                            다른 계정으로 로그인 (Logout & Re-login)
+                        </button>
+                        <button onClick={() => router.push('/')} className="text-stone-400 text-sm hover:text-stone-600 underline">
+                            홈페이지로 돌아가기
+                        </button>
+                    </div>
+                </div>
             </div>
         );
     }
