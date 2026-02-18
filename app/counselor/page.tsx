@@ -356,7 +356,7 @@ export default function CounselorPage() {
                                     onChange={(e) => setInputValue(e.target.value)}
                                     placeholder="오늘의 마음을 나눠주세요..."
                                     disabled={isLoading}
-                                    className="w-full px-5 md:px-8 py-4 md:py-6 pr-14 md:pr-16 bg-white border-2 border-stone-100 rounded-2xl md:rounded-3xl text-base md:text-lg placeholder:text-stone-300 focus:outline-none focus:border-[#8B4513]/30 focus:ring-4 focus:ring-[#8B4513]/10 transition-all shadow-xl"
+                                    className="w-full px-5 md:px-8 py-4 md:py-6 pr-14 md:pr-16 bg-white border-2 border-[#8B4513]/40 rounded-2xl md:rounded-3xl text-base md:text-lg placeholder:text-stone-400 focus:outline-none focus:border-[#8B4513] focus:ring-4 focus:ring-[#8B4513]/20 transition-all shadow-2xl font-medium text-stone-800"
                                 />
                                 <button
                                     type="submit"

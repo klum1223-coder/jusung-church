@@ -8,10 +8,24 @@ import {
     signOut,
     User
 } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'; // Firestore imports added
+import { auth, db } from '../firebaseConfig'; // db import added
+
+// Define UserData type
+export interface UserData {
+    uid: string;
+    email: string;
+    displayName: string;
+    photoURL: string;
+    role: 'guest' | 'member' | 'admin'; // Role-based access
+    status: 'pending' | 'approved' | 'rejected'; // Approval status
+    createdAt: any;
+    lastLoginAt: any;
+}
 
 interface AuthContextType {
     user: User | null;
+    userData: UserData | null; // Database user data
     loading: boolean;
     error: string | null;
     login: () => Promise<void>;
@@ -20,6 +34,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
+    userData: null,
     loading: true,
     error: null,
     login: async () => { },
@@ -28,20 +43,58 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [userData, setUserData] = useState<UserData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // Validate Config
         if (!auth) {
             setError("Firebase Auth not initialized. Check your environment variables.");
             setLoading(false);
             return;
         }
 
-        // Listen for auth state
-        const unsubscribe = onAuthStateChanged(auth, (u) => {
+        const unsubscribe = onAuthStateChanged(auth, async (u) => {
             setUser(u);
+
+            if (u && db) {
+                // Sync with Firestore
+                try {
+                    const userRef = doc(db, 'users', u.uid);
+                    const userSnap = await getDoc(userRef);
+
+                    if (userSnap.exists()) {
+                        // Existing user: Update last login and fetch data
+                        await setDoc(userRef, {
+                            lastLoginAt: serverTimestamp(),
+                            email: u.email,
+                            displayName: u.displayName,
+                            photoURL: u.photoURL
+                        }, { merge: true });
+                        setUserData(userSnap.data() as UserData);
+                    } else {
+                        // New user: Create document with 'pending' status
+                        const newUser: UserData = {
+                            uid: u.uid,
+                            email: u.email || '',
+                            displayName: u.displayName || 'Anonymous',
+                            photoURL: u.photoURL || '',
+                            role: 'guest',
+                            status: 'pending', // Default status
+                            createdAt: serverTimestamp(),
+                            lastLoginAt: serverTimestamp()
+                        };
+                        await setDoc(userRef, newUser);
+                        setUserData(newUser);
+                    }
+                } catch (err) {
+                    console.error("Error syncing user data:", err);
+                    // Don't block auth, just log error
+                }
+            } else {
+                setUserData(null);
+            }
+
             setLoading(false);
         });
         return () => unsubscribe();
@@ -76,10 +129,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logout = async () => {
         if (!auth) return;
         await signOut(auth);
+        setUserData(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, error, login, logout }}>
+        <AuthContext.Provider value={{ user, userData, loading, error, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

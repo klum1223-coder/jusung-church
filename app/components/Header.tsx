@@ -29,7 +29,7 @@ const Header = () => {
         { name: '사역안내', eng: 'Ministry', href: '/ministry' },
         { name: '중보기도', eng: 'Prayer', href: '/prayer' },
         { name: '마음쉼터', eng: 'Soul Rest', href: '/counselor' },
-        { name: '오시는 길', eng: 'Location', href: '/contact' },
+        { name: '말씀나눔', eng: 'Sharing', href: '/sharing' },
     ];
 
     // Hamburger icon animation variants
@@ -73,23 +73,23 @@ const Header = () => {
                     </div>
                 </Link>
 
-                <nav className="hidden lg:flex items-center gap-1">
+                <nav className="hidden lg:flex items-center gap-0.5">
                     {navItems.map((item) => (
                         <Link
                             key={item.name}
                             href={item.href}
-                            className={`px-5 py-2 rounded-full flex flex-col items-center group relative transition-all duration-300 ${pathname === item.href
+                            className={`px-3 py-2 rounded-full flex flex-col items-center group relative transition-all duration-300 ${pathname === item.href
                                 ? (scrolled || !isHome ? 'bg-gradient-to-r from-[#8B4513]/10 to-[#d4af37]/10' : 'bg-white/15 backdrop-blur-md')
                                 : 'hover:bg-white/10'
                                 }`}
                         >
-                            <span className={`text-[13px] font-bold transition-colors ${pathname === item.href
+                            <span className={`text-[12px] font-bold transition-colors whitespace-nowrap ${pathname === item.href
                                 ? '#8B4513'
                                 : (scrolled || !isHome ? 'text-stone-600 group-hover:text-[#8B4513]' : 'text-white group-hover:text-white/100 text-white/80')
                                 } ${pathname === item.href && (scrolled || !isHome ? 'text-[#8B4513]' : 'text-white')}`}>
                                 {item.name}
                             </span>
-                            <span className={`text-[8px] uppercase tracking-widest font-black transition-opacity ${pathname === item.href ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
+                            <span className={`text-[7px] uppercase tracking-widest font-black transition-opacity whitespace-nowrap ${pathname === item.href ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
                                 } ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-white'}`}>
                                 {item.eng}
                             </span>

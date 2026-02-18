@@ -5,6 +5,7 @@ import { db } from '../firebaseConfig';
 import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
 import { CHURCH_DATA } from '../lib/constants';
 import { Calendar, Quote } from 'lucide-react';
+import CongregationSharing from '../components/CongregationSharing';
 
 export default function MeditationPage() {
     const [meditations, setMeditations] = useState<any[]>([]);
@@ -115,6 +116,9 @@ export default function MeditationPage() {
                         )}
                     </div>
                 </section>
+
+                {/* Congregation Sharing Section */}
+                <CongregationSharing />
             </main>
         </div>
     );

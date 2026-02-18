@@ -69,15 +69,23 @@ export default function WorshipPage() {
                             <div className="space-y-4">
                                 {/* 카카오 지도 임베드 */}
                                 <div className="aspect-square bg-stone-100 rounded-[40px] overflow-hidden shadow-2xl border-8 border-white">
-                                    <iframe
-                                        src="https://map.kakao.com/?urlX=482066&urlY=863285&name=%EC%A3%BC%EC%84%B1%EA%B5%90%ED%9A%8C&map_type=TYPE_MAP&map_hybrid=false"
-                                        width="100%"
-                                        height="100%"
-                                        style={{ border: 0 }}
-                                        allowFullScreen
-                                        loading="lazy"
-                                        title="주성교회 위치"
-                                    />
+                                    <a
+                                        href={CHURCH_DATA.contact.naverMap}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block w-full h-full bg-stone-200 cursor-pointer hover:scale-105 transition-transform duration-500 relative group"
+                                    >
+                                        <img
+                                            src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000&auto=format&fit=crop"
+                                            alt="지도로 보기"
+                                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                        />
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-transparent transition-colors">
+                                            <div className="w-16 h-16 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#8B4513] shadow-lg">
+                                                <MapPin size={32} />
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
                                 {/* 네이버 지도 길찾기 버튼 */}
                                 <a

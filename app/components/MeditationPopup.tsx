@@ -2,56 +2,88 @@
 
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
-import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, query, limit, getDocs } from 'firebase/firestore';
 import { X, BookOpen, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-export default function MeditationPopup() {
+interface MeditationPopupProps {
+    data?: any;
+}
+
+export default function MeditationPopup({ data: initialData }: MeditationPopupProps) {
     const [meditation, setMeditation] = useState<any>(null);
     const [visible, setVisible] = useState(false);
     const [closing, setClosing] = useState(false);
 
     useEffect(() => {
-        // Check if user already dismissed today
-        const dismissed = localStorage.getItem('meditation_popup_dismissed');
-        if (dismissed) {
-            const dismissedDate = new Date(dismissed).toDateString();
-            const today = new Date().toDateString();
-            if (dismissedDate === today) return; // Already dismissed today
+        // 로컬스토리지 확인 - 오늘 이미 닫았으면 안 띄움
+        try {
+            const dismissed = localStorage.getItem('meditation_popup_dismissed');
+            if (dismissed) {
+                const dismissedDate = new Date(dismissed).toDateString();
+                const today = new Date().toDateString();
+                if (dismissedDate === today) return;
+            }
+        } catch (e) {
+            // ignore localStorage errors
         }
 
-        const fetchLatest = async () => {
+        // 부모에서 데이터를 받았으면 바로 사용
+        if (initialData) {
+            setMeditation(initialData);
+            setTimeout(() => setVisible(true), 1500);
+            return;
+        }
+
+        // 데이터가 없으면 직접 Firestore에서 가져오기
+        const fetchMeditation = async () => {
             try {
                 if (!db) return;
+
+                // 인덱스 에러 방지를 위해 단순 쿼리 사용 (클라이언트 필터링)
                 const q = query(
                     collection(db, 'main_contents'),
-                    where('type', '==', 'meditation'),
-                    orderBy('created_at', 'desc'),
-                    limit(1)
+                    limit(20)
                 );
                 const snapshot = await getDocs(q);
-                if (!snapshot.empty) {
-                    const doc = snapshot.docs[0];
-                    setMeditation({ id: doc.id, ...doc.data() });
-                    // Small delay for page load
-                    setTimeout(() => setVisible(true), 800);
+
+                const allDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+
+                // 최신순 정렬
+                allDocs.sort((a, b) => {
+                    const timeA = a.created_at?.seconds || 0;
+                    const timeB = b.created_at?.seconds || 0;
+                    return timeB - timeA;
+                });
+
+                const meditationDoc = allDocs.find(item => item.type === 'meditation');
+
+                if (meditationDoc) {
+                    setMeditation(meditationDoc);
+                    setTimeout(() => setVisible(true), 1500);
                 }
             } catch (err) {
-                console.error('Meditation popup fetch failed:', err);
+                console.error('Failed to fetch meditation popup:', err);
             }
         };
-        fetchLatest();
-    }, []);
+
+        fetchMeditation();
+    }, [initialData]);
 
     const handleClose = () => {
         setClosing(true);
-        localStorage.setItem('meditation_popup_dismissed', new Date().toISOString());
-        setTimeout(() => setVisible(false), 400);
+        try {
+            localStorage.setItem('meditation_popup_dismissed', new Date().toISOString());
+        } catch (e) { }
+        setTimeout(() => {
+            setVisible(false);
+            setClosing(false);
+        }, 400);
     };
 
     if (!visible || !meditation) return null;
 
-    const date = meditation.created_at
+    const date = meditation.created_at?.seconds
         ? new Date(meditation.created_at.seconds * 1000)
         : new Date();
 
@@ -85,7 +117,7 @@ export default function MeditationPopup() {
                         </div>
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#8B4513]">Daily Meditation</p>
-                            <p className="text-stone-400 text-xs">
+                            <p className="text-stone-400 text-xs text-left">
                                 {date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
                             </p>
                         </div>

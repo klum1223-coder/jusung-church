@@ -24,13 +24,14 @@ export default function AdminDashboard() {
     const router = useRouter();
     const isAdmin = checkIfAdmin(user);
 
-    const [activeTab, setActiveTab] = useState<'main' | 'meditation' | 'ministry' | 'activity' | 'community' | 'settings' | 'stats'>('main');
+    const [activeTab, setActiveTab] = useState<'main' | 'meditation' | 'ministry' | 'activity' | 'community' | 'settings' | 'stats' | 'users'>('main');
     const [meditations, setMeditations] = useState<any[]>([]);
     const [contents, setContents] = useState<any[]>([]);
     const [ministries, setMinistries] = useState<any[]>([]);
     const [activities, setActivities] = useState<any[]>([]);
     const [posts, setPosts] = useState<any[]>([]);
     const [stats, setStats] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]); // Added users state
     const [settings, setSettings] = useState<any>({});
     const [loading, setLoading] = useState(true);
 
@@ -76,6 +77,10 @@ export default function AdminDashboard() {
             setStats(data.slice(0, 30).reverse());
         });
 
+        const unsubUsers = onSnapshot(query(collection(db, 'users'), orderBy('createdAt', 'desc')), (s) => {
+            setUsers(s.docs.map(d => ({ id: d.id, ...d.data() })));
+        });
+
         setLoading(false);
         return () => {
             unsubMain();
@@ -84,6 +89,7 @@ export default function AdminDashboard() {
             unsubComm();
             unsubSett();
             unsubStats();
+            unsubUsers();
         };
     }, [isAdmin]);
 
@@ -177,6 +183,20 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleApproveUser = async (uid: string, currentStatus: string) => {
+        const newStatus = currentStatus === 'approved' ? 'pending' : 'approved';
+        const newRole = currentStatus === 'approved' ? 'guest' : 'member';
+
+        try {
+            await updateDoc(doc(db, 'users', uid), {
+                status: newStatus,
+                role: newRole
+            });
+        } catch (e) {
+            alert("상태 변경 실패");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-stone-50 flex">
             <aside className="w-72 bg-white border-r border-stone-200 flex flex-col fixed h-full">
@@ -233,6 +253,12 @@ export default function AdminDashboard() {
                     >
                         <BarChart3 size={20} /> 방문자 통계
                     </button>
+                    <button
+                        onClick={() => setActiveTab('users')}
+                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'users' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
+                    >
+                        <Users size={20} /> 사용자 관리
+                    </button>
                 </nav>
 
                 <div className="p-6 border-t border-stone-100">
@@ -256,6 +282,7 @@ export default function AdminDashboard() {
                             {activeTab === 'community' && '나눔의 정원'}
                             {activeTab === 'settings' && '사이트 환경 설정'}
                             {activeTab === 'stats' && '방문자 통계'}
+                            {activeTab === 'users' && '사용자 승인 관리'}
                         </h2>
                         <p className="text-stone-400 mt-2">홈페이지 내용을 관리자 권한으로 직접 수정합니다.</p>
                     </div>
@@ -479,6 +506,46 @@ export default function AdminDashboard() {
                             </div>
                         </div>
                     )}
+                    {activeTab === 'users' && (
+                        <div className="space-y-6">
+                            <div className="bg-white p-8 rounded-[40px] shadow-sm border border-stone-100">
+                                <h3 className="font-serif text-xl font-bold text-stone-900 mb-6">가입된 사용자 목록</h3>
+                                <div className="space-y-4">
+                                    {users.length === 0 ? <p className="text-stone-400 font-medium text-center py-10">가입된 사용자가 없습니다.</p> : users.map(u => (
+                                        <div key={u.id} className="flex items-center justify-between p-6 bg-stone-50 rounded-3xl border border-stone-100">
+                                            <div className="flex items-center gap-4">
+                                                {u.photoURL ? (
+                                                    <img src={u.photoURL} alt="" className="w-12 h-12 rounded-full border border-stone-200" />
+                                                ) : (
+                                                    <div className="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center text-stone-400">
+                                                        <Users size={24} />
+                                                    </div>
+                                                )}
+                                                <div>
+                                                    <p className="font-bold text-stone-900 text-lg">{u.displayName}</p>
+                                                    <p className="text-sm text-stone-400">{u.email}</p>
+                                                    <p className="text-[10px] text-stone-300 mt-1 uppercase tracking-widest">
+                                                        Joined: {u.createdAt?.seconds ? new Date(u.createdAt.seconds * 1000).toLocaleDateString() : '-'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${u.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
+                                                    {u.status === 'approved' ? 'Active Member' : 'Pending Approval'}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleApproveUser(u.id, u.status)}
+                                                    className={`px-6 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm ${u.status === 'approved' ? 'bg-white border border-stone-200 text-stone-400 hover:text-red-500 hover:border-red-200' : 'bg-[#8B4513] text-white hover:bg-stone-900 hover:scale-105'}`}
+                                                >
+                                                    {u.status === 'approved' ? '승인 취소' : '승인하기'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </main>
 
@@ -552,7 +619,7 @@ const AdminModal = ({ type, item, onClose }: any) => {
                 }
             }
 
-            const colName = type === 'main' ? 'main_contents' : type === 'activity' ? 'ministry_activities' : 'ministries';
+            const colName = (type === 'main' || type === 'meditation') ? 'main_contents' : type === 'activity' ? 'ministry_activities' : 'ministries';
             const payload = {
                 ...data,
                 linkUrl: linkUrl,
