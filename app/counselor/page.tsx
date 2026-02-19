@@ -97,6 +97,8 @@ export default function CounselorPage() {
     const [showPresets, setShowPresets] = useState(true);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
+    // Auto-scroll removed based on user request ("don't scroll down when buttons clicked")
+    /*
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -106,6 +108,7 @@ export default function CounselorPage() {
             scrollToBottom();
         }
     }, [messages]);
+    */
 
     const handlePresetClick = (presetId: string) => {
         const preset = EMOTION_PRESETS.find(p => p.id === presetId);
