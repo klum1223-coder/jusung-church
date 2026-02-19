@@ -1,18 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { db, storage } from '../firebaseConfig';
-const storageAny = storage as any;
+import { db } from '../firebaseConfig';
 import {
     collection, addDoc, query, orderBy, onSnapshot,
     deleteDoc, doc, serverTimestamp, updateDoc, increment,
-    where, getDocs, limit
+    limit, getDocs
 } from 'firebase/firestore';
-import { ref, getDownloadURL, listAll } from 'firebase/storage';
 import {
     BookOpen, Send, Trash2, X, Loader2, Lock,
     LogIn, Heart, PenLine, ChevronDown, ChevronUp,
-    FileText, Calendar, User
+    FileText
 } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,12 +26,12 @@ export default function SharingPage() {
     const [submitting, setSubmitting] = useState(false);
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
-    // 오늘의 큐티 (Firebase Storage)
+    // 오늘의 큐티 (Google Sheet)
     const [todayQT, setTodayQT] = useState<{ text: string; filename: string } | null>(null);
     const [qtLoading, setQtLoading] = useState(true);
     const [qtExpanded, setQtExpanded] = useState(false);
 
-    // DB 묵상 (Firestore fallback)
+    // DB 묵상 (Firestore fallback) - 사용하지 않을 수도 있지만 호환성을 위해 유지
     const [todayMeditation, setTodayMeditation] = useState<any>(null);
 
     const isApproved = userData?.status === 'approved';
@@ -47,204 +45,87 @@ export default function SharingPage() {
         }));
     }, []);
 
-    // ── Firebase Storage에서 오늘 큐티 파일 가져오기 ──
+    // ── 구글 스프레드시트에서 오늘 큐티 가져오기 ──
     useEffect(() => {
-        const fetchQT = async () => {
-            if (!storageAny) {
-                console.warn('Storage not initialized');
-                setQtLoading(false);
-                return;
-            }
-            let fileContent: string | null = null;
-            let fileName: string | null = null;
+        const fetchQTFromSheet = async () => {
+            const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLTyXyrQvXbNxzR7ouopJThkMlgOYFRJNVjrliXMupw1q76sjckBr1e6Wda6p_GoIeX1pYIzcjYHBP/pub?output=csv';
 
             try {
-                const folderRef = ref(storageAny, 'meditation');
-                console.log('Fetching files from:', folderRef.fullPath);
+                const res = await fetch(CSV_URL);
+                const text = await res.text();
 
-                const fileList = await listAll(folderRef);
-                console.log('Found files:', fileList.items.map(i => i.name));
+                // Simple CSV Parser
+                const parseCSV = (str: string) => {
+                    const rows = [];
+                    let currentRow = [];
+                    let currentVal = '';
+                    let insideQuote = false;
 
-                // 오늘 날짜 패턴과 매칭되는 파일 찾기
-                let matchedFile = null;
-                const today = new Date();
-                const mm = String(today.getMonth() + 1).padStart(2, '0');
-                const dd = String(today.getDate()).padStart(2, '0');
-                const yyyy = today.getFullYear();
+                    for (let i = 0; i < str.length; i++) {
+                        const char = str[i];
+                        const nextChar = str[i + 1];
 
-                const patterns = [
-                    `${yyyy}${mm}${dd}`,
-                    `${yyyy}-${mm}-${dd}`,
-                    `${mm}${dd}`,
-                    `${mm}-${dd}`,
-                ];
-
-                for (const item of fileList.items) {
-                    const name = item.name.toLowerCase();
-                    // .txt 또는 .md 확장자 허용
-                    if ((name.endsWith('.txt') || name.endsWith('.md')) && patterns.some(p => name.includes(p))) {
-                        matchedFile = item;
-                        console.log('Matched text/md file:', item.name);
-                        break;
-                    }
-                }
-
-                // 매칭 없으면 가장 최근 텍스트/마크다운 파일 사용
-                if (!matchedFile && fileList.items.length > 0) {
-                    const textFiles = fileList.items.filter(i => {
-                        const n = i.name.toLowerCase();
-                        return n.endsWith('.txt') || n.endsWith('.md');
-                    });
-
-                    if (textFiles.length > 0) {
-                        // 이름순 정렬 가정 (날짜 포맷이면 최신이 뒤에 옴)
-                        matchedFile = textFiles[textFiles.length - 1];
-                        console.log('No exact match, using latest file:', matchedFile.name);
-                    }
-                }
-
-                if (matchedFile) {
-                    const downloadUrl = await getDownloadURL(matchedFile);
-                    const res = await fetch('/api/qt-content', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: downloadUrl }),
-                    });
-
-                    if (!res.ok) {
-                        const errText = await res.text();
-                        console.error('QT Proxy error:', errText);
-                        throw new Error('Failed to fetch via proxy');
-                    }
-
-                    const rawText = await res.text();
-
-                    // 텍스트 정제 로직 (Frontmatter 제거, 불필요한 텍스트 삭제, 공백 압축)
-                    const cleanText = rawText
-                        .replace(/^---[\s\S]*?---/, '') // YAML Frontmatter 제거
-                        .replace(/\(큐티인.*?\)/g, '')   // (큐티인 5-6) 같은 패턴 제거
-                        // .replace(/#\s*.*?(\n|$)/g, '')  // # 제목 라인 제거 (본문 내용 삭제 방지 위해 주석 처리)
-                        .replace(/\*\*/g, '')           // 마크다운 볼드(**) 기호 제거 (깔끔하게)
-                    // .split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n'); // 기존 줄바꿈 제거 로직 주석 처리 (파싱 위해 원본 유지)
-
-                    // ── [NEW] 오늘 날짜에 해당하는 부분만 파싱 ──
-                    const todayObj = new Date();
-                    const month = todayObj.getMonth() + 1;
-                    const date = todayObj.getDate();
-
-                    // 내일 날짜 계산
-                    const tomorrowObj = new Date(todayObj);
-                    tomorrowObj.setDate(todayObj.getDate() + 1);
-                    const tmrMonth = tomorrowObj.getMonth() + 1;
-                    const tmrDate = tomorrowObj.getDate();
-
-                    // 찾을 패턴들 (예: "2월 19일", "02월 19일" 등)
-                    const todayPatterns = [
-                        `${month}월 ${date}일`,
-                        `${month}월${date}일`,
-                        `${String(month).padStart(2, '0')}월 ${String(date).padStart(2, '0')}일`
-                    ];
-
-                    const tomorrowPatterns = [
-                        `${tmrMonth}월 ${tmrDate}일`,
-                        `${tmrMonth}월${tmrDate}일`,
-                        `${String(tmrMonth).padStart(2, '0')}월 ${String(tmrDate).padStart(2, '0')}일`
-                    ];
-
-                    let bestContent = "";
-                    let maxLen = 0;
-
-                    // 모든 오늘 날짜 패턴에 대해 검색
-                    for (const p of todayPatterns) {
-                        let searchPos = 0;
-                        while (true) {
-                            const startIndex = cleanText.indexOf(p, searchPos);
-                            if (startIndex === -1) break;
-
-                            // 찾은 위치 다음 내일 날짜 찾기
-                            let endIndex = -1;
-                            let minDistance = Infinity;
-
-                            for (const tp of tomorrowPatterns) {
-                                // 같은 줄이나 바로 옆에 있는 경우는 목차일 확률이 높음. 최소 30글자 뒤부터 검색.
-                                const idx = cleanText.indexOf(tp, startIndex + 30);
-                                if (idx !== -1 && idx < minDistance) {
-                                    minDistance = idx;
-                                    endIndex = idx;
-                                }
-                            }
-
-                            let currentContent = "";
-                            if (endIndex !== -1) {
-                                currentContent = cleanText.substring(startIndex, endIndex);
+                        if (char === '"') {
+                            if (insideQuote && nextChar === '"') {
+                                currentVal += '"';
+                                i++;
                             } else {
-                                // 내일 날짜 없으면 끝까지
-                                currentContent = cleanText.substring(startIndex);
+                                insideQuote = !insideQuote;
                             }
-
-                            // 가장 긴 블록 선택 (목차 vs 본문 중 본문 선택 확률 높임)
-                            if (currentContent.length > maxLen) {
-                                maxLen = currentContent.length;
-                                bestContent = currentContent;
-                            }
-
-                            searchPos = startIndex + 1;
+                        } else if (char === ',' && !insideQuote) {
+                            currentRow.push(currentVal);
+                            currentVal = '';
+                        } else if ((char === '\r' || char === '\n') && !insideQuote) {
+                            if (char === '\r' && nextChar === '\n') i++;
+                            currentRow.push(currentVal);
+                            rows.push(currentRow);
+                            currentRow = [];
+                            currentVal = '';
+                        } else {
+                            currentVal += char;
                         }
                     }
-
-                    let parsedContent = bestContent.trim();
-
-                    if (!parsedContent) {
-                        // 파싱 실패 시 원본 앞부분 일부 노출 (디버깅용)
-                        parsedContent = cleanText.length > 500
-                            ? cleanText.substring(0, 500) + "\n\n(오늘 날짜 내용을 자동으로 찾지 못했습니다. 파일 형식을 확인해주세요.)"
-                            : cleanText;
+                    if (currentVal || currentRow.length > 0) {
+                        currentRow.push(currentVal);
+                        rows.push(currentRow);
                     }
+                    return rows;
+                };
 
-                    // 최종 줄바꿈 및 불필요한 공백 정리
-                    parsedContent = parsedContent
-                        .split('\n')
-                        .map(line => line.trim())
-                        .filter(line => line.length > 0)
-                        .join('\n\n'); // 문단 가독성 위해 2줄 띄움
+                const rows = parseCSV(text);
 
-                    fileContent = parsedContent;
-                    fileName = matchedFile.name;
-                    setTodayQT({ text: fileContent, filename: fileName });
+                // 한국 시간 기준 오늘 날짜 (YYYY-MM-DD)
+                const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+
+                const todayRow = rows.find(row => {
+                    const dateCell = row[0]?.trim();
+                    return dateCell === today;
+                });
+
+                if (todayRow) {
+                    const title = todayRow[1] || '';
+                    const scriptureRef = todayRow[2] || '';
+                    const content = todayRow[3] || '';
+                    const question = todayRow[4] || '';
+
+                    const formattedText = `[제목] ${title}\n\n[성경 말씀]\n${scriptureRef}\n\n[본문]\n${content}\n\n[묵상 질문]\n${question}`;
+
+                    setTodayQT({
+                        text: formattedText,
+                        filename: title || '오늘의 큐티'
+                    });
+                } else {
+                    console.log('Today QT not found in sheet for date:', today);
+                    // Fallback logic could go here
                 }
             } catch (err) {
-                console.error('Storage QT Load Failed:', err);
+                console.error('Failed to fetch QT from Sheet:', err);
+            } finally {
+                setQtLoading(false);
             }
-
-            // 파일 로드 실패하거나 파일이 없으면 Firestore에서 가져오기 (Fallback)
-            if (!fileContent) {
-                console.log('Falling back to Firestore...');
-                try {
-                    // 인덱스 문제 피하기 위해 단순 쿼리 후 클라이언트 필터링
-                    const q = query(
-                        collection(db, 'main_contents'),
-                        orderBy('created_at', 'desc'),
-                        limit(20)
-                    );
-                    const snap = await getDocs(q);
-
-                    const meditationDoc = snap.docs.find(d => d.data().type === 'meditation');
-
-                    if (meditationDoc) {
-                        const data = meditationDoc.data();
-                        console.log('Found Firestore meditation:', data.title);
-                        setTodayMeditation({ id: meditationDoc.id, ...data });
-                    } else {
-                        console.log('No meditation found in Firestore fallback');
-                    }
-                } catch (fbErr) {
-                    console.error('Firestore Fallback Failed:', fbErr);
-                }
-            }
-
-            setQtLoading(false);
         };
-        fetchQT();
+
+        fetchQTFromSheet();
     }, []);
 
     // ── 나눔 게시글 실시간 구독 ──
@@ -294,12 +175,6 @@ export default function SharingPage() {
         return new Date(ts.seconds * 1000).toLocaleDateString('ko-KR', {
             year: 'numeric', month: 'long', day: 'numeric'
         });
-    };
-
-    // QT 텍스트를 섹션별로 파싱 removed as it was unused or handled inline
-    const parseQTSections = (text: string) => {
-        const lines = text.split('\n').filter(l => l.trim());
-        return lines;
     };
 
     return (
