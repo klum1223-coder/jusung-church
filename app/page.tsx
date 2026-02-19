@@ -27,9 +27,9 @@ const GlowingCross = dynamic(() => import('./components/GlowingCross'), {
   loading: () => <div className="w-full h-full bg-transparent" />
 });
 
-const AbrahamPromiseScene = dynamic(() => import('./components/AbrahamPromiseScene'), {
+const SplineBackground = dynamic(() => import('./components/SplineBackground'), {
   ssr: false,
-  loading: () => <div className="fixed inset-0 bg-[#020205] -z-50" />
+  loading: () => <div className="fixed inset-0 bg-[#eef2ff] -z-50" />
 });
 
 // Dynamic import for MainContentModal (client-only to avoid SSR storage issues)
@@ -147,12 +147,12 @@ export default function JusungChurchPage() {
   const latestMeditation = cards.find(c => c.type === 'meditation');
 
   return (
-    <div className="min-h-screen bg-transparent text-zinc-100 selection:bg-amber-500/30">
+    <div className="min-h-screen bg-transparent text-zinc-800 selection:bg-indigo-500/30">
       <main>
         {/* Daily Meditation Popup */}
         <MeditationPopup data={latestMeditation} />
 
-        <AbrahamPromiseScene />
+        <SplineBackground />
 
         {/* Hero Section */}
         <section className="relative h-[100vh] md:h-[95vh] flex items-center justify-center overflow-hidden">
@@ -178,198 +178,135 @@ export default function JusungChurchPage() {
               transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
             />
 
-            {/* Decorative glowing orbs - more sophisticated */}
+
+
             <motion.div
-              className="absolute top-1/4 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-gradient-to-r from-[#d4af37]/40 to-[#cd7f32]/25 rounded-full blur-[80px] md:blur-[120px]"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute bottom-1/3 right-1/4 w-48 md:w-80 h-48 md:h-80 bg-gradient-to-r from-indigo-500/30 to-purple-500/20 rounded-full blur-[60px] md:blur-[100px]"
-              animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.45, 0.25] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            />
-            <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-gradient-to-r from-purple-600/20 to-pink-500/15 rounded-full blur-[100px] md:blur-[150px]"
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.div
-              className="absolute top-[10%] right-[10%] w-32 md:w-48 h-32 md:h-48 bg-gradient-to-br from-rose-400/25 to-orange-400/20 rounded-full blur-[50px]"
-              animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.35, 0.2] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            />
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="relative z-10 text-center px-6 max-w-5xl space-y-6 pt-20 md:pt-0"
+            >
+              <div className="space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.8 }}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/70 backdrop-blur-md rounded-full border border-zinc-200 shadow-sm"
+                >
+                  <Sparkles size={14} className="text-amber-500" />
+                  <span className="text-zinc-800 text-[10px] font-bold uppercase tracking-[0.15em]">{CHURCH_DATA.engName}</span>
+                </motion.div>
 
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                  className="font-serif text-5xl md:text-9xl text-zinc-900 font-bold leading-none tracking-tight relative"
+                  style={{
+                    textShadow: '0 4px 30px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <span className="relative inline-block">
+                    {CHURCH_DATA.name}
+                    <motion.span
+                      className="absolute -inset-1 bg-gradient-to-r from-[#d4af37]/20 via-transparent to-[#cd7f32]/20 blur-xl"
+                      animate={{ opacity: [0.3, 0.6, 0.3] }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                  </span>
+                </motion.h1>
 
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
+                  className="text-zinc-600/90 text-base md:text-2xl font-light tracking-wide max-w-2xl mx-auto leading-relaxed"
+                >
+                  {CHURCH_DATA.slogan}
+                </motion.p>
+              </div>
 
-
-
-            {/* Cross light rays - enhanced */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-gradient-to-b from-amber-400/40 via-amber-400/10 to-transparent" />
-            <div className="absolute top-1/3 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-amber-400/20 to-transparent" />
-
-            {/* Diagonal light streaks */}
-            <motion.div
-              className="absolute top-0 -left-1/4 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"
-              style={{ transform: 'rotate(45deg)', transformOrigin: 'center' }}
-              animate={{ x: ['0%', '200%'], opacity: [0, 1, 0] }}
-              transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-            />
-
-            {/* Subtle pattern overlay - denser */}
-            <div className="absolute inset-0 opacity-25" style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)`,
-              backgroundSize: '24px 24px'
-            }} />
-
-            {/* Subtle animated gradient for desktop (replaces unreliable external video) */}
-            <div className="absolute inset-0 hidden md:block opacity-30">
-              <div
-                className="absolute inset-0 animate-pulse"
-                style={{
-                  background: 'radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.15) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(139,69,19,0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(205,127,50,0.1) 0%, transparent 50%)',
-                  animationDuration: '4s',
-                }}
-              />
-            </div>
-
-            <div className="absolute inset-0 bg-black/10 z-10" />
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative z-10 text-center px-6 max-w-5xl space-y-6 pt-20 md:pt-0"
-          >
-            <div className="space-y-4">
+              {/* Animated Heart for Mobile */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20"
+                transition={{ delay: 0.5, duration: 1 }}
+                className="md:hidden relative mx-auto w-20 h-20"
               >
-                <Sparkles size={14} className="text-amber-400" />
-                <span className="text-white text-[10px] font-bold uppercase tracking-[0.15em]">{CHURCH_DATA.engName}</span>
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-5xl"
+                  style={{ filter: 'drop-shadow(0 0 20px rgba(255,100,100,0.5))' }}
+                >
+                  ❤️
+                </motion.div>
               </motion.div>
 
-              <motion.h1
+              {/* Glowing Cross - Desktop only */}
+
+
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="font-serif text-5xl md:text-9xl text-white font-bold leading-none tracking-tight relative"
-                style={{
-                  textShadow: '0 0 80px rgba(212,175,55,0.4), 0 0 40px rgba(255,255,255,0.3), 0 4px 30px rgba(0,0,0,0.6)',
-                }}
+                transition={{ delay: 0.8, duration: 0.8 }}
+                className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2"
               >
-                <span className="relative inline-block">
-                  {CHURCH_DATA.name}
+                <motion.button
+                  onClick={() => router.push('/worship')}
+                  className="group relative px-10 py-4 bg-zinc-900 text-white rounded-full font-bold transition-all shadow-xl hover:scale-105 overflow-hidden"
+                  style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}
+                  whileHover={{ scale: 1.05, boxShadow: '0 15px 40px rgba(0,0,0,0.2)' }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <motion.span
-                    className="absolute -inset-1 bg-gradient-to-r from-[#d4af37]/20 via-transparent to-[#cd7f32]/20 blur-xl"
-                    animate={{ opacity: [0.3, 0.6, 0.3] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
                   />
-                </span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-white/90 text-base md:text-2xl font-light tracking-wide max-w-2xl mx-auto leading-relaxed"
-              >
-                {CHURCH_DATA.slogan}
-              </motion.p>
-            </div>
-
-            {/* Animated Heart for Mobile */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="md:hidden relative mx-auto w-20 h-20"
-            >
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="text-5xl"
-                style={{ filter: 'drop-shadow(0 0 20px rgba(255,100,100,0.5))' }}
-              >
-                ❤️
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Sparkles size={16} className="text-amber-400" />
+                    예배 안내
+                  </span>
+                </motion.button>
+                <motion.button
+                  onClick={() => router.push('/sermon')}
+                  className="px-10 py-4 bg-white/80 border border-zinc-200 text-zinc-900 rounded-full font-bold hover:bg-white transition-all shadow-lg backdrop-blur-md relative overflow-hidden group"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <motion.span
+                    className="absolute inset-0 bg-black/5"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: '100%' }}
+                    transition={{ duration: 0.5 }}
+                  />
+                  <span className="relative z-10">온라인 예배</span>
+                </motion.button>
               </motion.div>
             </motion.div>
 
-            {/* Glowing Cross - Desktop only */}
+            {/* Scroll indicator */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="hidden md:block w-32 h-32 md:w-40 md:h-40 mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.5 }}
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
             >
-              <GlowingCross />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2"
-            >
-              <motion.button
-                onClick={() => router.push('/worship')}
-                className="group relative px-10 py-4 bg-gradient-to-r from-[#d4af37] via-[#cd7f32] to-[#8b4513] text-white rounded-full font-bold transition-all shadow-2xl hover:scale-105 overflow-hidden"
-                style={{ boxShadow: '0 10px 50px rgba(212,175,55,0.5), 0 0 30px rgba(212,175,55,0.2)' }}
-                whileHover={{ scale: 1.05, boxShadow: '0 15px 60px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.3)' }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                  animate={{ x: ['-100%', '200%'] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
-                />
-                <span className="relative z-10 flex items-center gap-2">
-                  <Sparkles size={16} className="animate-pulse" />
-                  예배 안내
-                </span>
-              </motion.button>
-              <motion.button
-                onClick={() => router.push('/sermon')}
-                className="px-10 py-4 bg-white/10 border-2 border-white/30 text-white rounded-full font-bold hover:bg-white hover:text-stone-900 transition-all shadow-xl backdrop-blur-md relative overflow-hidden group"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <motion.span
-                  className="absolute inset-0 bg-white/20"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '100%' }}
-                  transition={{ duration: 0.5 }}
-                />
-                <span className="relative z-10">온라인 예배</span>
-              </motion.button>
-            </motion.div>
-          </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
-          >
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="flex flex-col items-center gap-2 px-4 py-3 bg-white/10 backdrop-blur-xl rounded-full border border-white/20"
-            >
-              <span className="text-white/70 text-xs uppercase tracking-widest font-bold">Scroll</span>
               <motion.div
-                animate={{ y: [0, 4, 0], opacity: [0.5, 1, 0.5] }}
+                animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-white/60 backdrop-blur-xl rounded-full border border-zinc-200 shadow-sm"
               >
-                <ChevronDown size={20} className="text-[#d4af37]" />
+                <span className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Scroll</span>
+                <motion.div
+                  animate={{ y: [0, 4, 0], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <ChevronDown size={20} className="text-zinc-400" />
+                </motion.div>
               </motion.div>
             </motion.div>
-          </motion.div>
         </section>
 
         {/* Content Section */}
