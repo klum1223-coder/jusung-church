@@ -170,9 +170,12 @@ export default function JusungChurchPage() {
             className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20 md:pt-0"
           >
             {/* Glass Card Wrapper */}
-            <div className="bg-white/50 backdrop-blur-2xl rounded-[40px] p-8 md:p-16 border border-white/60 shadow-2xl relative overflow-hidden ring-1 ring-white/50">
-              {/* Shine effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/10 to-transparent pointer-events-none" />
+            <div className="relative p-8 md:p-12">
+              {/* Soft Spotlight Glow */}
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] -z-10 rounded-full blur-[80px] pointer-events-none"
+                style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 40%, transparent 70%)' }}
+              />
 
               <div className="relative z-10 space-y-8">
                 <div className="space-y-6">
