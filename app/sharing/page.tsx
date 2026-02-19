@@ -125,12 +125,80 @@ export default function SharingPage() {
                         .replace(/\(큐티인.*?\)/g, '')   // (큐티인 5-6) 같은 패턴 제거
                         .replace(/#\s*.*?(\n|$)/g, '')  // # 제목 라인 제거
                         .replace(/\*\*/g, '')           // 마크다운 볼드(**) 기호 제거 (깔끔하게)
-                        .split('\n')                    // 줄 단위로 분리
-                        .map(line => line.trim())       // 각 줄의 앞뒤 공백 제거
-                        .filter(line => line.length > 0) // 빈 줄 완전히 제거
-                        .join('\n');                    // 다시 한 줄씩만 띄워서 합치기
+                    // .split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n'); // 기존 줄바꿈 제거 로직 주석 처리 (파싱 위해 원본 유지)
 
-                    fileContent = cleanText;
+                    // ── [NEW] 오늘 날짜에 해당하는 부분만 파싱 ──
+                    const todayObj = new Date();
+                    const month = todayObj.getMonth() + 1;
+                    const date = todayObj.getDate();
+
+                    // 내일 날짜 계산
+                    const tomorrowObj = new Date(todayObj);
+                    tomorrowObj.setDate(todayObj.getDate() + 1);
+                    const tmrMonth = tomorrowObj.getMonth() + 1;
+                    const tmrDate = tomorrowObj.getDate();
+
+                    // 찾을 패턴들 (예: "2월 19일", "02월 19일" 등)
+                    const todayPatterns = [
+                        `${month}월 ${date}일`,
+                        `${month}월${date}일`,
+                        `${String(month).padStart(2, '0')}월 ${String(date).padStart(2, '0')}일`
+                    ];
+
+                    const tomorrowPatterns = [
+                        `${tmrMonth}월 ${tmrDate}일`,
+                        `${tmrMonth}월${tmrDate}일`,
+                        `${String(tmrMonth).padStart(2, '0')}월 ${String(tmrDate).padStart(2, '0')}일`
+                    ];
+
+                    let startIndex = -1;
+                    let endIndex = -1;
+
+                    // 오늘 날짜 찾기
+                    for (const p of todayPatterns) {
+                        const idx = cleanText.indexOf(p);
+                        if (idx !== -1) {
+                            startIndex = idx;
+                            break;
+                        }
+                    }
+
+                    let parsedContent = "";
+
+                    if (startIndex !== -1) {
+                        // 내일 날짜 찾기 (끝 지점)
+                        for (const p of tomorrowPatterns) {
+                            const idx = cleanText.indexOf(p, startIndex + 10); // 오늘 날짜 이후부터 검색
+                            if (idx !== -1) {
+                                endIndex = idx;
+                                break;
+                            }
+                        }
+
+                        if (endIndex !== -1) {
+                            parsedContent = cleanText.substring(startIndex, endIndex).trim();
+                        } else {
+                            // 내일 날짜가 없으면 파일 끝까지
+                            parsedContent = cleanText.substring(startIndex).trim();
+                        }
+                    } else {
+                        // 오늘 날짜를 못 찾았으면... 전체가 오늘의 말씀이거나, 형식이 다른 경우
+                        // 우선 전체를 보여주되, 너무 길면(책 전체면) 앞부분만 보여주거나 경고
+                        if (cleanText.length > 3000) {
+                            parsedContent = "오늘 날짜(" + todayPatterns[0] + ")에 해당하는 묵상 내용을 찾을 수 없습니다.\n\n" + cleanText.substring(0, 500) + "...";
+                        } else {
+                            parsedContent = cleanText.trim();
+                        }
+                    }
+
+                    // 최종 줄바꿈 정리
+                    parsedContent = parsedContent
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0)
+                        .join('\n');
+
+                    fileContent = parsedContent;
                     fileName = matchedFile.name;
                     setTodayQT({ text: fileContent, filename: fileName });
                 }
