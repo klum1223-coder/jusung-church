@@ -56,17 +56,17 @@ const Header = () => {
                     <motion.div
                         className={`w-12 h-12 rounded-2xl flex items-center justify-center font-serif font-black text-2xl transition-all duration-500 ${scrolled || !isHome
                             ? 'bg-gradient-to-br from-[#d4af37] to-[#8B4513] text-white shadow-lg shadow-[#8B4513]/30'
-                            : 'bg-white/10 backdrop-blur-md text-white border border-white/20'
+                            : 'bg-white/40 backdrop-blur-md text-stone-900 border border-stone-200'
                             }`}
                         whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
                         transition={{ duration: 0.3 }}
                     >J</motion.div>
                     <div className="flex flex-col">
-                        <h1 className={`text-2xl font-serif font-black tracking-tight transition-colors duration-500 ${scrolled || !isHome ? 'text-stone-900' : 'text-white drop-shadow-lg'
+                        <h1 className={`text-2xl font-serif font-black tracking-tight transition-colors duration-500 ${scrolled || !isHome ? 'text-stone-900' : 'text-stone-900'
                             }`}>
                             {CHURCH_DATA.name}
                         </h1>
-                        <span className={`text-[9px] uppercase tracking-[0.4em] font-black transition-colors duration-500 ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-white/70'
+                        <span className={`text-[9px] uppercase tracking-[0.4em] font-black transition-colors duration-500 ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-500'
                             }`}>
                             {CHURCH_DATA.engName}
                         </span>
@@ -85,12 +85,12 @@ const Header = () => {
                         >
                             <span className={`text-[12px] font-bold transition-colors whitespace-nowrap ${pathname === item.href
                                 ? '#8B4513'
-                                : (scrolled || !isHome ? 'text-stone-600 group-hover:text-[#8B4513]' : 'text-white group-hover:text-white/100 text-white/80')
-                                } ${pathname === item.href && (scrolled || !isHome ? 'text-[#8B4513]' : 'text-white')}`}>
+                                : (scrolled || !isHome ? 'text-stone-600 group-hover:text-[#8B4513]' : 'text-stone-700 group-hover:text-stone-900')
+                                } ${pathname === item.href && (scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-900')}`}>
                                 {item.name}
                             </span>
                             <span className={`text-[7px] uppercase tracking-widest font-black transition-opacity whitespace-nowrap ${pathname === item.href ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
-                                } ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-white'}`}>
+                                } ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-500'}`}>
                                 {item.eng}
                             </span>
                         </Link>
@@ -105,7 +105,7 @@ const Header = () => {
                                     }`}>
                                     {isAdmin ? 'Administrator' : 'Member'}
                                 </span>
-                                <span className={`text-sm font-bold ${scrolled || !isHome ? 'text-stone-900' : 'text-white'
+                                <span className={`text-sm font-bold ${scrolled || !isHome ? 'text-stone-900' : 'text-stone-900'
                                     }`}>{user.displayName || '성도'}님</span>
                             </div>
                             <div className="relative">
@@ -136,7 +136,7 @@ const Header = () => {
                             onClick={login}
                             className={`px-10 py-3.5 rounded-full font-black text-[11px] tracking-widest transition-all flex items-center gap-2 relative overflow-hidden ${scrolled || !isHome
                                 ? 'bg-gradient-to-r from-[#8b4513] to-[#d4af37] text-white shadow-2xl shadow-[#8b4513]/30'
-                                : 'glass text-stone-900 hover:bg-white shadow-lg'
+                                : 'glass text-stone-900 hover:bg-white shadow-lg bg-white/40'
                                 }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
