@@ -102,7 +102,9 @@ export default function CounselorPage() {
     };
 
     useEffect(() => {
-        scrollToBottom();
+        if (messages.length > 0) {
+            scrollToBottom();
+        }
     }, [messages]);
 
     const handlePresetClick = (presetId: string) => {
