@@ -83,13 +83,13 @@ const Header = () => {
                                 : 'hover:bg-white/10'
                                 }`}
                         >
-                            <span className={`text-[12px] font-bold transition-colors whitespace-nowrap ${pathname === item.href
+                            <span className={`text-[15px] font-bold transition-colors whitespace-nowrap ${pathname === item.href
                                 ? '#8B4513'
                                 : (scrolled || !isHome ? 'text-stone-600 group-hover:text-[#8B4513]' : 'text-stone-700 group-hover:text-stone-900')
                                 } ${pathname === item.href && (scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-900')}`}>
                                 {item.name}
                             </span>
-                            <span className={`text-[7px] uppercase tracking-widest font-black transition-opacity whitespace-nowrap ${pathname === item.href ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
+                            <span className={`text-[10px] uppercase tracking-widest font-black transition-opacity whitespace-nowrap ${pathname === item.href ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
                                 } ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-500'}`}>
                                 {item.eng}
                             </span>

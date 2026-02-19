@@ -164,101 +164,78 @@ export default function JusungChurchPage() {
 
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20 md:pt-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="relative z-10 flex flex-col justify-between h-full py-32 px-4 max-w-7xl mx-auto pointer-events-none"
           >
-            {/* Glass Card Wrapper */}
-            <div className="relative p-8 md:p-12">
-              {/* Soft Spotlight Glow */}
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] -z-10 rounded-full blur-[80px] pointer-events-none"
-                style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 40%, transparent 70%)' }}
-              />
+            {/* TOP BLOCK: Main Title & Badge */}
+            <div className="flex flex-col items-center gap-6 pointer-events-auto mt-10 md:mt-0">
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/60 backdrop-blur-md rounded-full border border-stone-200 shadow-sm"
+              >
+                <Sparkles size={14} className="text-amber-500" />
+                <span className="text-stone-800 text-xs font-bold uppercase tracking-[0.2em]">{CHURCH_DATA.engName}</span>
+              </motion.div>
 
-              <div className="relative z-10 space-y-8">
-                <div className="space-y-6">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2, duration: 0.8 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full border border-stone-200 shadow-sm"
-                  >
-                    <Sparkles size={14} className="text-amber-500" />
-                    <span className="text-stone-800 text-[10px] font-bold uppercase tracking-[0.15em]">{CHURCH_DATA.engName}</span>
-                  </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, duration: 0.8 }}
+                className="font-serif text-6xl md:text-9xl text-stone-900 font-black leading-none tracking-tight text-center drop-shadow-lg"
+              >
+                {CHURCH_DATA.name}
+              </motion.h1>
+            </div>
 
-                  <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.8 }}
-                    className="font-serif text-5xl md:text-8xl text-stone-900 font-black leading-none tracking-tight relative drop-shadow-sm"
-                  >
-                    <span className="relative inline-block">
-                      {CHURCH_DATA.name}
-                    </span>
-                  </motion.h1>
+            {/* CENTER: Empty space for 3D Animation */}
+            <div className="flex-1 min-h-[20vh]" />
 
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
-                    className="text-stone-600 text-base md:text-xl font-medium tracking-wide max-w-2xl mx-auto leading-relaxed"
-                  >
-                    {CHURCH_DATA.slogan}
-                  </motion.p>
-                </div>
+            {/* BOTTOM BLOCK: Slogan & Buttons */}
+            <div className="flex flex-col items-center gap-10 pointer-events-auto pb-10 md:pb-0">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="text-stone-800 text-lg md:text-2xl font-medium tracking-wide max-w-3xl text-center leading-relaxed drop-shadow-md bg-white/20 backdrop-blur-sm p-4 rounded-2xl"
+              >
+                {CHURCH_DATA.slogan}
+              </motion.p>
 
-                {/* Animated Heart for Mobile */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5, duration: 1 }}
-                  className="md:hidden relative mx-auto w-16 h-16"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.8 }}
+                className="flex flex-col sm:flex-row gap-5 justify-center items-center"
+              >
+                <motion.button
+                  onClick={() => router.push('/worship')}
+                  className="group relative px-12 py-5 bg-stone-900 text-white rounded-full font-bold transition-all shadow-2xl hover:scale-105 overflow-hidden ring-4 ring-stone-900/10"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="text-4xl"
-                    style={{ filter: 'drop-shadow(0 0 10px rgba(255,100,100,0.3))' }}
-                  >
-                    ❤️
-                  </motion.div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, duration: 0.8 }}
-                  className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2"
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
+                    animate={{ x: ['-100%', '200%'] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
+                  />
+                  <span className="relative z-10 flex items-center gap-3 text-lg">
+                    <Sparkles size={18} className="text-amber-400" />
+                    예배 안내
+                  </span>
+                </motion.button>
+                <motion.button
+                  onClick={() => router.push('/sermon')}
+                  className="px-12 py-5 bg-white/90 border-2 border-white text-stone-900 rounded-full font-bold hover:bg-white transition-all shadow-xl backdrop-blur-sm relative overflow-hidden group text-lg"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <motion.button
-                    onClick={() => router.push('/worship')}
-                    className="group relative px-10 py-4 bg-stone-900 text-white rounded-full font-bold transition-all shadow-xl hover:scale-105 overflow-hidden ring-4 ring-stone-900/10"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <motion.span
-                      className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                      animate={{ x: ['-100%', '200%'] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
-                    />
-                    <span className="relative z-10 flex items-center gap-2">
-                      <Sparkles size={16} className="text-amber-400" />
-                      예배 안내
-                    </span>
-                  </motion.button>
-                  <motion.button
-                    onClick={() => router.push('/sermon')}
-                    className="px-10 py-4 bg-white border border-stone-200 text-stone-900 rounded-full font-bold hover:bg-stone-50 transition-all shadow-lg relative overflow-hidden group"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span className="relative z-10">온라인 예배</span>
-                  </motion.button>
-                </motion.div>
-              </div>
+                  <span className="relative z-10">온라인 예배</span>
+                </motion.button>
+              </motion.div>
             </div>
           </motion.div>
 
