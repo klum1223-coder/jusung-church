@@ -123,7 +123,7 @@ export default function SharingPage() {
                     const cleanText = rawText
                         .replace(/^---[\s\S]*?---/, '') // YAML Frontmatter 제거
                         .replace(/\(큐티인.*?\)/g, '')   // (큐티인 5-6) 같은 패턴 제거
-                        .replace(/#\s*.*?(\n|$)/g, '')  // # 제목 라인 제거
+                        // .replace(/#\s*.*?(\n|$)/g, '')  // # 제목 라인 제거 (본문 내용 삭제 방지 위해 주석 처리)
                         .replace(/\*\*/g, '')           // 마크다운 볼드(**) 기호 제거 (깔끔하게)
                     // .split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n'); // 기존 줄바꿈 제거 로직 주석 처리 (파싱 위해 원본 유지)
 
@@ -151,52 +151,62 @@ export default function SharingPage() {
                         `${String(tmrMonth).padStart(2, '0')}월 ${String(tmrDate).padStart(2, '0')}일`
                     ];
 
-                    let startIndex = -1;
-                    let endIndex = -1;
+                    let bestContent = "";
+                    let maxLen = 0;
 
-                    // 오늘 날짜 찾기
+                    // 모든 오늘 날짜 패턴에 대해 검색
                     for (const p of todayPatterns) {
-                        const idx = cleanText.indexOf(p);
-                        if (idx !== -1) {
-                            startIndex = idx;
-                            break;
-                        }
-                    }
+                        let searchPos = 0;
+                        while (true) {
+                            const startIndex = cleanText.indexOf(p, searchPos);
+                            if (startIndex === -1) break;
 
-                    let parsedContent = "";
+                            // 찾은 위치 다음 내일 날짜 찾기
+                            let endIndex = -1;
+                            let minDistance = Infinity;
 
-                    if (startIndex !== -1) {
-                        // 내일 날짜 찾기 (끝 지점)
-                        for (const p of tomorrowPatterns) {
-                            const idx = cleanText.indexOf(p, startIndex + 10); // 오늘 날짜 이후부터 검색
-                            if (idx !== -1) {
-                                endIndex = idx;
-                                break;
+                            for (const tp of tomorrowPatterns) {
+                                // 같은 줄이나 바로 옆에 있는 경우는 목차일 확률이 높음. 최소 30글자 뒤부터 검색.
+                                const idx = cleanText.indexOf(tp, startIndex + 30);
+                                if (idx !== -1 && idx < minDistance) {
+                                    minDistance = idx;
+                                    endIndex = idx;
+                                }
                             }
-                        }
 
-                        if (endIndex !== -1) {
-                            parsedContent = cleanText.substring(startIndex, endIndex).trim();
-                        } else {
-                            // 내일 날짜가 없으면 파일 끝까지
-                            parsedContent = cleanText.substring(startIndex).trim();
-                        }
-                    } else {
-                        // 오늘 날짜를 못 찾았으면... 전체가 오늘의 말씀이거나, 형식이 다른 경우
-                        // 우선 전체를 보여주되, 너무 길면(책 전체면) 앞부분만 보여주거나 경고
-                        if (cleanText.length > 3000) {
-                            parsedContent = "오늘 날짜(" + todayPatterns[0] + ")에 해당하는 묵상 내용을 찾을 수 없습니다.\n\n" + cleanText.substring(0, 500) + "...";
-                        } else {
-                            parsedContent = cleanText.trim();
+                            let currentContent = "";
+                            if (endIndex !== -1) {
+                                currentContent = cleanText.substring(startIndex, endIndex);
+                            } else {
+                                // 내일 날짜 없으면 끝까지
+                                currentContent = cleanText.substring(startIndex);
+                            }
+
+                            // 가장 긴 블록 선택 (목차 vs 본문 중 본문 선택 확률 높임)
+                            if (currentContent.length > maxLen) {
+                                maxLen = currentContent.length;
+                                bestContent = currentContent;
+                            }
+
+                            searchPos = startIndex + 1;
                         }
                     }
 
-                    // 최종 줄바꿈 정리
+                    let parsedContent = bestContent.trim();
+
+                    if (!parsedContent) {
+                        // 파싱 실패 시 원본 앞부분 일부 노출 (디버깅용)
+                        parsedContent = cleanText.length > 500
+                            ? cleanText.substring(0, 500) + "\n\n(오늘 날짜 내용을 자동으로 찾지 못했습니다. 파일 형식을 확인해주세요.)"
+                            : cleanText;
+                    }
+
+                    // 최종 줄바꿈 및 불필요한 공백 정리
                     parsedContent = parsedContent
                         .split('\n')
                         .map(line => line.trim())
                         .filter(line => line.length > 0)
-                        .join('\n');
+                        .join('\n\n'); // 문단 가독성 위해 2줄 띄움
 
                     fileContent = parsedContent;
                     fileName = matchedFile.name;
