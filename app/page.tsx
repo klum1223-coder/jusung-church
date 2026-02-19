@@ -185,7 +185,13 @@ export default function JusungChurchPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="font-serif text-6xl md:text-9xl text-stone-900 font-black leading-none tracking-tight text-center drop-shadow-lg"
+                className="font-sans text-6xl md:text-9xl font-black leading-none tracking-tighter text-center select-none"
+                style={{
+                  background: 'linear-gradient(to bottom, #44403c, #78716c)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
+                }}
               >
                 {CHURCH_DATA.name}
               </motion.h1>
@@ -194,17 +200,8 @@ export default function JusungChurchPage() {
             {/* CENTER: Empty space for 3D Animation */}
             <div className="flex-1 min-h-[20vh]" />
 
-            {/* BOTTOM BLOCK: Slogan & Buttons */}
-            <div className="flex flex-col items-center gap-10 pointer-events-auto pb-10 md:pb-0">
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-stone-800 text-lg md:text-2xl font-medium tracking-wide max-w-3xl text-center leading-relaxed drop-shadow-md bg-white/20 backdrop-blur-sm p-4 rounded-2xl"
-              >
-                {CHURCH_DATA.slogan}
-              </motion.p>
-
+            {/* BOTTOM BLOCK: Buttons Only */}
+            <div className="flex flex-col items-center gap-4 pointer-events-auto pb-10 md:pb-0">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
