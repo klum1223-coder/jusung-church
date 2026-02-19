@@ -27,9 +27,9 @@ const GlowingCross = dynamic(() => import('./components/GlowingCross'), {
   loading: () => <div className="w-full h-full bg-transparent" />
 });
 
-const SplineHero = dynamic(() => import('./components/SplineHero'), {
+const AbrahamPromiseScene = dynamic(() => import('./components/AbrahamPromiseScene'), {
   ssr: false,
-  loading: () => <div className="absolute inset-0 bg-neutral-950" />
+  loading: () => <div className="fixed inset-0 bg-[#020205] -z-50" />
 });
 
 // Dynamic import for MainContentModal (client-only to avoid SSR storage issues)
@@ -66,8 +66,7 @@ export default function JusungChurchPage() {
   const isAdmin = checkIfAdmin(user);
   const [isMainModalOpen, setMainModalOpen] = useState(false);
   const [isGraceModalOpen, setIsGraceModalOpen] = useState(false);
-  const [particles, setParticles] = useState<any[]>([]);
-  const [stars, setStars] = useState<any[]>([]);
+
 
   useEffect(() => {
     if (!db) return;
@@ -108,30 +107,7 @@ export default function JusungChurchPage() {
     };
   }, []);
 
-  // Initialize random particles and stars on client side to prevent hydration mismatches
-  useEffect(() => {
-    setParticles([...Array(30)].map((_, i) => ({
-      id: i,
-      width: 2 + Math.random() * 4,
-      height: 2 + Math.random() * 4,
-      bg: i % 3 === 0 ? '#fbbf24' : i % 3 === 1 ? '#60a5fa' : '#ffffff',
-      initialX: Math.random() * 100,
-      initialY: Math.random() * 100,
-      duration: 3 + Math.random() * 5,
-      delay: Math.random() * 4,
-      moveY1: Math.random() * 100,
-      moveY2: Math.random() * 100
-    })));
 
-    setStars([...Array(15)].map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      size: 8 + Math.random() * 8,
-      duration: 2 + Math.random() * 2,
-      delay: Math.random() * 3
-    })));
-  }, []);
 
   // Fetch latest sermon from YouTube
   const [youtubeSermon, setYoutubeSermon] = useState<any | null>(null);
@@ -171,23 +147,16 @@ export default function JusungChurchPage() {
   const latestMeditation = cards.find(c => c.type === 'meditation');
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-transparent text-zinc-100 selection:bg-amber-500/30">
       <main>
         {/* Daily Meditation Popup */}
         <MeditationPopup data={latestMeditation} />
 
-        {/* Floating Background Elements */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-[#8B4513]/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-amber-100/30 rounded-full blur-[100px]" />
-        </div>
+        <AbrahamPromiseScene />
 
         {/* Hero Section */}
         <section className="relative h-[100vh] md:h-[95vh] flex items-center justify-center overflow-hidden">
-          {/* 3D Spline Background */}
-          <div className="absolute inset-0 z-0">
-            <SplineHero />
-          </div>
+          {/* 3D Background moved to global fixed layer */}
 
           {/* Beautiful Gradient Background (Overlay) */}
           <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
@@ -231,60 +200,9 @@ export default function JusungChurchPage() {
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
             />
 
-            {/* Floating particles - more varied sizes */}
-            <div className="absolute inset-0 overflow-hidden">
-              {particles.map((p) => (
-                <motion.div
-                  key={p.id}
-                  className="absolute rounded-full"
-                  style={{
-                    width: `${p.width}px`,
-                    height: `${p.height}px`,
-                    background: p.bg,
-                  }}
-                  initial={{
-                    x: `${p.initialX}%`,
-                    y: `${p.initialY}%`,
-                    opacity: 0
-                  }}
-                  animate={{
-                    y: [`${p.moveY1}%`, `${p.moveY2}%`],
-                    opacity: [0, 0.8, 0],
-                    scale: [1, 1.5, 1]
-                  }}
-                  transition={{
-                    duration: p.duration,
-                    repeat: Infinity,
-                    delay: p.delay
-                  }}
-                />
-              ))}
-            </div>
 
-            {/* Twinkling stars */}
-            <div className="absolute inset-0">
-              {stars.map((s) => (
-                <motion.div
-                  key={`star-${s.id}`}
-                  className="absolute"
-                  style={{
-                    left: `${s.left}%`,
-                    top: `${s.top}%`,
-                  }}
-                  animate={{
-                    opacity: [0.2, 1, 0.2],
-                    scale: [1, 1.3, 1]
-                  }}
-                  transition={{
-                    duration: s.duration,
-                    repeat: Infinity,
-                    delay: s.delay
-                  }}
-                >
-                  <Sparkles size={s.size} className="text-amber-300/60" />
-                </motion.div>
-              ))}
-            </div>
+
+
 
             {/* Cross light rays - enhanced */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[2px] h-full bg-gradient-to-b from-amber-400/40 via-amber-400/10 to-transparent" />
