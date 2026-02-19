@@ -231,20 +231,19 @@ export default function SharingPage() {
                                     </div>
                                 </div>
 
-                                {/* Title */}
+                                {/* Scripture Ref as Main Title */}
                                 <h1 className="font-serif text-3xl md:text-4xl font-extrabold text-stone-900 leading-tight">
-                                    {todayQT.title}
+                                    {todayQT.scripture}
                                 </h1>
 
-                                {/* Scripture Box (Quote Style) */}
-                                {todayQT.scripture && (
+                                {/* Topic Title inside Box (Quote Style) */}
+                                {todayQT.title && (
                                     <div className="relative bg-[#f9f5f0] p-8 rounded-3xl border-l-4 border-[#8B4513]">
-                                        <Quote className="absolute top-6 right-6 text-[#8B4513]/10 rotate-180" size={48} />
+                                        {/* Quote Icon Removed */}
                                         <div className="relative z-10">
-                                            <p className="font-serif text-lg md:text-xl font-bold text-stone-800 leading-relaxed mb-4 whitespace-pre-wrap">
-                                                "{todayQT.scripture}"
+                                            <p className="font-serif text-lg md:text-xl font-bold text-stone-800 leading-relaxed whitespace-pre-wrap">
+                                                {todayQT.title}
                                             </p>
-                                            {/* If we could parse the reference separate, put it here. Assuming text contains ref at start or end. */}
                                         </div>
                                     </div>
                                 )}
@@ -261,8 +260,8 @@ export default function SharingPage() {
                                             <h3 className="flex items-center gap-2 text-[#8B4513] font-bold text-sm uppercase tracking-wider mb-4">
                                                 <PenLine size={16} /> 묵상 질문
                                             </h3>
-                                            <p className="text-stone-700 italic font-serif text-lg leading-relaxed bg-stone-50 p-6 rounded-2xl border border-stone-100">
-                                                {todayQT.question}
+                                            <p className="text-stone-700 italic font-serif text-lg leading-relaxed bg-stone-50 p-6 rounded-2xl border border-stone-100 whitespace-pre-wrap">
+                                                {todayQT.question.replace(/(\d+\.)/g, '\n$1').trim()}
                                             </p>
                                         </div>
                                     )}
