@@ -30,8 +30,17 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
 
         // 부모에서 데이터를 받았으면 바로 사용
         if (initialData) {
-            setMeditation(initialData);
-            setTimeout(() => setVisible(true), 1500);
+            // 날짜 체크 (오래된 데이터는 팝업 띄우지 않음)
+            const medDate = initialData.created_at?.seconds
+                ? new Date(initialData.created_at.seconds * 1000)
+                : new Date();
+            const now = new Date();
+            const diffDays = Math.ceil(Math.abs(now.getTime() - medDate.getTime()) / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 7) {
+                setMeditation(initialData);
+                setTimeout(() => setVisible(true), 1500);
+            }
             return;
         }
 
@@ -59,8 +68,18 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
                 const meditationDoc = allDocs.find(item => item.type === 'meditation');
 
                 if (meditationDoc) {
-                    setMeditation(meditationDoc);
-                    setTimeout(() => setVisible(true), 1500);
+                    // 7일 이내의 묵상만 유효한 것으로 처리
+                    const medDate = meditationDoc.created_at?.seconds
+                        ? new Date(meditationDoc.created_at.seconds * 1000)
+                        : new Date();
+                    const now = new Date();
+                    const diffTime = Math.abs(now.getTime() - medDate.getTime());
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays <= 7) {
+                        setMeditation(meditationDoc);
+                        setTimeout(() => setVisible(true), 1500);
+                    }
                 }
             } catch (err) {
                 console.error('Failed to fetch meditation popup:', err);
