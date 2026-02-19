@@ -10,7 +10,7 @@ import {
 import {
     BookOpen, Send, Trash2, X, Loader2, Lock,
     LogIn, Heart, PenLine, ChevronDown, ChevronUp,
-    FileText
+    FileText, Quote
 } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,11 +27,18 @@ export default function SharingPage() {
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
     // 오늘의 큐티 (Google Sheet)
-    const [todayQT, setTodayQT] = useState<{ text: string; filename: string } | null>(null);
+    interface QTData {
+        date: string;
+        title: string;
+        scripture: string;
+        content: string;
+        question: string;
+    }
+    const [todayQT, setTodayQT] = useState<QTData | null>(null);
     const [qtLoading, setQtLoading] = useState(true);
     const [qtExpanded, setQtExpanded] = useState(false);
 
-    // DB 묵상 (Firestore fallback) - 사용하지 않을 수도 있지만 호환성을 위해 유지
+    // DB 묵상 (Firestore fallback/Legacy)
     const [todayMeditation, setTodayMeditation] = useState<any>(null);
 
     const isApproved = userData?.status === 'approved';
@@ -103,20 +110,15 @@ export default function SharingPage() {
                 });
 
                 if (todayRow) {
-                    const title = todayRow[1] || '';
-                    const scriptureRef = todayRow[2] || '';
-                    const content = todayRow[3] || '';
-                    const question = todayRow[4] || '';
-
-                    const formattedText = `[제목] ${title}\n\n[성경 말씀]\n${scriptureRef}\n\n[본문]\n${content}\n\n[묵상 질문]\n${question}`;
-
                     setTodayQT({
-                        text: formattedText,
-                        filename: title || '오늘의 큐티'
+                        date: todayRow[0] || today,
+                        title: todayRow[1] || '오늘의 묵상',
+                        scripture: todayRow[2] || '',
+                        content: todayRow[3] || '',
+                        question: todayRow[4] || ''
                     });
                 } else {
-                    console.log('Today QT not found in sheet for date:', today);
-                    // Fallback logic could go here
+                    console.log('Today QT not found for date:', today);
                 }
             } catch (err) {
                 console.error('Failed to fetch QT from Sheet:', err);
@@ -177,6 +179,10 @@ export default function SharingPage() {
         });
     };
 
+    // Helper to format scripture (extract ref if possible)
+    // Assuming user enters "Luke 6:46 Text..." or just text
+    // We'll just display it nicely.
+
     return (
         <div className="min-h-screen pt-24 font-sans" style={{ background: '#f0ebe3' }}>
 
@@ -196,282 +202,242 @@ export default function SharingPage() {
                 </div>
             </section>
 
-            <div className="max-w-6xl mx-auto px-6 pb-24 space-y-10">
+            <div className="max-w-4xl mx-auto px-6 pb-24 space-y-10">
 
-                {/* ── 오늘의 큐티 카드 ── */}
-                <div className="rounded-3xl overflow-hidden shadow-lg border border-stone-300" style={{ background: '#fff8f0' }}>
-                    {/* 카드 헤더 */}
-                    <div className="flex items-center justify-between px-8 py-5 border-b border-stone-200" style={{ background: '#8B4513' }}>
-                        <div className="flex items-center gap-3">
-                            <BookOpen size={20} className="text-white" />
-                            <span className="text-white font-black tracking-widest text-sm uppercase">
-                                오늘의 큐티 말씀
-                            </span>
-                        </div>
-                        <span className="text-white/70 text-xs font-bold">
-                            {todayQT?.filename || '매일 묵상'}
-                        </span>
-                    </div>
+                {/* ── 오늘의 큐티 카드 (Redesigned) ── */}
+                <div className="bg-white rounded-[32px] overflow-hidden shadow-xl border border-stone-100 relative">
+                    <div className="absolute top-0 w-full h-2 bg-[#8B4513]" /> {/* Top Accent Bar */}
 
-                    {/* 카드 본문 */}
-                    <div className="p-8">
+                    <div className="p-8 md:p-10">
                         {qtLoading ? (
-                            <div className="flex items-center gap-3 py-8 justify-center">
-                                <Loader2 className="animate-spin text-[#8B4513]" size={24} />
-                                <span className="text-stone-500 font-medium">말씀을 불러오는 중...</span>
+                            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                                <Loader2 className="animate-spin text-[#8B4513]" size={32} />
+                                <span className="text-stone-400 font-medium text-sm">말씀을 불러오는 중입니다...</span>
                             </div>
                         ) : todayQT ? (
-                            <div>
-                                <div className={`overflow-hidden transition-all duration-500 ${qtExpanded ? '' : 'max-h-64'}`}>
-                                    <pre className="whitespace-pre-wrap font-sans text-stone-800 leading-8 text-[15px] font-medium">
-                                        {todayQT.text}
-                                    </pre>
+                            <div className="space-y-8">
+                                {/* Header: Badge + Date */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-[#f0ebe3] px-3 py-1.5 rounded-full">
+                                            <span className="text-[#8B4513] text-[11px] font-black tracking-widest uppercase">오늘의 말씀</span>
+                                        </div>
+                                        <span className="text-stone-400 text-xs font-bold tracking-wider uppercase">
+                                            {todayQT.date}
+                                        </span>
+                                    </div>
+                                    <div className="flex gap-2 text-stone-300">
+                                        <BookOpen size={18} />
+                                    </div>
                                 </div>
-                                <div className="flex items-center justify-between mt-6 pt-4 border-t border-stone-200">
-                                    <button
-                                        onClick={() => setQtExpanded(!qtExpanded)}
-                                        className="flex items-center gap-2 text-[#8B4513] font-bold text-sm hover:underline"
-                                    >
-                                        {qtExpanded ? <><ChevronUp size={16} />접기</> : <><ChevronDown size={16} />전체 보기</>}
-                                    </button>
-                                    {isApproved && (
-                                        <button
-                                            onClick={() => {
-                                                setScripture(todayQT.filename.replace(/\.[^/.]+$/, ''));
-                                                setIsWriting(true);
-                                                setTimeout(() => window.scrollTo({ top: 700, behavior: 'smooth' }), 100);
-                                            }}
-                                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90"
-                                            style={{ background: '#8B4513' }}
-                                        >
-                                            <PenLine size={15} />
-                                            이 말씀으로 나눔 쓰기
-                                        </button>
+
+                                {/* Title */}
+                                <h1 className="font-serif text-3xl md:text-4xl font-extrabold text-stone-900 leading-tight">
+                                    {todayQT.title}
+                                </h1>
+
+                                {/* Scripture Box (Quote Style) */}
+                                {todayQT.scripture && (
+                                    <div className="relative bg-[#f9f5f0] p-8 rounded-3xl border-l-4 border-[#8B4513]">
+                                        <Quote className="absolute top-6 right-6 text-[#8B4513]/10 rotate-180" size={48} />
+                                        <div className="relative z-10">
+                                            <p className="font-serif text-lg md:text-xl font-bold text-stone-800 leading-relaxed mb-4 whitespace-pre-wrap">
+                                                "{todayQT.scripture}"
+                                            </p>
+                                            {/* If we could parse the reference separate, put it here. Assuming text contains ref at start or end. */}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Content Body */}
+                                <div className={`prose prose-stone max-w-none transition-all duration-700 overflow-hidden ${qtExpanded ? 'opacity-100 max-h-[2000px]' : 'opacity-80 max-h-32 mask-image-b'}`}>
+                                    <div className="whitespace-pre-wrap text-stone-600 leading-8 font-medium text-[15px]">
+                                        {todayQT.content}
+                                    </div>
+
+                                    {/* Question Section */}
+                                    {todayQT.question && (
+                                        <div className="mt-8 pt-8 border-t border-stone-100">
+                                            <h3 className="flex items-center gap-2 text-[#8B4513] font-bold text-sm uppercase tracking-wider mb-4">
+                                                <PenLine size={16} /> 묵상 질문
+                                            </h3>
+                                            <p className="text-stone-700 italic font-serif text-lg leading-relaxed bg-stone-50 p-6 rounded-2xl border border-stone-100">
+                                                {todayQT.question}
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
-                            </div>
-                        ) : todayMeditation ? (
-                            <div className="space-y-3">
-                                <h3 className="font-serif text-2xl font-bold text-stone-900">
-                                    "{todayMeditation.title}"
-                                </h3>
-                                <p className="text-stone-700 leading-8 font-medium text-[15px]">
-                                    {todayMeditation.description}
-                                </p>
+
+                                {/* Expand Button */}
+                                <div className="flex justify-center pt-4">
+                                    <button
+                                        onClick={() => setQtExpanded(!qtExpanded)}
+                                        className="group flex items-center gap-2 px-8 py-3 rounded-full border border-stone-200 bg-white hover:border-[#8B4513] hover:text-[#8B4513] transition-all shadow-sm hover:shadow-md"
+                                    >
+                                        <span className="text-xs font-bold tracking-wider text-stone-500 group-hover:text-[#8B4513] transition-colors">
+                                            {qtExpanded ? '묵상 내용 접기' : '묵상 전체 읽기'}
+                                        </span>
+                                        {qtExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                    </button>
+                                </div>
+
+                                {/* Write Action */}
+                                {isApproved && (
+                                    <div className="flex justify-center pt-4">
+                                        <button
+                                            onClick={() => {
+                                                setScripture(todayQT.title); // Or quote part
+                                                setIsWriting(true);
+                                                setTimeout(() => window.scrollTo({ top: 800, behavior: 'smooth' }), 100);
+                                            }}
+                                            className="w-full md:w-auto px-8 py-4 bg-[#8B4513] text-white rounded-2xl font-bold shadow-lg hover:bg-[#723b10] transition-all flex items-center justify-center gap-2"
+                                        >
+                                            <PenLine size={18} />
+                                            이 말씀으로 나눔 작성하기
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ) : (
-                            <div className="text-center py-10 text-stone-400">
-                                <FileText size={40} className="mx-auto mb-3 opacity-30" />
-                                <p className="font-medium">오늘의 큐티 자료를 준비 중입니다.</p>
-                                <p className="text-sm mt-1">관리자가 자료를 업로드하면 여기에 표시됩니다.</p>
+                            <div className="text-center py-20 text-stone-400 bg-stone-50 rounded-3xl border border-dashed border-stone-200">
+                                <FileText size={48} className="mx-auto mb-4 opacity-20" />
+                                <p className="font-bold text-lg text-stone-500">오늘의 큐티가 없습니다</p>
+                                <p className="text-sm mt-2">관리자가 자료를 업로드하면 표시됩니다.</p>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* ── 글쓰기 영역 ── */}
-                <div>
+                {/* ── 글쓰기 섹션 (Same as before, simplified slightly) ── */}
+                <div id="write-section">
                     {!user ? (
                         <button
                             onClick={login}
-                            className="w-full py-5 rounded-2xl border-2 border-dashed border-stone-400 text-stone-600 font-bold hover:border-[#8B4513] hover:text-[#8B4513] transition-all flex items-center justify-center gap-3 group"
-                            style={{ background: '#fff8f0' }}
+                            className="w-full py-6 rounded-3xl border-2 border-dashed border-stone-300 text-stone-500 font-bold hover:border-[#8B4513] hover:text-[#8B4513] hover:bg-white transition-all flex items-center justify-center gap-3 group bg-[#f7f3ef]"
                         >
-                            <LogIn className="group-hover:scale-110 transition-transform" size={18} />
-                            로그인하고 말씀 나눔에 참여하기
+                            <LogIn className="group-hover:scale-110 transition-transform" size={20} />
+                            로그인하고 은혜 나누기
                         </button>
                     ) : !isApproved ? (
-                        <div className="w-full py-6 rounded-2xl border border-amber-300 flex flex-col items-center justify-center gap-2 text-center"
-                            style={{ background: '#fffbeb' }}>
+                        <div className="w-full py-6 rounded-3xl border border-amber-200 bg-amber-50 flex flex-col items-center justify-center gap-2 text-center">
                             <Lock size={22} className="text-amber-600 mb-1" />
-                            <p className="font-bold text-amber-800">작성 권한 승인 대기 중입니다.</p>
-                            <p className="text-sm text-amber-600">관리자 승인 후 글을 작성할 수 있습니다.</p>
+                            <p className="font-bold text-amber-800">작성 권한 승인 대기 중</p>
                         </div>
                     ) : !isWriting ? (
                         <button
                             onClick={() => setIsWriting(true)}
-                            className="w-full py-5 rounded-2xl border-2 border-dashed border-stone-400 text-stone-600 font-bold hover:border-[#8B4513] hover:text-[#8B4513] transition-all flex items-center justify-center gap-3 group"
-                            style={{ background: '#fff8f0' }}
+                            className="w-full py-6 rounded-3xl border-2 border-dashed border-stone-300 text-stone-500 font-bold hover:border-[#8B4513] hover:text-[#8B4513] hover:bg-white transition-all flex items-center justify-center gap-3 group bg-[#f7f3ef]"
                         >
-                            <PenLine className="group-hover:scale-110 transition-transform" size={18} />
-                            오늘 받은 은혜를 나눠주세요
+                            <PenLine className="group-hover:scale-110 transition-transform" size={20} />
+                            오늘 받은 은혜 나누기
                         </button>
                     ) : (
                         <motion.form
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
                             onSubmit={handleSubmit}
-                            className="rounded-3xl shadow-lg border border-stone-300 overflow-hidden"
-                            style={{ background: '#fff8f0' }}
+                            className="bg-white rounded-[32px] shadow-xl border border-stone-100 overflow-hidden"
                         >
-                            {/* 폼 헤더 */}
-                            <div className="flex justify-between items-center px-8 py-5 border-b border-stone-200">
+                            <div className="px-8 py-6 border-b border-stone-100 flex justify-between items-center bg-[#fbf9f6]">
                                 <div className="flex items-center gap-3">
-                                    {userData?.photoURL ? (
-                                        <img src={userData.photoURL} alt="" className="w-10 h-10 rounded-full border-2 border-stone-200 object-cover" />
-                                    ) : (
-                                        <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-base"
-                                            style={{ background: '#8B4513' }}>
-                                            {userData?.displayName?.charAt(0)}
-                                        </div>
-                                    )}
+                                    <div className="w-10 h-10 rounded-full bg-[#8B4513] text-white flex items-center justify-center font-black shadow-md">
+                                        {userData?.displayName?.charAt(0)}
+                                    </div>
                                     <div>
-                                        <p className="font-black text-stone-900">{userData?.displayName}</p>
-                                        <p className="text-xs text-stone-500 font-medium">{todayDateStr}</p>
+                                        <p className="font-bold text-stone-900">{userData?.displayName}</p>
+                                        <p className="text-xs text-stone-500 font-medium">작성 중...</p>
                                     </div>
                                 </div>
-                                <button type="button" onClick={() => setIsWriting(false)}
-                                    className="text-stone-400 hover:text-stone-700 transition-colors p-1.5 rounded-lg hover:bg-stone-100">
-                                    <X size={18} />
+                                <button type="button" onClick={() => setIsWriting(false)} className="p-2 hover:bg-stone-100 rounded-full transition-colors">
+                                    <X size={20} className="text-stone-400" />
                                 </button>
                             </div>
-
-                            {/* 입력 필드 */}
-                            <div className="p-8 space-y-4">
+                            <div className="p-8 space-y-5">
                                 <input
                                     value={title}
                                     onChange={e => setTitle(e.target.value)}
-                                    placeholder="제목을 입력하세요 (예: 시편 23편 묵상)"
-                                    className="w-full px-5 py-4 rounded-xl text-stone-900 font-bold placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#8B4513]/40 transition-all border border-stone-300 text-sm"
-                                    style={{ background: '#fdf6ee' }}
+                                    placeholder="제목 (예: 시편 23편 묵상)"
+                                    className="w-full px-6 py-4 rounded-2xl bg-stone-50 border-none font-bold text-stone-900 placeholder:text-stone-400 focus:ring-2 focus:ring-[#8B4513]/20 transition-all"
                                     required
                                 />
                                 <input
                                     value={scripture}
                                     onChange={e => setScripture(e.target.value)}
-                                    placeholder="말씀 구절 (예: 시편 23:1-3, 선택사항)"
-                                    className="w-full px-5 py-4 rounded-xl text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#8B4513]/40 transition-all border border-stone-300 text-sm font-medium"
-                                    style={{ background: '#fdf6ee' }}
+                                    placeholder="관련 말씀 (선택사항)"
+                                    className="w-full px-6 py-4 rounded-2xl bg-stone-50 border-none font-medium text-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-[#8B4513]/20 transition-all text-sm"
                                 />
                                 <textarea
                                     value={content}
                                     onChange={e => setContent(e.target.value)}
-                                    placeholder="오늘 받은 은혜나 묵상한 내용을 자유롭게 나눠주세요..."
-                                    className="w-full h-40 px-5 py-4 rounded-xl text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#8B4513]/40 transition-all resize-none leading-relaxed border border-stone-300 text-sm font-medium"
-                                    style={{ background: '#fdf6ee' }}
+                                    placeholder="나의 묵상과 은혜를 자유롭게 기록해보세요..."
+                                    className="w-full h-48 px-6 py-4 rounded-2xl bg-stone-50 border-none font-medium text-stone-700 placeholder:text-stone-400 focus:ring-2 focus:ring-[#8B4513]/20 transition-all resize-none leading-relaxed"
                                     required
                                 />
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="w-full py-4 rounded-xl font-black text-white shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm hover:opacity-90"
-                                    style={{ background: '#8B4513' }}
+                                    className="w-full py-4 rounded-2xl bg-[#8B4513] text-white font-bold shadow-lg hover:bg-[#723b10] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
-                                    {submitting ? <Loader2 className="animate-spin" size={16} /> : <Send size={16} />}
-                                    나눔 등록하기
+                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+                                    나눔 게시하기
                                 </button>
                             </div>
                         </motion.form>
                     )}
                 </div>
 
-                {/* ── 구분선 + 나눔 수 ── */}
+                {/* ── 게시글 목록 ── */}
                 {!loading && posts.length > 0 && (
-                    <div className="flex items-center gap-4">
-                        <div className="flex-1 h-px bg-stone-300" />
-                        <span className="text-stone-500 font-bold text-sm whitespace-nowrap">
-                            {posts.length}개의 나눔
-                        </span>
-                        <div className="flex-1 h-px bg-stone-300" />
-                    </div>
-                )}
-
-                {/* ── 나눔 게시글 3열 그리드 ── */}
-                {loading ? (
-                    <div className="flex justify-center py-20">
-                        <Loader2 className="animate-spin text-[#8B4513]" size={36} />
-                    </div>
-                ) : posts.length === 0 ? (
-                    <div className="text-center py-20 text-stone-500 font-medium text-base">
-                        아직 등록된 나눔이 없습니다.<br />
-                        <span className="text-stone-400 text-sm">첫 번째 말씀 나눔을 시작해 보세요.</span>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        <AnimatePresence>
-                            {posts.map((post, idx) => (
-                                <motion.div
-                                    key={post.id}
-                                    initial={{ opacity: 0, y: 16 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: idx * 0.04 }}
-                                    className="rounded-2xl border border-stone-300 shadow-sm hover:shadow-md transition-all overflow-hidden group flex flex-col"
-                                    style={{ background: '#fff8f0' }}
-                                >
-                                    <div className="p-6 flex flex-col flex-1">
-                                        {/* 작성자 */}
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="flex items-center gap-2.5">
-                                                {post.photoURL ? (
-                                                    <img src={post.photoURL} alt="" className="w-10 h-10 rounded-full border-2 border-stone-200 object-cover" />
-                                                ) : (
-                                                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-sm"
-                                                        style={{ background: '#8B4513' }}>
-                                                        {post.name?.charAt(0)}
-                                                    </div>
-                                                )}
-                                                <div>
-                                                    <p className="font-black text-stone-900 text-sm">{post.name}</p>
-                                                    <p className="text-[10px] text-stone-500 font-bold uppercase tracking-wider">
-                                                        {formatDate(post.created_at)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            {(user?.uid === post.uid || isAdmin) && (
-                                                <button
-                                                    onClick={() => handleDelete(post.id)}
-                                                    className="text-stone-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1"
-                                                >
-                                                    <Trash2 size={14} />
-                                                </button>
-                                            )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-10 border-t border-stone-200">
+                        {posts.map((post, idx) => (
+                            <motion.div
+                                key={post.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="bg-white rounded-[24px] p-6 shadow-sm border border-stone-100 hover:shadow-xl transition-all group flex flex-col"
+                            >
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-full bg-[#f0ebe3] text-[#8B4513] flex items-center justify-center font-black text-sm">
+                                            {post.name?.charAt(0)}
                                         </div>
-
-                                        {/* 말씀 구절 뱃지 */}
-                                        {post.scripture && (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg mb-3 w-fit border border-[#8B4513]/30"
-                                                style={{ background: '#8B4513' + '18' }}>
-                                                <BookOpen size={11} className="text-[#8B4513]" />
-                                                <span className="text-[#8B4513] text-[11px] font-black">{post.scripture}</span>
-                                            </div>
-                                        )}
-
-                                        {/* 제목 */}
-                                        <h2 className="font-serif text-base font-black text-stone-900 mb-2.5 leading-snug">
-                                            {post.title}
-                                        </h2>
-
-                                        {/* 내용 */}
-                                        <div className={`text-stone-700 leading-relaxed text-sm font-medium whitespace-pre-wrap flex-1 ${expandedId !== post.id ? 'line-clamp-4' : ''}`}>
-                                            {post.content}
-                                        </div>
-
-                                        {post.content?.length > 150 && (
-                                            <button
-                                                onClick={() => setExpandedId(expandedId === post.id ? null : post.id)}
-                                                className="mt-2 text-[#8B4513] text-xs font-black flex items-center gap-0.5 hover:underline"
-                                            >
-                                                {expandedId === post.id
-                                                    ? <><ChevronUp size={12} />접기</>
-                                                    : <><ChevronDown size={12} />더 보기</>
-                                                }
-                                            </button>
-                                        )}
-
-                                        {/* 좋아요 */}
-                                        <div className="flex items-center gap-3 mt-4 pt-3 border-t border-stone-200">
-                                            <button
-                                                onClick={() => handleLike(post.id)}
-                                                className="flex items-center gap-1.5 text-stone-500 hover:text-rose-600 transition-colors text-xs font-black"
-                                            >
-                                                <Heart size={14} />
-                                                <span>{post.likes || 0}</span>
-                                            </button>
+                                        <div>
+                                            <p className="font-bold text-stone-900 text-sm">{post.name}</p>
+                                            <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">{formatDate(post.created_at)}</p>
                                         </div>
                                     </div>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
+                                    {(user?.uid === post.uid || isAdmin) && (
+                                        <button onClick={() => handleDelete(post.id)} className="text-stone-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
+                                </div>
+
+                                {post.scripture && (
+                                    <span className="inline-block px-3 py-1 bg-[#8B4513]/5 text-[#8B4513] text-[10px] font-black rounded-lg mb-3 self-start">
+                                        {post.scripture}
+                                    </span>
+                                )}
+
+                                <h3 className="font-serif text-lg font-bold text-stone-900 mb-2 line-clamp-1">{post.title}</h3>
+                                <p className={`text-stone-600 text-sm leading-relaxed whitespace-pre-wrap flex-1 ${expandedId !== post.id ? 'line-clamp-4' : ''}`}>
+                                    {post.content}
+                                </p>
+
+                                {post.content?.length > 150 && (
+                                    <button onClick={() => setExpandedId(expandedId === post.id ? null : post.id)} className="mt-2 text-[#8B4513] text-xs font-bold hover:underline self-start">
+                                        {expandedId === post.id ? '접기' : '더 보기'}
+                                    </button>
+                                )}
+
+                                <div className="mt-4 pt-4 border-t border-stone-50 flex items-center gap-2">
+                                    <button onClick={() => handleLike(post.id)} className="flex items-center gap-1.5 text-stone-400 hover:text-rose-500 transition-colors text-xs font-bold">
+                                        <Heart size={16} /> {post.likes || 0}
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
                 )}
             </div>

@@ -55,7 +55,13 @@ const Footer = () => {
                         </div>
                         <div className="flex gap-4 pt-6 mt-4 border-t border-stone-100">
                             <a href={CHURCH_DATA.contact.youtube} target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-stone-50 rounded-[18px] flex items-center justify-center text-stone-400 hover:bg-[#FF0000] hover:text-white transition-all shadow-sm"><Youtube size={24} /></a>
-                            <a href="#" className="w-12 h-12 bg-stone-50 rounded-[18px] flex items-center justify-center text-stone-400 hover:bg-gradient-to-br hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white transition-all shadow-sm"><Instagram size={24} /></a>
+                            <a href="https://blog.naver.com/joosung0416" target="_blank" rel="noopener noreferrer" className="w-12 h-12 bg-stone-50 rounded-[18px] flex items-center justify-center text-stone-400 hover:bg-[#03C75A] hover:text-white transition-all shadow-sm group">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transition-transform group-hover:scale-110">
+                                    <rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor" className="opacity-0 group-hover:opacity-100" />
+                                    <path d="M15 17H12.5V11.5L10 17H7.5V7H10V12.5L12.5 7H15V17Z" fill="currentColor" stroke="currentColor" strokeWidth="0.5" />
+                                    {/* Using a N shape for Naver */}
+                                </svg>
+                            </a>
                         </div>
                     </div>
 
