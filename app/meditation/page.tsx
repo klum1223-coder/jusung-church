@@ -65,8 +65,11 @@ export default function MeditationPage() {
                                         </div>
                                         <div className="flex-1 space-y-8">
                                             <h2 className="font-serif text-3xl md:text-4xl font-bold text-stone-900 leading-tight">
-                                                &quot;여호와는 나의 목자시니 내게 부족함이 없으리로다&quot;
+                                                여호와는 나의 목자시니 내게 부족함이 없으리로다
                                             </h2>
+                                            <div className="bg-stone-50 rounded-2xl px-5 py-4 border-l-4 border-[#8B4513]/40">
+                                                <p className="text-stone-700 text-base font-medium">오늘의 묵상</p>
+                                            </div>
                                             <div className="w-12 h-px bg-stone-200"></div>
                                             <p className="text-stone-600 text-xl font-light italic leading-relaxed">
                                                 그가 나를 푸른 풀밭에 누이시며{'\n'}쉴 만한 물 가으로 인도하시는도다.{'\n'}내 영혼을 소생시키시고{'\n'}자기 이름을 위하여 의의 길로 인도하시는도다.
@@ -96,11 +99,18 @@ export default function MeditationPage() {
                                             </div>
                                             <div className="flex-1 space-y-8">
                                                 <h2 className="font-serif text-3xl md:text-4xl font-bold text-stone-900 group-hover:text-[#8B4513] transition-colors leading-tight">
-                                                    "{item.title}"
+                                                    {item.scripture || item.title}
                                                 </h2>
+                                                {(item.scripture && item.title) && (
+                                                    <div className="bg-stone-50 rounded-2xl px-5 py-4 border-l-4 border-[#8B4513]/40">
+                                                        <p className="text-stone-700 text-base font-medium leading-relaxed">
+                                                            {item.title}
+                                                        </p>
+                                                    </div>
+                                                )}
                                                 <div className="w-12 h-px bg-stone-100"></div>
                                                 <p className="text-stone-600 text-xl font-light italic leading-relaxed whitespace-pre-line">
-                                                    {item.description}
+                                                    {item.description?.replace(/(\d+\.\s)/g, '\n$1').trim()}
                                                 </p>
                                                 <div className="pt-4 flex items-center gap-2 text-stone-400 font-bold text-xs uppercase tracking-widest">
                                                     <Calendar size={14} /> Posted by Pastor {CHURCH_DATA.pastor.name}

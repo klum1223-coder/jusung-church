@@ -142,17 +142,26 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
                         </div>
                     </div>
 
-                    {/* Title */}
+                    {/* Scripture Reference as Main Title */}
                     <h2 className="font-serif text-2xl md:text-3xl font-bold text-stone-900 leading-snug">
-                        &quot;{meditation.title}&quot;
+                        {meditation.scripture || meditation.title}
                     </h2>
+
+                    {/* Topic Title in box below */}
+                    {(meditation.scripture && meditation.title) && (
+                        <div className="bg-stone-50 rounded-2xl px-5 py-4 border-l-4 border-[#8B4513]/40">
+                            <p className="text-stone-700 text-base font-medium leading-relaxed">
+                                {meditation.title}
+                            </p>
+                        </div>
+                    )}
 
                     {/* Divider */}
                     <div className="w-16 h-px bg-[#8B4513]/30" />
 
-                    {/* Content */}
+                    {/* Content - 번호별 줄바꿈 처리 */}
                     <p className="text-stone-600 text-base md:text-lg font-light italic leading-relaxed whitespace-pre-line line-clamp-6">
-                        {meditation.description}
+                        {meditation.description?.replace(/(\d+\.\s)/g, '\n$1').trim()}
                     </p>
 
                     {/* Actions */}

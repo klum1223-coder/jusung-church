@@ -10,6 +10,7 @@ const storageAny = storage as any;
 const MainContentModal = ({ isOpen, onClose, onSubmit }: any) => {
     const [isUploading, setIsUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [contentType, setContentType] = useState('sermon');
 
     if (!isOpen) return null;
 
@@ -39,6 +40,7 @@ const MainContentModal = ({ isOpen, onClose, onSubmit }: any) => {
         onSubmit({
             type: formData.get('type'),
             title: formData.get('title'),
+            scripture: formData.get('scripture') || '',
             description: formData.get('description'),
             linkUrl: formData.get('linkUrl'),
             imageUrl
@@ -69,6 +71,8 @@ const MainContentModal = ({ isOpen, onClose, onSubmit }: any) => {
                             <select
                                 name="type"
                                 required
+                                value={contentType}
+                                onChange={(e) => setContentType(e.target.value)}
                                 className="w-full p-6 bg-stone-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-[#8B4513] font-bold transition-all appearance-none"
                             >
                                 <option value="sermon">설교 (Sermon)</option>
@@ -88,6 +92,19 @@ const MainContentModal = ({ isOpen, onClose, onSubmit }: any) => {
                             />
                         </div>
                     </div>
+
+                    {/* 묵상 선택 시 성경 구절 입력 필드 */}
+                    {contentType === 'meditation' && (
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">성경 구절 참조 (Scripture Reference)</label>
+                            <input
+                                name="scripture"
+                                placeholder="예: 마태복음 16:13-20"
+                                className="w-full p-6 bg-amber-50 rounded-2xl border-2 border-amber-200 outline-none focus:ring-2 focus:ring-[#8B4513] font-medium"
+                            />
+                            <p className="text-[11px] text-stone-400 pl-2">성경 구절이 메인 제목으로 표시되고, 위의 '제목'은 주제 설명으로 표시됩니다.</p>
+                        </div>
+                    )}
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">상세 설명 / 본문</label>
