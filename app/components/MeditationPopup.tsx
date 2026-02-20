@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, query, limit, getDocs } from 'firebase/firestore';
-import { X, BookOpen, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { X, BookOpen } from 'lucide-react';
 
 interface MeditationPopupProps {
     data?: any;
@@ -107,7 +106,7 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
         : new Date();
 
     return (
-        <div className={`fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 transition-all duration-500 ${closing ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 transition-all duration-500 ${closing ? 'opacity-0' : 'opacity-100'}`}>
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-stone-900/70 backdrop-blur-md"
@@ -115,7 +114,7 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
             />
 
             {/* Modal */}
-            <div className={`relative w-full max-w-lg bg-[#faf9f6] rounded-[32px] shadow-2xl overflow-hidden transition-all duration-500 ${closing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`}>
+            <div className={`relative w-full max-w-2xl bg-[#faf9f6] rounded-[32px] shadow-2xl overflow-hidden transition-all duration-500 ${closing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`}>
                 {/* Header decoration */}
                 <div className="h-2 bg-gradient-to-r from-[#8B4513] via-[#A0522D] to-[#D2691E]" />
 
@@ -128,7 +127,7 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
                 </button>
 
                 {/* Content */}
-                <div className="p-8 md:p-10 space-y-6">
+                <div className="p-8 md:p-10 space-y-6 overflow-y-auto max-h-[80vh]">
                     {/* Icon & Label */}
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-[#8B4513] rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -160,21 +159,15 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
                     <div className="w-16 h-px bg-[#8B4513]/30" />
 
                     {/* Content - 번호별 줄바꿈 처리 */}
-                    <p className="text-stone-600 text-base md:text-lg font-light italic leading-relaxed whitespace-pre-line line-clamp-6">
+                    <p className="text-stone-600 text-base md:text-lg font-light italic leading-relaxed whitespace-pre-line">
                         {meditation.description?.replace(/(\d+\.\s)/g, '\n$1').trim()}
                     </p>
 
                     {/* Actions */}
-                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <Link
-                            href="/meditation"
-                            className="flex-1 py-4 bg-[#8B4513] text-white rounded-2xl font-bold text-center shadow-lg hover:bg-stone-900 transition-all flex items-center justify-center gap-2"
-                        >
-                            묵상 페이지로 이동 <ArrowRight size={18} />
-                        </Link>
+                    <div className="pt-2">
                         <button
                             onClick={handleClose}
-                            className="flex-1 py-4 bg-stone-100 text-stone-600 rounded-2xl font-bold text-center hover:bg-stone-200 transition-all"
+                            className="w-full py-4 bg-[#8B4513] text-white rounded-2xl font-bold text-center shadow-lg hover:bg-stone-900 transition-all"
                         >
                             닫기
                         </button>

@@ -54,7 +54,7 @@ const MainContentModal = ({ isOpen, onClose, onSubmit }: any) => {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
             <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={onClose} />
-            <div className="relative bg-white w-full max-w-2xl rounded-[40px] shadow-2xl p-12 overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-500">
+            <div className="relative bg-white w-full max-w-4xl rounded-[40px] shadow-2xl p-12 overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-500">
                 <button onClick={onClose} className="absolute top-10 right-10 text-stone-300 hover:text-stone-900 transition-colors">
                     <X size={32} />
                 </button>
@@ -111,7 +111,8 @@ const MainContentModal = ({ isOpen, onClose, onSubmit }: any) => {
                         <textarea
                             name="description"
                             placeholder="내용을 정성스레 입력하세요"
-                            className="w-full p-6 bg-stone-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-[#8B4513] h-40 resize-none font-light leading-relaxed"
+                            className={`w-full p-6 bg-stone-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-[#8B4513] resize-y font-light leading-relaxed ${contentType === 'meditation' ? 'h-96' : 'h-56'
+                                }`}
                         />
                     </div>
 
