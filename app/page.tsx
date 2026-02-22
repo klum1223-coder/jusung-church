@@ -9,6 +9,7 @@ import { Play, ArrowRight, Pause, Volume2, VolumeX, ChevronDown, Calendar, Clock
 import GraceCardModal from './components/GraceCardModal';
 import TiltCard from './components/TiltCard';
 import MeditationPopup from './components/MeditationPopup';
+import NoticeModal from './components/NoticeModal';
 import { db } from './firebaseConfig';
 import {
   collection,
@@ -66,6 +67,7 @@ export default function JusungChurchPage() {
   const isAdmin = checkIfAdmin(user);
   const [isMainModalOpen, setMainModalOpen] = useState(false);
   const [isGraceModalOpen, setIsGraceModalOpen] = useState(false);
+  const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
 
 
   useEffect(() => {
@@ -466,7 +468,7 @@ export default function JusungChurchPage() {
                   >
                     <TiltCard>
                       <button
-                        onClick={() => router.push('/community')}
+                        onClick={() => setIsNoticeModalOpen(true)}
                         className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all relative overflow-hidden"
                         style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #d946ef 100%)' }}
                       >
@@ -657,6 +659,13 @@ export default function JusungChurchPage() {
           <GraceCardModal
             isOpen={isGraceModalOpen}
             onClose={() => setIsGraceModalOpen(false)}
+          />
+        )}
+        {isNoticeModalOpen && (
+          <NoticeModal
+            isOpen={isNoticeModalOpen}
+            onClose={() => setIsNoticeModalOpen(false)}
+            notices={cards}
           />
         )}
       </AnimatePresence>

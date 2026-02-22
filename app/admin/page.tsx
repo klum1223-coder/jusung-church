@@ -594,6 +594,7 @@ const AdminCard = ({ item, onEdit, onDelete }: any) => (
 const AdminModal = ({ type, item, onClose }: any) => {
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const [selectedMainType, setSelectedMainType] = useState(item?.type || 'sermon');
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
@@ -664,11 +665,26 @@ const AdminModal = ({ type, item, onClose }: any) => {
                     ) : type === 'main' ? (
                         <>
                             <div className="grid grid-cols-2 gap-4">
-                                <FormInput label="분류" name="type" defaultValue={item?.type} required select options={['sermon', 'notice', 'bulletin', 'newcomer']} />
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">분류</label>
+                                    <select name="type" value={selectedMainType} onChange={(e) => setSelectedMainType(e.target.value)} required className="w-full bg-stone-50 border-none rounded-2xl p-4 font-bold text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all">
+                                        <option value="sermon">sermon</option>
+                                        <option value="notice">notice</option>
+                                        <option value="bulletin">bulletin</option>
+                                        <option value="newcomer">newcomer</option>
+                                    </select>
+                                </div>
                                 <FormInput label="제목" name="title" defaultValue={item?.title} required />
                             </div>
                             <FormInput label="설명" name="description" defaultValue={item?.description} textarea />
                             <FormInput label="링크 URL" name="linkUrl" defaultValue={item?.linkUrl} />
+
+                            {selectedMainType === 'notice' && (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FormInput label="공지 시작일" name="startDate" defaultValue={item?.startDate} type="date" />
+                                    <FormInput label="공지 종료일" name="endDate" defaultValue={item?.endDate} type="date" />
+                                </div>
+                            )}
                         </>
                     ) : type === 'activity' ? (
                         <>
@@ -714,7 +730,7 @@ const AdminModal = ({ type, item, onClose }: any) => {
     );
 };
 
-const FormInput = ({ label, name, defaultValue, required, textarea, select, options }: any) => (
+const FormInput = ({ label, name, defaultValue, required, textarea, select, options, type = 'text' }: any) => (
     <div className="space-y-2">
         <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">{label}</label>
         {select ? (
@@ -724,7 +740,7 @@ const FormInput = ({ label, name, defaultValue, required, textarea, select, opti
         ) : textarea ? (
             <textarea name={name} defaultValue={defaultValue} required={required} rows={4} className="w-full bg-stone-50 border-none rounded-2xl p-4 text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all" />
         ) : (
-            <input name={name} defaultValue={defaultValue} required={required} className="w-full bg-stone-50 border-none rounded-2xl p-4 font-bold text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all" />
+            <input type={type} name={name} defaultValue={defaultValue} required={required} className="w-full bg-stone-50 border-none rounded-2xl p-4 font-bold text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all" />
         )}
     </div>
 );
