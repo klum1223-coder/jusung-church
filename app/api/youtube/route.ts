@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
 const API_KEY = process.env.YOUTUBE_API_KEY || '';
 
 // 재생목록 정의
@@ -27,7 +30,7 @@ const PLAYLISTS = [
 async function fetchPlaylist(playlistId: string, maxResults: number) {
     try {
         const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=${maxResults}&key=${API_KEY}`;
-        const response = await fetch(url, { next: { revalidate: 600 } });
+        const response = await fetch(url, { next: { revalidate: 60 } });
         const data = await response.json();
 
         if (!data.items) return [];

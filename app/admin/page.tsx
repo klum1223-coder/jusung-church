@@ -664,7 +664,7 @@ const AdminModal = ({ type, item, onClose }: any) => {
                     ) : type === 'main' ? (
                         <>
                             <div className="grid grid-cols-2 gap-4">
-                                <FormInput label="분류" name="type" defaultValue={item?.type} required select options={['sermon', 'notice', 'bullet', 'newcomer']} />
+                                <FormInput label="분류" name="type" defaultValue={item?.type} required select options={['sermon', 'notice', 'bulletin', 'newcomer']} />
                                 <FormInput label="제목" name="title" defaultValue={item?.title} required />
                             </div>
                             <FormInput label="설명" name="description" defaultValue={item?.description} textarea />
