@@ -15,17 +15,21 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
     const [closing, setClosing] = useState(false);
 
     useEffect(() => {
-        // 로컬스토리지 확인 - 오늘 이미 닫았으면 안 띄움
-        try {
-            const dismissed = localStorage.getItem('meditation_popup_dismissed');
-            if (dismissed) {
-                const dismissedDate = new Date(dismissed).toDateString();
-                const today = new Date().toDateString();
-                if (dismissedDate === today) return;
-            }
-        } catch (e) {
-            // ignore localStorage errors
-        }
+        let timeoutId: NodeJS.Timeout;
+
+        const isDismissed = () => {
+            try {
+                const dismissed = localStorage.getItem('meditation_popup_dismissed');
+                if (dismissed) {
+                    const dismissedDate = new Date(dismissed).toDateString();
+                    const today = new Date().toDateString();
+                    if (dismissedDate === today) return true;
+                }
+            } catch (e) { }
+            return false;
+        };
+
+        if (isDismissed()) return;
 
         // 부모에서 데이터를 받았으면 바로 사용
         if (initialData) {
@@ -38,9 +42,11 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
 
             if (diffDays <= 7) {
                 setMeditation(initialData);
-                setTimeout(() => setVisible(true), 1500);
+                timeoutId = setTimeout(() => {
+                    if (!isDismissed()) setVisible(true);
+                }, 1500);
             }
-            return;
+            return () => clearTimeout(timeoutId);
         }
 
         // 데이터가 없으면 직접 Firestore에서 가져오기
@@ -77,7 +83,9 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
 
                     if (diffDays <= 7) {
                         setMeditation(meditationDoc);
-                        setTimeout(() => setVisible(true), 1500);
+                        timeoutId = setTimeout(() => {
+                            if (!isDismissed()) setVisible(true);
+                        }, 1500);
                     }
                 }
             } catch (err) {
@@ -86,6 +94,8 @@ export default function MeditationPopup({ data: initialData }: MeditationPopupPr
         };
 
         fetchMeditation();
+
+        return () => clearTimeout(timeoutId);
     }, [initialData]);
 
     const handleClose = () => {
