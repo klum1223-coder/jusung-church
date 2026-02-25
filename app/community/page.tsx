@@ -62,8 +62,8 @@ export default function CommunityPage() {
 
                     <div className="container mx-auto max-w-5xl flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-10">
                         <div className="space-y-6">
-                            <span className="text-amber-400 font-black tracking-[0.4em] text-[12px] uppercase">Community Flow</span>
-                            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-white">나눔의 정원</h1>
+                            <span className="text-[#d4af37] font-black tracking-[0.4em] text-[12px] uppercase">Community Flow</span>
+                            <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight text-white drop-shadow-md">나눔의 정원</h1>
                             <p className="text-white/80 text-lg md:text-xl font-light max-w-xl">성도님들의 일상과 기도 제목, 받은 은혜를 자유롭게 나누는 따뜻한 공간입니다.</p>
                         </div>
                         <button
@@ -83,19 +83,19 @@ export default function CommunityPage() {
                                 <p className="text-stone-400 font-bold uppercase tracking-widest text-xs">Connecting Body...</p>
                             </div>
                         ) : posts.length === 0 ? (
-                            <div className="bg-white border-2 border-dashed border-stone-200 rounded-[40px] py-32 text-center">
-                                <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-6 text-stone-200">
+                            <div className="bg-white border border-stone-200/50 rounded-[40px] py-32 text-center shadow-sm">
+                                <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto mb-6 text-stone-300">
                                     <MessageCircle size={40} />
                                 </div>
-                                <p className="text-stone-400 font-bold uppercase tracking-widest">사랑의 첫 마디를 남겨주세요.</p>
+                                <p className="text-stone-400 font-bold uppercase tracking-widest text-sm">사랑의 첫 마디를 남겨주세요.</p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 gap-10">
                                 {posts.map((post: any) => (
-                                    <article key={post.id} className="bg-white p-10 md:p-12 rounded-[48px] shadow-sm border border-stone-100 hover:shadow-xl transition-all group relative">
+                                    <article key={post.id} className="bg-white p-10 md:p-12 rounded-[48px] shadow-sm border border-stone-200/50 hover:shadow-xl hover:shadow-[#8B4513]/5 transition-all group relative">
                                         <div className="flex items-start justify-between mb-8">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 bg-stone-100 rounded-full flex items-center justify-center text-[#8B4513] font-bold text-xl shadow-inner uppercase">
+                                                <div className="w-14 h-14 bg-stone-50 border border-stone-100 rounded-full flex items-center justify-center text-[#8B4513] font-bold text-xl uppercase shadow-sm">
                                                     {post.authorName?.[0]}
                                                 </div>
                                                 <div>
@@ -106,8 +106,8 @@ export default function CommunityPage() {
                                                 </div>
                                             </div>
                                             {(user && (user.uid === post.authorId || checkIfAdmin(user))) && (
-                                                <button onClick={() => handleDeletePost(post.id)} className="text-stone-200 hover:text-red-500 transition-colors p-3 hover:bg-red-50 rounded-full">
-                                                    <Trash2 size={24} />
+                                                <button onClick={() => handleDeletePost(post.id)} className="text-stone-300 hover:text-red-500 transition-colors p-3 hover:bg-red-50 rounded-full">
+                                                    <Trash2 size={22} />
                                                 </button>
                                             )}
                                         </div>
@@ -165,11 +165,11 @@ const CommunityPostModal = ({ isOpen, onClose, onSubmit }: any) => {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
-            <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-md" onClick={onClose}></div>
-            <div className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-500">
-                <div className="p-8 md:p-12 border-b border-stone-100 flex items-center justify-between">
+            <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-md" onClick={onClose}></div>
+            <div className="relative w-full max-w-2xl bg-[#faf9f6] rounded-[48px] shadow-2xl overflow-hidden pointer-events-auto mt-20 mb-10 overflow-y-auto max-h-[90vh]">
+                <div className="p-8 md:p-12 border-b border-stone-200/50 flex items-center justify-between sticky top-0 bg-[#faf9f6]/95 backdrop-blur-sm z-10">
                     <h3 className="font-serif text-3xl font-bold text-stone-900">새로운 나눔 쓰기</h3>
-                    <button onClick={onClose} className="text-stone-400 hover:text-stone-900"><X size={28} /></button>
+                    <button onClick={onClose} className="text-stone-400 hover:text-[#8B4513] transition-colors"><X size={28} /></button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-8">
                     <div className="space-y-2">
@@ -186,19 +186,21 @@ const CommunityPostModal = ({ isOpen, onClose, onSubmit }: any) => {
                             placeholder="은혜로운 이야기를 들려주세요"
                             className="w-full bg-stone-50 border-none rounded-2xl p-6 text-lg font-light placeholder:text-stone-300 focus:ring-2 focus:ring-[#8B4513] transition-all" />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">사진 첨부</label>
-                        <label className="flex items-center gap-4 p-6 bg-stone-50 rounded-2xl cursor-pointer hover:bg-stone-100 transition-colors border-2 border-dashed border-stone-200">
-                            <Image className="text-[#8B4513]" size={24} />
-                            <span className="text-stone-500 font-bold">{imageFile ? imageFile.name : '사진 선택 (클릭)'}</span>
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase text-[#8B4513] tracking-widest">사진 첨부</label>
+                        <label className="flex items-center gap-4 p-8 bg-white rounded-3xl cursor-pointer hover:border-[#8B4513]/30 transition-all border border-stone-200/60 shadow-sm group">
+                            <div className="w-12 h-12 bg-stone-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <Image className="text-[#8B4513]" size={24} />
+                            </div>
+                            <span className="text-stone-600 font-medium group-hover:text-[#8B4513] transition-colors">{imageFile ? imageFile.name : '사진을 선택해주세요'}</span>
                             <input type="file" className="hidden" accept="image/*" onChange={e => setImageFile(e.target.files?.[0] || null)} />
                         </label>
                     </div>
                     <button
                         disabled={isUploading}
-                        className="w-full py-6 bg-[#8B4513] text-white rounded-[24px] font-bold text-xl shadow-xl hover:bg-stone-900 transition-all disabled:opacity-50"
+                        className="w-full py-6 bg-[#8B4513] text-white rounded-full font-bold text-xl shadow-xl shadow-[#8B4513]/20 hover:bg-stone-900 hover:shadow-2xl transition-all disabled:opacity-50 disabled:shadow-none"
                     >
-                        {isUploading ? '작성 중...' : '나눔 올리기'}
+                        {isUploading ? '올리는 중...' : '나눔 올리기'}
                     </button>
                 </form>
             </div>

@@ -88,31 +88,32 @@
 }
 
 :root {
-  --background: #fdfcfb;
-  --foreground: #1a1817;
-  --primary: #8b4513;
-  --primary-dark: #6d3610;
-  --primary-light: #a5612f;
-  --accent-gold: #d4af37;
-  --accent-bronze: #cd7f32;
-  --primary-foreground: #ffffff;
-  --muted: #f7f6f4;
-  --muted-foreground: #78716c;
-  --shadow-color: rgba(139, 69, 19, 0.15);
+  --background: #0a0a0c;
+  --foreground: #ffffff;
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --background-light: #ffffff;
+  --background-dark: #0a0a0c;
+  --surface-dark: #121215;
+  --text-gray: #9ca3af;
+  --shadow-color: rgba(124, 58, 237, 0.15);
 }
 
 @theme {
-  --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Noto Sans KR", "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", "Noto Serif KR", serif;
+  --font-display: "Anton", sans-serif;
 
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-background-light: var(--background-light);
+  --color-background-dark: var(--background-dark);
+  --color-surface-dark: var(--surface-dark);
+  --color-text-gray: var(--text-gray);
 
   --shadow-premium: 0 25px 60px -15px var(--shadow-color), 0 10px 20px -10px rgba(0, 0, 0, 0.04);
-  --shadow-premium-hover: 0 35px 80px -15px rgba(139, 69, 19, 0.25), 0 15px 30px -10px rgba(0, 0, 0, 0.08);
-  --shadow-glow: 0 0 40px rgba(212, 175, 55, 0.15);
+  --shadow-premium-hover: 0 35px 80px -15px rgba(124, 58, 237, 0.25), 0 15px 30px -10px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.15);
 }
 
 body {
@@ -123,18 +124,9 @@ body {
   position: relative;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 50;
-  filter: contrast(120%) brightness(120%);
+.text-stroke {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
+  color: transparent;
 }
 
 .glass {

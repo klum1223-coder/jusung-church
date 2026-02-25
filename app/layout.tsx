@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display, Noto_Serif_KR, Geist, Geist_Mono } from "next/font/google";
+import { Inter, Playfair_Display, Noto_Serif_KR, Noto_Sans_KR, Anton, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -8,11 +8,11 @@ import PageTransition from "./components/PageTransition";
 import VisitorTracker from "./components/VisitorTracker";
 import SplashScreen from "./components/SplashScreen";
 
-import MeditationPopup from "./components/MeditationPopup";
-
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
 const notoSerifKr = Noto_Serif_KR({ subsets: ["latin"], weight: ["200", "300", "400", "500", "600", "700", "900"], variable: "--font-noto-serif-kr", display: "swap" });
+const notoSansKr = Noto_Sans_KR({ subsets: ["latin"], weight: ["300", "400", "500", "700"], variable: "--font-noto-sans-kr", display: "swap" });
+const anton = Anton({ subsets: ["latin"], weight: "400", variable: "--font-anton", display: "swap" });
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
@@ -73,7 +73,7 @@ import ServiceWorkerUnregister from "./components/ServiceWorkerUnregister";
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${notoSerifKr.variable} antialiased bg-[#fafafa] font-sans`}>
+      <body className={`${notoSansKr.variable} ${anton.variable} ${geistSans.variable} ${geistMono.variable} ${inter.variable} ${playfair.variable} ${notoSerifKr.variable} bg-[#0a0a0c] text-white font-sans antialiased selection:bg-[#7c3aed] selection:text-white transition-colors duration-300`}>
         <AuthProvider>
           <ServiceWorkerUnregister />
           <SplashScreen />
@@ -84,7 +84,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </PageTransition>
           <Footer />
 
-          <MeditationPopup />
+
         </AuthProvider>
       </body>
     </html>

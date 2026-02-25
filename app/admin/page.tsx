@@ -24,12 +24,11 @@ export default function AdminDashboard() {
     const router = useRouter();
     const isAdmin = checkIfAdmin(user);
 
-    const [activeTab, setActiveTab] = useState<'main' | 'meditation' | 'ministry' | 'activity' | 'community' | 'settings' | 'stats' | 'users'>('main');
+    const [activeTab, setActiveTab] = useState<'main' | 'meditation' | 'ministry' | 'activity' | 'settings' | 'stats' | 'users'>('main');
     const [meditations, setMeditations] = useState<any[]>([]);
     const [contents, setContents] = useState<any[]>([]);
     const [ministries, setMinistries] = useState<any[]>([]);
     const [activities, setActivities] = useState<any[]>([]);
-    const [posts, setPosts] = useState<any[]>([]);
     const [stats, setStats] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]); // Added users state
     const [settings, setSettings] = useState<any>({});
@@ -64,10 +63,6 @@ export default function AdminDashboard() {
             setActivities(s.docs.map(d => ({ id: d.id, ...d.data() })));
         });
 
-        const unsubComm = onSnapshot(query(collection(db, 'community_posts'), orderBy('created_at', 'desc')), (s) => {
-            setPosts(s.docs.map(d => ({ id: d.id, ...d.data() })));
-        });
-
         const unsubSett = onSnapshot(doc(db, 'settings', 'site'), (s) => {
             if (s.exists()) setSettings(s.data());
         });
@@ -86,7 +81,6 @@ export default function AdminDashboard() {
             unsubMain();
             unsubMin();
             unsubAct();
-            unsubComm();
             unsubSett();
             unsubStats();
             unsubUsers();
@@ -123,23 +117,28 @@ export default function AdminDashboard() {
 
     if (!user) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 p-4">
-                <div className="bg-white p-10 rounded-3xl shadow-xl max-w-md w-full text-center space-y-8">
-                    <div className="w-16 h-16 bg-[#8B4513] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#fdfcfb] p-4 relative overflow-hidden">
+                {/* Decorative gradients */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-[#8B4513]/5 to-transparent rounded-full blur-[80px] -z-10 translate-x-1/3 -translate-y-1/3" />
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-tr from-[#d4af37]/5 to-transparent rounded-full blur-[60px] -z-10 -translate-x-1/3 translate-y-1/3" />
+
+                <div className="bg-white/80 backdrop-blur-md p-10 rounded-[32px] shadow-2xl border border-white/50 max-w-md w-full text-center space-y-8 relative">
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#8B4513] to-[#6b3410] rounded-2xl flex items-center justify-center text-white mx-auto shadow-xl ring-4 ring-[#8B4513]/10">
                         <LayoutDashboard size={32} />
                     </div>
                     <div>
-                        <h1 className="font-serif text-3xl font-bold text-stone-900">Admin Login</h1>
-                        <p className="text-stone-500 mt-2">관리자 페이지에 접근하려면 로그인이 필요합니다.</p>
+                        <h1 className="font-serif text-3xl font-black text-stone-900">Admin Login</h1>
+                        <p className="text-stone-500 mt-2 font-medium">관리자 페이지에 접근하려면 로그인이 필요합니다.</p>
                     </div>
                     <button
                         onClick={login}
-                        className="w-full py-4 bg-[#8B4513] text-white rounded-2xl font-bold text-lg shadow-lg hover:bg-stone-900 transition-all flex items-center justify-center gap-3"
+                        className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold text-lg shadow-lg hover:bg-[#8B4513] hover:shadow-[#8B4513]/20 transition-all flex items-center justify-center gap-3 relative overflow-hidden group"
                     >
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6 bg-white rounded-full p-0.5" alt="G" />
-                        Google 계정으로 로그인
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6 bg-white rounded-full p-0.5 relative z-10" alt="G" />
+                        <span className="relative z-10">Google 계정으로 로그인</span>
                     </button>
-                    <button onClick={() => router.push('/')} className="text-stone-400 text-sm hover:text-stone-600 underline">
+                    <button onClick={() => router.push('/')} className="text-stone-400 text-sm hover:text-stone-600 font-medium transition-colors">
                         홈페이지로 돌아가기
                     </button>
                 </div>
@@ -198,100 +197,75 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-stone-50 flex">
-            <aside className="w-72 bg-white border-r border-stone-200 flex flex-col fixed h-full">
-                <div className="p-8 border-b border-stone-100 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#8B4513] rounded-xl flex items-center justify-center text-white shadow-lg">
-                        <LayoutDashboard size={20} />
+        <div className="min-h-screen bg-[#fdfcfb] flex font-sans">
+            <aside className="w-72 bg-white/80 backdrop-blur-md border-r border-stone-200/60 flex flex-col fixed h-full z-10 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)]">
+                <div className="p-8 border-b border-stone-200/60 flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#8B4513] to-[#6b3410] rounded-2xl flex items-center justify-center text-white shadow-lg ring ring-white">
+                        <LayoutDashboard size={24} />
                     </div>
                     <div>
-                        <h1 className="font-bold text-stone-900 group">Admin Panel</h1>
-                        <p className="text-[10px] text-stone-400 font-black tracking-widest uppercase">Jusung Church</p>
+                        <h1 className="font-bold text-stone-900 text-lg">Admin Panel</h1>
+                        <p className="text-[10px] text-stone-400 font-black tracking-widest uppercase mt-0.5">Jusung Church</p>
                     </div>
                 </div>
 
-                <nav className="p-6 flex-1 space-y-2">
-                    <button
-                        onClick={() => setActiveTab('main')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'main' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <Home size={20} /> 메인 콘텐츠
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('meditation')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'meditation' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <BookOpen size={20} /> 매일 묵상
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('ministry')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'ministry' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <Users size={20} /> 사역 소개
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('activity')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'activity' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <ImageIcon size={20} /> 사역 현장
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('community')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'community' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <MessageSquare size={20} /> 나눔/커뮤니티
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'settings' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <Save size={20} /> 사이트 설정
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('stats')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'stats' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <BarChart3 size={20} /> 방문자 통계
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('users')}
-                        className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === 'users' ? 'bg-[#8B4513] text-white shadow-xl' : 'text-stone-500 hover:bg-stone-100'}`}
-                    >
-                        <Users size={20} /> 사용자 관리
-                    </button>
+                <nav className="p-6 flex-1 space-y-2 overflow-y-auto">
+                    {[
+                        { id: 'main', icon: Home, label: '메인 콘텐츠' },
+                        { id: 'meditation', icon: BookOpen, label: '매일 묵상' },
+                        { id: 'ministry', icon: Users, label: '사역 소개' },
+                        { id: 'activity', icon: ImageIcon, label: '사역 현장' },
+                        { id: 'settings', icon: Save, label: '사이트 설정' },
+                        { id: 'stats', icon: BarChart3, label: '방문자 통계' },
+                        { id: 'users', icon: Users, label: '사용자 관리' },
+                    ].map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id as any)}
+                            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all relative overflow-hidden group ${activeTab === item.id ? 'bg-stone-900 text-white shadow-xl shadow-stone-900/10' : 'text-stone-500 hover:bg-stone-100/80 hover:text-stone-900'}`}
+                        >
+                            {activeTab === item.id && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />}
+                            <item.icon size={20} className="relative z-10" />
+                            <span className="relative z-10">{item.label}</span>
+                        </button>
+                    ))}
                 </nav>
 
-                <div className="p-6 border-t border-stone-100">
+                <div className="p-6 border-t border-stone-200/60">
                     <button
                         onClick={() => router.push('/')}
-                        className="w-full flex items-center justify-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-sm transition-colors py-4"
+                        className="w-full flex items-center justify-center gap-2 text-stone-400 hover:text-stone-900 font-bold text-sm transition-colors py-4 px-6 rounded-2xl hover:bg-stone-50"
                     >
                         <ArrowLeft size={16} /> 홈페이지로 이동
                     </button>
                 </div>
             </aside>
 
-            <main className="flex-1 ml-72 p-12">
-                <header className="flex items-center justify-between mb-12">
+            <main className="flex-1 ml-72 p-12 lg:p-16 max-w-7xl mx-auto w-full relative">
+                {/* Subtle background decoration */}
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-[#8B4513]/5 to-transparent rounded-full blur-[80px] -z-10 pointer-events-none" />
+
+                <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-16">
                     <div>
-                        <h2 className="text-4xl font-serif font-bold text-stone-900">
+                        <h2 className="text-4xl font-serif font-black text-stone-900 tracking-tight">
                             {activeTab === 'main' && '메인 콘텐츠'}
                             {activeTab === 'meditation' && '매일 묵상'}
                             {activeTab === 'ministry' && '사역 소개'}
-                            {activeTab === 'activity' && '사역 현장 (갤러리)'}
-                            {activeTab === 'community' && '나눔의 정원'}
-                            {activeTab === 'settings' && '사이트 환경 설정'}
+                            {activeTab === 'activity' && '사역 현장'}
+                            {activeTab === 'settings' && '사이트 설정'}
                             {activeTab === 'stats' && '방문자 통계'}
-                            {activeTab === 'users' && '사용자 승인 관리'}
+                            {activeTab === 'users' && '사용자 관리'}
                         </h2>
-                        <p className="text-stone-400 mt-2">홈페이지 내용을 관리자 권한으로 직접 수정합니다.</p>
+                        <p className="text-stone-500 mt-3 font-medium text-lg">홈페이지 내용을 관리자 권한으로 직접 수정합니다.</p>
                     </div>
-                    {(activeTab === 'main' || activeTab === 'meditation' || activeTab === 'ministry' || activeTab === 'activity') && (
+                    {['main', 'meditation', 'ministry', 'activity'].includes(activeTab) && (
                         <button
                             onClick={() => { setEditingItem(null); setIsModalOpen(true); }}
-                            className="bg-[#8B4513] text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-3 shadow-2xl hover:bg-stone-900 transition-all active:scale-95 whitespace-nowrap"
+                            className="bg-[#8B4513] text-white px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-[#8B4513]/20 hover:bg-stone-900 hover:shadow-stone-900/20 transition-all active:scale-95 whitespace-nowrap group overflow-hidden relative"
                         >
-                            <Plus size={20} /> 새로운 {activeTab === 'main' ? '콘텐츠' : activeTab === 'meditation' ? '묵상' : activeTab === 'ministry' ? '사역' : '활동/사진'} 등록하기
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                            <Plus size={20} className="relative z-10" />
+                            <span className="relative z-10">새로 만들기</span>
                         </button>
                     )}
                 </header>
@@ -349,19 +323,6 @@ export default function AdminDashboard() {
                                     item={item}
                                     onEdit={() => { setEditingItem(item); setIsModalOpen(true); }}
                                     onDelete={() => handleDelete('ministry_activities', item.id)}
-                                />
-                            ))
-                        )
-                    )}
-                    {activeTab === 'community' && (
-                        posts.length === 0 ? (
-                            <EmptyState type="게시물" />
-                        ) : (
-                            posts.map(item => (
-                                <AdminCard
-                                    key={item.id}
-                                    item={item}
-                                    onDelete={() => handleDelete('community_posts', item.id)}
                                 />
                             ))
                         )
@@ -561,31 +522,34 @@ export default function AdminDashboard() {
 }
 
 const AdminCard = ({ item, onEdit, onDelete }: any) => (
-    <div className="bg-white p-6 rounded-3xl border border-stone-200 flex items-center gap-6 group hover:shadow-xl transition-all">
+    <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl border border-stone-200/60 flex flex-col md:flex-row items-start md:items-center gap-6 group hover:shadow-xl hover:border-stone-300 transition-all hover:-translate-y-1 duration-300">
         {item.imageUrl || item.img ? (
-            <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0">
-                <img src={item.imageUrl || item.img} className="w-full h-full object-cover" alt="" />
+            <div className="w-full md:w-32 h-48 md:h-32 rounded-2xl overflow-hidden shrink-0 shadow-sm relative">
+                <img src={item.imageUrl || item.img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="" />
+                <div className="absolute inset-0 bg-stone-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
         ) : (
-            <div className="w-24 h-24 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-200 shrink-0">
+            <div className="w-full md:w-32 h-24 md:h-32 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-300 shrink-0 border border-stone-100">
                 <ImageIcon size={32} />
             </div>
         )}
-        <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-                {item.type && <span className="bg-stone-100 text-stone-500 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full">{item.type}</span>}
-                <h3 className="font-bold text-stone-900 truncate text-lg">{item.title || item.name}</h3>
+        <div className="flex-1 min-w-0 w-full">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+                {item.type && <span className="bg-stone-100 text-stone-600 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-stone-200/50">{item.type}</span>}
+                {item.category && <span className="bg-stone-900 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{item.category}</span>}
+                <h3 className="font-serif font-bold text-stone-900 truncate text-xl leading-tight">{item.title || item.name}</h3>
             </div>
-            <p className="text-stone-400 text-sm line-clamp-1">{item.description || item.desc}</p>
+            <p className="text-stone-500 line-clamp-2 leading-relaxed font-medium">{item.description || item.desc || item.detail}</p>
+            {item.date && <p className="text-[#8B4513] text-sm font-bold mt-2">{item.date}</p>}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex md:flex-col lg:flex-row items-center gap-2 w-full md:w-auto mt-4 md:mt-0 pt-4 md:pt-0 border-t border-stone-100 md:border-none">
             {onEdit && (
-                <button onClick={onEdit} className="p-3 text-stone-400 hover:text-[#8B4513] hover:bg-[#8B4513]/5 rounded-xl transition-all">
-                    <Edit2 size={20} />
+                <button onClick={onEdit} className="flex-1 md:flex-none p-3 lg:px-6 lg:py-3 text-stone-500 hover:text-[#8B4513] hover:bg-[#8B4513]/5 rounded-xl transition-all font-bold text-sm bg-stone-50 border border-transparent hover:border-[#8B4513]/20 flex items-center justify-center gap-2">
+                    <Edit2 size={16} /> <span className="md:hidden lg:inline">수정</span>
                 </button>
             )}
-            <button onClick={onDelete} className="p-3 text-stone-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                <Trash2 size={20} />
+            <button onClick={onDelete} className="flex-1 md:flex-none p-3 lg:px-6 lg:py-3 text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold text-sm bg-stone-50 border border-transparent hover:border-red-200 flex items-center justify-center gap-2">
+                <Trash2 size={16} /> <span className="md:hidden lg:inline">삭제</span>
             </button>
         </div>
     </div>
@@ -668,16 +632,25 @@ const AdminModal = ({ type, item, onClose }: any) => {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">분류</label>
                                     <select name="type" value={selectedMainType} onChange={(e) => setSelectedMainType(e.target.value)} required className="w-full bg-stone-50 border-none rounded-2xl p-4 font-bold text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all">
-                                        <option value="sermon">sermon</option>
-                                        <option value="notice">notice</option>
-                                        <option value="bulletin">bulletin</option>
-                                        <option value="newcomer">newcomer</option>
+                                        <option value="sermon">설교 (Sermon)</option>
+                                        <option value="notice">공지사항 (Notice)</option>
+                                        <option value="bulletin">주보 (Bulletin)</option>
+                                        <option value="newcomer">새가족 (Newcomer)</option>
                                     </select>
                                 </div>
                                 <FormInput label="제목" name="title" defaultValue={item?.title} required />
                             </div>
-                            <FormInput label="설명" name="description" defaultValue={item?.description} textarea />
-                            <FormInput label="링크 URL" name="linkUrl" defaultValue={item?.linkUrl} />
+                            <FormInput
+                                label={selectedMainType === 'sermon' ? "설명 (예: 마태복음 1장 1절 / 김주성 담임목사)" : "설명"}
+                                name="description"
+                                defaultValue={item?.description}
+                                textarea
+                            />
+                            <FormInput
+                                label={selectedMainType === 'sermon' ? "유튜브 링크 주소 (선택)" : (selectedMainType === 'bulletin' ? "주보 파일(PDF) 또는 링크 주소" : "링크 URL")}
+                                name="linkUrl"
+                                defaultValue={item?.linkUrl}
+                            />
 
                             {selectedMainType === 'notice' && (
                                 <div className="grid grid-cols-2 gap-4">
@@ -709,10 +682,22 @@ const AdminModal = ({ type, item, onClose }: any) => {
                     {type !== 'meditation' && (
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">사진 등록</label>
-                            <label className="flex items-center gap-4 p-6 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-200 cursor-pointer hover:bg-stone-100 transition-all">
-                                <ImageIcon className="text-[#8B4513]" size={24} />
-                                <span className="text-stone-500 font-bold">{file ? file.name : (item?.imageUrl || item?.img ? '사진 변경하기' : '사진 선택')}</span>
-                                <input type="file" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+                            <label className="flex flex-col items-center justify-center gap-4 p-8 bg-stone-50/50 rounded-3xl border-2 border-dashed border-stone-200 cursor-pointer hover:bg-stone-50 hover:border-[#8B4513]/30 transition-all overflow-hidden relative min-h-[160px]">
+                                {(file || item?.imageUrl || item?.img) ? (
+                                    <img
+                                        src={file ? URL.createObjectURL(file) : (item?.imageUrl || item?.img)}
+                                        className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-30 transition-opacity"
+                                        alt="preview"
+                                    />
+                                ) : null}
+                                <div className="relative z-10 flex flex-col items-center justify-center gap-2 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-sm text-center">
+                                    <ImageIcon className="text-[#8B4513]" size={28} />
+                                    <span className="text-stone-700 font-bold whitespace-nowrap px-4 text-sm">
+                                        {file ? file.name : (item?.imageUrl || item?.img ? '새 사진으로 변경하기' : '클릭하여 사진 업로드')}
+                                    </span>
+                                    <span className="text-stone-400 text-xs font-medium">{file ? '클릭하여 다른 사진 선택' : '또는 사진을 이곳으로 드래그 하세요'}</span>
+                                </div>
+                                <input type="file" className="hidden" accept={selectedMainType === 'bulletin' ? "image/*,.pdf" : "image/*"} onChange={e => setFile(e.target.files?.[0] || null)} />
                             </label>
                         </div>
                     )}
@@ -730,7 +715,7 @@ const AdminModal = ({ type, item, onClose }: any) => {
     );
 };
 
-const FormInput = ({ label, name, defaultValue, required, textarea, select, options, type = 'text' }: any) => (
+const FormInput = ({ label, name, defaultValue, required, textarea, select, options, type = 'text', placeholder }: any) => (
     <div className="space-y-2">
         <label className="text-[10px] font-black uppercase text-stone-400 tracking-widest">{label}</label>
         {select ? (
@@ -738,28 +723,32 @@ const FormInput = ({ label, name, defaultValue, required, textarea, select, opti
                 {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
             </select>
         ) : textarea ? (
-            <textarea name={name} defaultValue={defaultValue} required={required} rows={4} className="w-full bg-stone-50 border-none rounded-2xl p-4 text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all" />
+            <textarea name={name} defaultValue={defaultValue} required={required} placeholder={placeholder} rows={4} className="w-full bg-stone-50 border-none rounded-2xl p-4 text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all placeholder:text-stone-300" />
         ) : (
-            <input type={type} name={name} defaultValue={defaultValue} required={required} className="w-full bg-stone-50 border-none rounded-2xl p-4 font-bold text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all" />
+            <input type={type} name={name} defaultValue={defaultValue} required={required} placeholder={placeholder} className="w-full bg-stone-50 border-none rounded-2xl p-4 font-bold text-stone-900 focus:ring-2 focus:ring-[#8B4513] transition-all placeholder:text-stone-300" />
         )}
     </div>
 );
 const EmptyState = ({ type, onAdd }: any) => (
-    <div className="bg-white border-2 border-dashed border-stone-100 rounded-[40px] py-32 text-center space-y-6">
-        <div className="w-24 h-24 bg-stone-50 rounded-full flex items-center justify-center mx-auto text-stone-200">
+    <div className="bg-white/50 backdrop-blur-sm border-2 border-dashed border-stone-200/60 rounded-[40px] py-32 text-center space-y-6">
+        <div className="w-24 h-24 bg-stone-100 rounded-full flex items-center justify-center mx-auto text-stone-300 mb-8 border border-stone-200 shadow-inner">
             <Plus size={40} />
         </div>
         <div>
-            <p className="text-stone-400 font-bold uppercase tracking-widest text-xs">등록된 {type}가 없습니다.</p>
-            <p className="text-stone-300 text-sm mt-1">새로운 {type}를 등록하여 홈페이지를 꾸며보세요.</p>
+            <p className="text-stone-500 font-bold uppercase tracking-widest text-sm">등록된 {type}가 없습니다.</p>
+            <p className="text-stone-400 text-base mt-2">새로운 {type}를 등록하여 홈페이지를 꾸며보세요.</p>
         </div>
         {onAdd && (
-            <button
-                onClick={onAdd}
-                className="inline-flex items-center gap-2 px-8 py-3 bg-[#8B4513] text-white rounded-full font-bold shadow-xl hover:scale-105 transition-all"
-            >
-                첫 {type} 추가하기 <Plus size={16} />
-            </button>
+            <div className="pt-4">
+                <button
+                    onClick={onAdd}
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-[#8B4513] text-white rounded-2xl font-bold shadow-xl shadow-[#8B4513]/20 hover:-translate-y-1 hover:shadow-[#8B4513]/30 transition-all active:scale-95 group overflow-hidden relative"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <span className="relative z-10">첫 {type} 추가하기</span>
+                    <Plus size={18} className="relative z-10 group-hover:rotate-90 transition-transform" />
+                </button>
+            </div>
         )}
     </div>
 );

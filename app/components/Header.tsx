@@ -62,11 +62,11 @@ const Header = () => {
                         transition={{ duration: 0.3 }}
                     >J</motion.div>
                     <div className="flex flex-col">
-                        <h1 className={`text-2xl font-serif font-black tracking-tight transition-colors duration-500 ${scrolled || !isHome ? 'text-stone-900' : 'text-stone-900'
+                        <h1 className={`text-2xl font-serif font-black tracking-tight transition-colors duration-500 ${scrolled || !isHome ? 'text-stone-900' : 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-amber-500 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]'
                             }`}>
                             {CHURCH_DATA.name}
                         </h1>
-                        <span className={`text-[9px] uppercase tracking-[0.4em] font-black transition-colors duration-500 ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-500'
+                        <span className={`text-[9px] uppercase tracking-[0.4em] font-black transition-colors duration-500 ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-yellow-500/80 drop-shadow-[0_0_2px_rgba(250,204,21,0.5)]'
                             }`}>
                             {CHURCH_DATA.engName}
                         </span>
@@ -83,14 +83,14 @@ const Header = () => {
                                 : 'hover:bg-white/10'
                                 }`}
                         >
-                            <span className={`text-[15px] font-bold transition-colors whitespace-nowrap ${pathname === item.href
+                            <span className={`text-[17px] font-bold transition-colors whitespace-nowrap ${pathname === item.href
                                 ? '#8B4513'
-                                : (scrolled || !isHome ? 'text-stone-600 group-hover:text-[#8B4513]' : 'text-stone-700 group-hover:text-stone-900')
-                                } ${pathname === item.href && (scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-900')}`}>
+                                : (scrolled || !isHome ? 'text-stone-600 group-hover:text-[#8B4513]' : 'text-stone-300 group-hover:text-white')
+                                } ${pathname === item.href && (scrolled || !isHome ? 'text-[#8B4513]' : 'text-white')}`}>
                                 {item.name}
                             </span>
-                            <span className={`text-[10px] uppercase tracking-widest font-black transition-opacity whitespace-nowrap ${pathname === item.href ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
-                                } ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-500'}`}>
+                            <span className={`text-[11px] uppercase tracking-widest font-black transition-opacity whitespace-nowrap ${pathname === item.href ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'
+                                } ${scrolled || !isHome ? 'text-[#8B4513]' : 'text-stone-300'}`}>
                                 {item.eng}
                             </span>
                         </Link>
@@ -105,7 +105,7 @@ const Header = () => {
                                     }`}>
                                     {isAdmin ? 'Administrator' : 'Member'}
                                 </span>
-                                <span className={`text-sm font-bold ${scrolled || !isHome ? 'text-stone-900' : 'text-stone-900'
+                                <span className={`text-sm font-bold ${scrolled || !isHome ? 'text-stone-900' : 'text-white'
                                     }`}>{user.displayName || '성도'}님</span>
                             </div>
                             <div className="relative">
@@ -136,7 +136,7 @@ const Header = () => {
                             onClick={login}
                             className={`px-10 py-3.5 rounded-full font-black text-[11px] tracking-widest transition-all flex items-center gap-2 relative overflow-hidden ${scrolled || !isHome
                                 ? 'bg-gradient-to-r from-[#8b4513] to-[#d4af37] text-white shadow-2xl shadow-[#8b4513]/30'
-                                : 'glass text-stone-900 hover:bg-white shadow-lg bg-white/40'
+                                : 'glass text-white hover:bg-white/20 shadow-lg bg-white/10'
                                 }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}

@@ -37,15 +37,15 @@ export default function BulletinPage() {
         <div className="bg-[#faf9f6] min-h-screen pt-20 md:pt-24 font-sans selection:bg-[#8B4513] selection:text-white">
             <main>
                 {/* Hero Section */}
-                <section className="py-24 px-6 bg-stone-900 text-white relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-30">
+                <section className="py-24 px-6 relative overflow-hidden bg-stone-900 border-b border-[#8B4513]/20">
+                    <div className="absolute inset-0 opacity-30 mix-blend-luminosity">
                         <img
                             src="https://images.unsplash.com/photo-1507692049790-de58293a4697?w=1200&q=80"
                             className="w-full h-full object-cover"
                             alt="Weekly Bulletin"
                         />
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/60 to-transparent" />
 
                     <div className="container mx-auto max-w-5xl relative z-10 text-center space-y-8">
                         <motion.div
@@ -54,11 +54,11 @@ export default function BulletinPage() {
                             transition={{ duration: 0.8 }}
                             className="space-y-6"
                         >
-                            <span className="text-amber-400 font-black tracking-[0.3em] md:tracking-[0.4em] text-[10px] md:text-[12px] uppercase">
+                            <span className="text-[#d4af37] font-black tracking-[0.3em] md:tracking-[0.4em] text-[10px] md:text-[12px] uppercase">
                                 Weekly News & Worship Guide
                             </span>
-                            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">주보 보기</h1>
-                            <p className="text-white/70 text-lg md:text-xl font-light max-w-2xl mx-auto px-4 leading-relaxed">
+                            <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white drop-shadow-lg">주보 보기</h1>
+                            <p className="text-white/80 text-lg md:text-xl font-light max-w-2xl mx-auto px-4 leading-relaxed">
                                 주성교회의 예배 순서와 한 주간의 소식을 확인하실 수 있습니다.
                             </p>
                         </motion.div>
@@ -89,19 +89,19 @@ export default function BulletinPage() {
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: idx * 0.1 }}
-                                        className="group bg-white rounded-[32px] p-8 border border-stone-100 shadow-sm hover:shadow-xl transition-all relative overflow-hidden cursor-pointer"
+                                        className="group bg-white rounded-3xl p-8 border border-stone-200/60 shadow-sm hover:shadow-xl hover:shadow-[#8B4513]/5 hover:border-[#8B4513]/20 transition-all relative overflow-hidden cursor-pointer"
                                         onClick={() => b.linkUrl && window.open(b.linkUrl, '_blank')}
                                     >
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-[100px] transition-transform group-hover:scale-150 duration-700 pointer-events-none" />
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#8B4513]/5 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl pointer-events-none" />
 
                                         <div className="relative z-10 flex flex-col md:flex-row gap-6 md:items-center">
-                                            <div className="w-16 h-16 bg-[#8B4513]/5 rounded-2xl flex items-center justify-center text-[#8B4513] group-hover:bg-[#8B4513] group-hover:text-white transition-colors">
-                                                <FileText size={32} />
+                                            <div className="w-16 h-16 bg-stone-50 border border-stone-100 rounded-2xl flex items-center justify-center text-[#8B4513] group-hover:scale-110 transition-transform shadow-sm">
+                                                <FileText size={30} />
                                             </div>
 
                                             <div className="flex-1 space-y-2">
-                                                <div className="flex items-center gap-2 text-xs font-bold text-stone-400 uppercase tracking-wider">
-                                                    <Calendar size={14} />
+                                                <div className="flex items-center gap-2 text-[10px] font-black text-stone-400 uppercase tracking-widest">
+                                                    <Calendar size={12} />
                                                     {b.created_at ? new Date(b.created_at.seconds * 1000).toLocaleDateString() : 'Unknown Date'}
                                                 </div>
                                                 <h3 className="text-xl font-serif font-bold text-stone-900 group-hover:text-[#8B4513] transition-colors">
@@ -112,7 +112,7 @@ export default function BulletinPage() {
                                                 )}
                                             </div>
 
-                                            <div className="flex items-center justify-center w-12 h-12 rounded-full border border-stone-200 text-stone-300 group-hover:border-[#8B4513] group-hover:text-[#8B4513] transition-all">
+                                            <div className="flex items-center justify-center w-12 h-12 rounded-full border border-stone-200 bg-white text-stone-300 group-hover:border-[#8B4513] group-hover:bg-[#8B4513] group-hover:text-white transition-all shadow-sm group-hover:shadow-md">
                                                 {b.linkUrl ? <Download size={20} /> : <ChevronRight size={20} />}
                                             </div>
                                         </div>

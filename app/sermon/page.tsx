@@ -69,8 +69,8 @@ export default function SermonPage() {
 
             <main>
                 {/* Hero */}
-                <section className="py-12 md:py-20 px-4 md:px-6 bg-stone-900 text-white relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-20">
+                <section className="py-12 md:py-20 px-4 md:px-6 relative overflow-hidden bg-stone-900 border-b border-[#8B4513]/20">
+                    <div className="absolute inset-0 opacity-30 mix-blend-luminosity">
                         <img
                             src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1200&q=80"
                             className="w-full h-full object-cover"
@@ -78,14 +78,16 @@ export default function SermonPage() {
                             loading="eager"
                         />
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/60 to-transparent" />
+
                     <div className="container mx-auto max-w-5xl relative z-10 text-center space-y-4 md:space-y-6">
-                        <span className="text-[#F5E6D3] font-black tracking-[0.3em] md:tracking-[0.4em] text-[10px] md:text-[12px] uppercase">
+                        <span className="text-[#d4af37] font-black tracking-[0.3em] md:tracking-[0.4em] text-[10px] md:text-[12px] uppercase">
                             Online Worship
                         </span>
-                        <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl font-bold tracking-tight">
+                        <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl font-bold tracking-tight text-white drop-shadow-lg">
                             설교 말씀
                         </h1>
-                        <p className="text-white/60 text-sm md:text-lg font-light max-w-2xl mx-auto px-4">
+                        <p className="text-white/80 text-sm md:text-lg font-light max-w-2xl mx-auto px-4">
                             언제 어디서나 하나님의 말씀을 통해 영적 회복과 평안을 누리시기 바랍니다.
                         </p>
                         <div className="pt-3 md:pt-6">
@@ -93,9 +95,9 @@ export default function SermonPage() {
                                 href={CHURCH_DATA.contact.youtube}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-5 md:px-8 py-3 md:py-4 bg-[#FF0000] text-white rounded-full font-bold text-sm shadow-2xl hover:bg-[#cc0000] transition-all hover:scale-105"
+                                className="inline-flex items-center gap-2 px-5 md:px-8 py-3 md:py-4 bg-[#8B4513] text-white rounded-full font-bold text-sm shadow-xl shadow-[#8B4513]/20 hover:bg-stone-900 transition-all hover:scale-105"
                             >
-                                <Youtube size={18} />
+                                <Youtube size={18} className="text-white" />
                                 유튜브 채널 바로가기
                             </a>
                         </div>
@@ -175,7 +177,7 @@ export default function SermonPage() {
 // =============================================
 function SectionHeader({ label, engLabel, playlistId }: { label: string; engLabel: string; playlistId: string }) {
     return (
-        <div className="mb-6 md:mb-10 flex items-end justify-between border-b border-stone-200 pb-4">
+        <div className="mb-6 md:mb-10 flex items-end justify-between border-b border-stone-200/60 pb-4">
             <div className="space-y-1">
                 <span className="text-[#8B4513] font-black tracking-[0.3em] text-[9px] uppercase">{engLabel}</span>
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-stone-900">{label}</h2>
@@ -184,7 +186,7 @@ function SectionHeader({ label, engLabel, playlistId }: { label: string; engLabe
                 href={`https://www.youtube.com/playlist?list=${playlistId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-[#8B4513] font-bold text-xs hover:gap-2.5 transition-all whitespace-nowrap"
+                className="flex items-center gap-1.5 text-stone-400 hover:text-[#8B4513] font-bold text-xs hover:gap-2.5 transition-all whitespace-nowrap"
             >
                 전체 보기 <ExternalLink size={12} />
             </a>
@@ -201,10 +203,10 @@ function SermonCard({ video, index }: { video: Video; index: number }) {
 
     return (
         <div
-            className="bg-white rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl transition-all group border border-stone-100"
+            className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-[#8B4513]/5 transition-all group border border-stone-200/60"
             style={{ animation: `fadeUp 0.5s ease-out ${index * 0.08}s both` }}
         >
-            <div className="aspect-video relative overflow-hidden bg-stone-900">
+            <div className="aspect-video relative overflow-hidden bg-stone-900 border-b border-stone-100">
                 {playing ? (
                     <iframe
                         className="w-full h-full"
@@ -219,7 +221,7 @@ function SermonCard({ video, index }: { video: Video; index: number }) {
                         {!imgErr && video.thumbnail ? (
                             <img
                                 src={video.thumbnail}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                 alt={video.title}
                                 loading="lazy"
                                 onError={() => setImgErr(true)}
@@ -229,17 +231,17 @@ function SermonCard({ video, index }: { video: Video; index: number }) {
                                 <Youtube size={36} className="text-white/20" />
                             </div>
                         )}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-colors">
-                            <div className="w-14 h-14 bg-white/90 rounded-full flex items-center justify-center text-[#8B4513] shadow-xl opacity-80 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all">
-                                <Play size={22} className="ml-0.5" fill="currentColor" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors">
+                            <div className="w-14 h-14 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center text-[#8B4513] shadow-xl opacity-90 group-hover:opacity-100 scale-95 group-hover:scale-110 transition-transform">
+                                <Play size={22} className="ml-1" fill="currentColor" />
                             </div>
                         </div>
                     </div>
                 )}
             </div>
-            <div className="p-5 space-y-2">
-                <div className="flex items-center gap-2 text-stone-400 text-[9px] font-black uppercase tracking-widest">
-                    <Calendar size={10} />
+            <div className="p-6 space-y-3">
+                <div className="flex items-center gap-2 text-stone-400 text-[10px] font-black uppercase tracking-widest">
+                    <Calendar size={12} />
                     {video.publishedAt
                         ? new Date(video.publishedAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
                         : '최신'}
@@ -267,33 +269,33 @@ function ShortCard({ video, index }: { video: Video; index: number }) {
             style={{ animation: `fadeUp 0.4s ease-out ${index * 0.06}s both` }}
         >
             {/* 세로 썸네일 */}
-            <div className="aspect-[9/16] rounded-[16px] overflow-hidden bg-stone-900 relative shadow-sm group-hover:shadow-xl transition-all">
+            <div className="aspect-[9/16] rounded-3xl overflow-hidden bg-stone-900 relative shadow-sm hover:shadow-xl hover:shadow-[#8B4513]/10 transition-all border border-stone-200/60 hover:border-[#8B4513]/20">
                 {!imgErr && video.thumbnail ? (
                     <img
                         src={video.thumbnail}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
                         alt={video.title}
                         loading="lazy"
                         onError={() => setImgErr(true)}
                     />
                 ) : (
-                    <div className="w-full h-full bg-gradient-to-b from-stone-700 to-stone-900 flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-b from-stone-800 to-stone-900 flex items-center justify-center">
                         <Youtube size={28} className="text-white/20" />
                     </div>
                 )}
                 {/* Play overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                    <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-[#FF0000] opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all">
-                        <Play size={16} className="ml-0.5" fill="currentColor" />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent group-hover:from-stone-900/80 transition-colors flex items-center justify-center">
+                    <div className="w-12 h-12 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center text-[#8B4513] opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all shadow-lg">
+                        <Play size={18} className="ml-1" fill="currentColor" />
                     </div>
                 </div>
                 {/* Shorts 뱃지 */}
-                <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-[#FF0000] text-white text-[8px] font-black rounded-full uppercase tracking-wider">
+                <div className="absolute top-3 left-3 px-2.5 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[8px] font-black rounded-full uppercase tracking-widest">
                     Shorts
                 </div>
             </div>
             {/* 제목 */}
-            <p className="mt-2 text-xs font-bold text-stone-700 line-clamp-2 leading-tight group-hover:text-[#8B4513] transition-colors">
+            <p className="mt-3 text-xs md:text-sm font-bold text-stone-700 line-clamp-2 leading-tight group-hover:text-[#8B4513] transition-colors px-1">
                 {video.title}
             </p>
         </a>

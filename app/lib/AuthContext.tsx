@@ -6,7 +6,9 @@ import {
     signInWithPopup,
     GoogleAuthProvider,
     signOut,
-    User
+    User,
+    signInWithRedirect,
+    getRedirectResult
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'; // Firestore imports added
 import { auth, db } from '../firebaseConfig'; // db import added
@@ -41,11 +43,43 @@ const AuthContext = createContext<AuthContextType>({
     logout: async () => { },
 });
 
+// Helper function to detect mobile/in-app browsers
+const isMobileOrInAppBrowser = () => {
+    if (typeof window === 'undefined') return false;
+    const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
+    const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua.toLowerCase());
+    const isInApp = /KAKAOTALK|Instagram|NAVER|FBAN|FBAV/i.test(ua);
+    return isMobile || isInApp;
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Handle redirect result globally
+    useEffect(() => {
+        if (!auth) return;
+
+        const checkRedirectResult = async () => {
+            try {
+                // This will run when the app mounts, and resolve if a redirect login just finished
+                const result = await getRedirectResult(auth);
+                // If result is present, the auth state change listener below will handle the rest
+                if (result) {
+                    // console.log("Successfully logged in via redirect", result.user);
+                }
+            } catch (err: any) {
+                console.error("Redirect login error:", err);
+                const errorMessage = `로그인 처리 중 오류 발생: ${err.message} (${err.code})`;
+                setError(errorMessage);
+                // We use alert here just to be safe if UI doesn't catch it
+            }
+        };
+
+        checkRedirectResult();
+    }, []);
 
     useEffect(() => {
         if (!auth) {
@@ -113,7 +147,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const provider = new GoogleAuthProvider();
             provider.setCustomParameters({ prompt: 'select_account' });
-            await signInWithPopup(auth, provider);
+
+            // Choose auth method based on device
+            if (isMobileOrInAppBrowser()) {
+                await signInWithRedirect(auth, provider);
+                // The page will redirect away here, so loading will remain true
+            } else {
+                await signInWithPopup(auth, provider);
+                // setLoading to false in finally block will trigger correctly
+            }
         } catch (error: any) {
             if (error.code !== 'auth/cancelled-popup-request') {
                 console.error("Login failed:", error);
@@ -122,14 +164,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 alert(errorMessage);
             }
         } finally {
-            setLoading(false);
+            // we don't switch off loading here if we expect a redirect because the component will unmount
+            if (!isMobileOrInAppBrowser()) {
+                setLoading(false);
+            }
         }
     };
 
     const logout = async () => {
         if (!auth) return;
-        await signOut(auth);
-        setUserData(null);
+        setLoading(true);
+        try {
+            await signOut(auth);
+            setUserData(null);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

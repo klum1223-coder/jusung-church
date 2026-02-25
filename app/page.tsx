@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ArrowRight, Pause, Volume2, VolumeX, ChevronDown, Calendar, Clock, MapPin, Search, Menu as MenuIcon, X, Instagram, Youtube, ArrowUpRight, Heart, FileText, Bell, Users, Loader2, Link as LinkIcon, ExternalLink, BookOpen, Sparkles, Plus, Image as ImageIcon, Gift, Mic } from 'lucide-react';
+import { Play, ArrowRight, Pause, Volume2, VolumeX, ChevronDown, Calendar, Clock, MapPin, Search, Menu as MenuIcon, X, Instagram, Youtube, ArrowUpRight, Heart, FileText, Bell, Users, Loader2, Link as LinkIcon, ExternalLink, BookOpen, Sparkles, Plus, Image as ImageIcon, Gift, Mic, Phone, PenLine } from 'lucide-react';
 
 import GraceCardModal from './components/GraceCardModal';
 import TiltCard from './components/TiltCard';
-import MeditationPopup from './components/MeditationPopup';
+
 import NoticeModal from './components/NoticeModal';
 import { db } from './firebaseConfig';
 import {
@@ -26,11 +26,6 @@ import { useAuth } from './lib/AuthContext';
 const GlowingCross = dynamic(() => import('./components/GlowingCross'), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-transparent" />
-});
-
-const SplineBackground = dynamic(() => import('./components/SplineBackground'), {
-  ssr: false,
-  loading: () => <div className="fixed inset-0 bg-[#eef2ff] -z-50" />
 });
 
 // Dynamic import for MainContentModal (client-only to avoid SSR storage issues)
@@ -68,6 +63,18 @@ export default function JusungChurchPage() {
   const [isMainModalOpen, setMainModalOpen] = useState(false);
   const [isGraceModalOpen, setIsGraceModalOpen] = useState(false);
   const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
+  const [isMedExpanded, setIsMedExpanded] = useState(false);
+
+  interface QTData {
+    date: string;
+    title: string;
+    scripture: string;
+    content: string;
+    question: string;
+  }
+  const [todayQT, setTodayQT] = useState<QTData | null>(null);
+  const [qtLoading, setQtLoading] = useState(true);
+
 
 
   useEffect(() => {
@@ -89,7 +96,6 @@ export default function JusungChurchPage() {
       }
     );
 
-    // Fetch Naver Blog Posts
     const fetchBlogPosts = async () => {
       try {
         const res = await fetch('/api/naver-rss');
@@ -102,6 +108,41 @@ export default function JusungChurchPage() {
       }
     };
     fetchBlogPosts();
+
+    const fetchQTFromSheet = async () => {
+      const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLTyXyrQvXbNxzR7ouopJThkMlgOYFRJNVjrliXMupw1q76sjckBr1e6Wda6p_GoIeX1pYIzcjYHBP/pub?output=csv';
+      try {
+        const res = await fetch(CSV_URL);
+        const text = await res.text();
+        const parseCSV = (str: string) => {
+          const rows = []; let currentRow = []; let currentVal = ''; let insideQuote = false;
+          for (let i = 0; i < str.length; i++) {
+            const char = str[i], nextChar = str[i + 1];
+            if (char === '"') {
+              if (insideQuote && nextChar === '"') { currentVal += '"'; i++; } else insideQuote = !insideQuote;
+            } else if (char === ',' && !insideQuote) {
+              currentRow.push(currentVal); currentVal = '';
+            } else if ((char === '\r' || char === '\n') && !insideQuote) {
+              if (char === '\r' && nextChar === '\n') i++;
+              currentRow.push(currentVal); rows.push(currentRow); currentRow = []; currentVal = '';
+            } else currentVal += char;
+          }
+          if (currentVal || currentRow.length > 0) { currentRow.push(currentVal); rows.push(currentRow); }
+          return rows;
+        };
+        const rows = parseCSV(text);
+        const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+        const todayRow = rows.find(row => row[0]?.trim() === today);
+        if (todayRow) {
+          setTodayQT({
+            date: todayRow[0] || today, title: todayRow[1] || '오늘의 묵상',
+            scripture: todayRow[2] || '', content: todayRow[3] || '', question: todayRow[4] || ''
+          });
+        }
+      } catch (err) { console.error('Failed to fetch QT from Sheet', err); }
+      finally { setQtLoading(false); }
+    };
+    fetchQTFromSheet();
 
     return () => {
       unsubscribe1();
@@ -146,507 +187,254 @@ export default function JusungChurchPage() {
   };
 
   const latestSermon = youtubeSermon || cards.find(c => c.type === 'sermon');
-  const latestMeditation = cards.find(c => c.type === 'meditation');
 
   return (
-    <div className="min-h-screen bg-transparent text-zinc-800 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-[#121215] text-[#1A1A1A] font-sans selection:bg-[#1A1A1A] selection:text-white">
       <main>
-        {/* Daily Meditation Popup */}
-        <MeditationPopup data={latestMeditation} />
+        {/* Hero Section: Today's Word (Meditation) */}
+        <header className="relative min-h-[70vh] flex items-center justify-center pt-32 pb-20 overflow-hidden bg-[#121215]">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#7c3aed]/10 to-transparent opacity-50 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-[#7c3aed]/10 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-700"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#7c3aed]/5 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
 
-        <SplineBackground />
-
-        {/* Hero Section */}
-        <section className="relative h-[100vh] md:h-[95vh] flex items-center justify-center overflow-hidden">
-          {/* 3D Background moved to global fixed layer */}
-
-          {/* Beautiful Gradient Background (Overlay) */}
-
-
-
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="relative z-10 flex flex-col justify-between h-full py-32 px-4 max-w-7xl mx-auto pointer-events-none"
-          >
-            {/* TOP BLOCK: Main Title & Badge */}
-            <div className="flex flex-col items-center gap-6 pointer-events-auto mt-10 md:mt-0">
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/60 backdrop-blur-md rounded-full border border-stone-200 shadow-sm"
-              >
-                <Sparkles size={14} className="text-amber-500" />
-                <span className="text-stone-800 text-xs font-bold uppercase tracking-[0.2em]">{CHURCH_DATA.engName}</span>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="font-sans text-6xl md:text-9xl font-black leading-none tracking-tighter text-center select-none"
-                style={{
-                  background: 'linear-gradient(to bottom, #44403c, #78716c)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
-                }}
-              >
-                {CHURCH_DATA.name}
-              </motion.h1>
-            </div>
-
-            {/* CENTER: Empty space for 3D Animation */}
-            <div className="flex-1 min-h-[20vh]" />
-
-            {/* BOTTOM BLOCK: Buttons Only */}
-            <div className="flex flex-col items-center gap-4 pointer-events-auto pb-10 md:pb-0">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-                className="flex flex-col sm:flex-row gap-5 justify-center items-center"
-              >
-                <motion.button
-                  onClick={() => router.push('/worship')}
-                  className="group relative px-12 py-5 bg-stone-900 text-white rounded-full font-bold transition-all shadow-2xl hover:scale-105 overflow-hidden ring-4 ring-stone-900/10"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <motion.span
-                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"
-                    animate={{ x: ['-100%', '200%'] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear", repeatDelay: 1 }}
-                  />
-                  <span className="relative z-10 flex items-center gap-3 text-lg">
-                    <Sparkles size={18} className="text-amber-400" />
-                    예배 안내
-                  </span>
-                </motion.button>
-                <motion.button
-                  onClick={() => router.push('/sermon')}
-                  className="px-12 py-5 bg-white/90 border-2 border-white text-stone-900 rounded-full font-bold hover:bg-white transition-all shadow-xl backdrop-blur-sm relative overflow-hidden group text-lg"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <span className="relative z-10">온라인 예배</span>
-                </motion.button>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
-          >
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="flex flex-col items-center gap-2 px-4 py-3 bg-white/60 backdrop-blur-xl rounded-full border border-zinc-200 shadow-sm"
-            >
-              <span className="text-zinc-500 text-xs uppercase tracking-widest font-bold">Scroll</span>
-              <motion.div
-                animate={{ y: [0, 4, 0], opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                <ChevronDown size={20} className="text-zinc-400" />
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </section>
-
-        {/* Content Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="py-32 px-4 md:px-6 relative"
-        >
-          {/* Subtle background decoration */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-20 left-10 w-72 h-72 bg-[#d4af37]/5 rounded-full blur-[120px]" />
-            <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#8b4513]/5 rounded-full blur-[150px]" />
-          </div>
-          <div className="container mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[600px]">
-
-              {/* Left Column: Featured Sermon (Span 7) */}
-              <motion.div
-                className="col-span-1 lg:col-span-7 h-[400px] lg:h-full"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <TiltCard className="h-full">
-                  <div
-                    onClick={() => (latestSermon?.linkUrl) && window.open(latestSermon.linkUrl, '_blank')}
-                    className="w-full h-full premium-card relative overflow-hidden group cursor-pointer bg-gradient-to-br from-[#1a1033] via-[#2d1b4e] to-[#0f0c29] border-none shadow-2xl"
-                  >
-                    {/* Pastor/Sermon Background Image */}
-                    <div className="absolute inset-0 z-0 overflow-hidden">
-                      {/* Background Image */}
-                      <img
-                        src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1200&q=80"
-                        alt="주일예배설교"
-                        className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-60"
-                      />
-
-                      {/* Dark overlay for text readability */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
-
-                      {/* Decorative golden accent */}
-                      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#d4af37] via-[#cd7f32] to-transparent" />
-                    </div>
-
-                    <div className="relative z-10 p-8 md:p-12 flex flex-col justify-between h-full">
-                      <div className="flex justify-between items-start">
-                        {/* Glass Badge */}
-                        <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-xl">
-                          <motion.span
-                            className="w-2 h-2 rounded-full bg-[#d4af37]"
-                            animate={{ scale: [1, 1.5, 1], opacity: [0.7, 1, 0.7] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          />
-                          <span className="text-[10px] font-black uppercase text-white tracking-[0.2em]">Featured Sermon</span>
-                        </div>
-
-                        {/* Sermon Icon - 오른쪽 카드들과 통일감 */}
-                        <div
-                          className="w-14 h-14 rounded-xl flex items-center justify-center shadow-2xl"
-                          style={{ background: 'linear-gradient(135deg, #d4af37 0%, #cd7f32 50%, #8b4513 100%)' }}
-                        >
-                          <Mic size={28} className="text-white" />
-                        </div>
-                      </div>
-
-                      <div className="space-y-6">
-                        <div className="space-y-2">
-                          <motion.p
-                            className="text-[#d4af37] text-xs font-bold tracking-widest uppercase mb-2"
-                            initial={{ opacity: 0, x: -10 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                          >
-                            New Update
-                          </motion.p>
-                          <h2 className="font-serif text-3xl md:text-5xl text-white font-bold leading-tight group-hover:translate-x-1 transition-transform duration-500 drop-shadow-2xl">
-                            {latestSermon?.title || "이번 주 설교 말씀"}
-                          </h2>
-                        </div>
-
-                        {latestSermon?.description && (
-                          <p className="text-white/70 text-base md:text-lg line-clamp-2 font-light leading-relaxed max-w-lg drop-shadow-md border-l-2 border-[#d4af37]/30 pl-4">
-                            {latestSermon.description}
-                          </p>
-                        )}
-
-                        <motion.div
-                          className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#d4af37] to-[#cd7f32] text-white rounded-full font-bold text-xs hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all mt-4"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-1">
-                            <Play size={14} fill="currentColor" />
-                          </div>
-                          WATCH SERMON
-                        </motion.div>
-                      </div>
-                    </div>
-
-                    {/* Decorative glass border on hover */}
-                    <div className="absolute inset-0 border border-white/0 group-hover:border-white/10 transition-colors duration-500 pointer-events-none rounded-[32px]" />
+          <div className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full flex flex-col items-center">
+            {todayQT ? (
+              <div className="w-full max-w-7xl flex flex-col items-center text-center">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-[#7c3aed]/20 rounded-2xl flex items-center justify-center text-[#7c3aed] border border-[#7c3aed]/30 shadow-[0_0_30px_rgba(124,58,237,0.2)]">
+                    <BookOpen size={20} />
                   </div>
-                </TiltCard>
-              </motion.div>
-
-              {/* Right Column: Quick Actions (Span 5) */}
-              <motion.div
-                className="col-span-1 lg:col-span-5 flex flex-col gap-6 h-full"
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <div className="grid grid-cols-2 gap-4 flex-1">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <TiltCard>
-                      <button
-                        onClick={() => setIsGraceModalOpen(true)}
-                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all relative overflow-hidden"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 50%, #dc2626 100%)' }}
-                      >
-                        <motion.div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
-                        />
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                          <Gift size={24} fill="currentColor" />
-                        </div>
-                        <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>말씀 뽑기</h3>
-                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Grace Draw</p>
-                        </div>
-                      </button>
-                    </TiltCard>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.35 }}
-                  >
-                    <TiltCard>
-                      <button
-                        onClick={() => router.push('/worship')}
-                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all relative overflow-hidden"
-                        style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%)' }}
-                      >
-                        <motion.div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
-                        />
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
-                          <BookOpen size={24} />
-                        </div>
-                        <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>예배 안내</h3>
-                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Worship Info</p>
-                        </div>
-                      </button>
-                    </TiltCard>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <TiltCard>
-                      <button
-                        onClick={() => router.push('/bulletin')}
-                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all text-left relative overflow-hidden"
-                        style={{ background: 'linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #06b6d4 100%)' }}
-                      >
-                        <motion.div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
-                        />
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                          <FileText size={24} />
-                        </div>
-                        <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>주보 보기</h3>
-                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Weekly Bulletin</p>
-                        </div>
-                      </button>
-                    </TiltCard>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.45 }}
-                  >
-                    <TiltCard>
-                      <button
-                        onClick={() => setIsNoticeModalOpen(true)}
-                        className="w-full h-full rounded-[32px] p-6 flex flex-col justify-between group border-none hover:shadow-2xl transition-all relative overflow-hidden"
-                        style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #d946ef 100%)' }}
-                      >
-                        <motion.div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%)' }}
-                        />
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
-                        <div className="relative z-10 w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
-                          <Bell size={24} />
-                        </div>
-                        <div className="text-left relative z-10">
-                          <h3 className="font-bold text-white text-lg mb-1" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>공지사항</h3>
-                          <p className="text-[11px] text-white/90 uppercase tracking-wider font-bold">Notice & News</p>
-                        </div>
-                      </button>
-                    </TiltCard>
-                  </motion.div>
+                  <span className="text-sm font-bold tracking-widest text-[#7c3aed] uppercase">Today's Word</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-600"></span>
+                  <span className="text-sm text-gray-400 tracking-wider drop-shadow-md">
+                    {todayQT.date}
+                  </span>
                 </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <TiltCard>
-                    <button
-                      onClick={() => router.push('/community')}
-                      className="w-full h-full rounded-[32px] shadow-premium hover:shadow-premium-hover p-8 flex items-center justify-between group bg-gradient-to-br from-[#d4af37] via-[#c5a065] to-[#8b4513] border-none relative overflow-hidden"
-                    >
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0"
-                        animate={{ x: ['-100%', '200%'] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear", repeatDelay: 2 }}
-                      />
-                      <div className="text-left relative z-10">
-                        <h3 className="font-serif text-2xl font-bold text-white mb-2 drop-shadow-lg">나눔의 정원</h3>
-                        <p className="text-white/90 text-xs font-medium tracking-wide drop-shadow">Community Lounge & Sharing</p>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white mb-6 leading-tight drop-shadow-lg px-4 whitespace-nowrap overflow-x-auto no-scrollbar max-w-full">
+                  {todayQT.scripture || todayQT.title}
+                </h1>
+
+                {(todayQT.scripture && todayQT.title) && (
+                  <h2 className="text-xl md:text-2xl text-[#d1d5db] font-medium mb-8 pb-8 border-b border-white/10 w-full max-w-5xl px-4 whitespace-nowrap overflow-x-auto no-scrollbar">
+                    {todayQT.title}
+                  </h2>
+                )}
+
+                <div className="relative w-full max-w-5xl px-4">
+                  <div className={`text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed font-light mb-8 whitespace-pre-wrap transition-all duration-700 overflow-hidden text-left ${isMedExpanded ? 'max-h-[2000px]' : 'max-h-36'}`}>
+                    <div className="mb-8">{todayQT.content}</div>
+                    {todayQT.question && (
+                      <div className="mt-10 pt-10 border-t border-white/10 bg-[#1A1A24]/40 p-8 rounded-3xl border border-white/5 w-full">
+                        <h4 className="flex items-center justify-center md:justify-start gap-3 text-[#7c3aed] font-bold text-base mb-4 uppercase tracking-widest">
+                          <PenLine size={18} /> 묵상 질문
+                        </h4>
+                        <p className="text-gray-300 italic text-lg lg:text-xl leading-relaxed whitespace-pre-line text-center md:text-left">
+                          {todayQT.question.replace(/(\d+\.)/g, '\n$1').trim()}
+                        </p>
                       </div>
-                      <motion.div
-                        className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-[#8b4513] transition-all shadow-lg relative z-10"
-                        whileHover={{ scale: 1.1, rotate: 360 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <Users size={28} />
-                      </motion.div>
-                    </button>
-                  </TiltCard>
-                </motion.div>
-              </motion.div>
+                    )}
+                  </div>
+                  {!isMedExpanded && (
+                    <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#121215] to-transparent pointer-events-none"></div>
+                  )}
+                </div>
+
+                <div className="mt-6 flex flex-wrap justify-center gap-6 items-center">
+                  <button
+                    onClick={() => setIsMedExpanded(!isMedExpanded)}
+                    className="inline-flex items-center text-sm font-bold tracking-wider text-white hover:text-[#7c3aed] transition-colors bg-white/5 px-8 py-3.5 rounded-full hover:bg-white/10 border border-white/10 shadow-lg"
+                  >
+                    {isMedExpanded ? "말씀 접기" : "말씀 전체 읽기"}
+                    <ChevronDown size={18} className={`ml-2 transition-transform ${isMedExpanded ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  <button
+                    onClick={() => router.push('/sharing')}
+                    className="inline-flex items-center gap-2 px-8 py-3 bg-[#7c3aed] text-white hover:bg-[#6d28d9] rounded-full font-bold transition-all shadow-lg shadow-[#7c3aed]/20 hover:shadow-[#7c3aed]/40 hover:-translate-y-1 border border-white/10"
+                  >
+                    <PenLine size={18} />
+                    이 말씀으로 나눔 작성하기
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="max-w-4xl w-full flex flex-col items-center text-center">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-[#7c3aed]/20 rounded-2xl flex items-center justify-center text-[#7c3aed] border border-[#7c3aed]/30">
+                    <BookOpen size={20} />
+                  </div>
+                  <span className="text-sm font-bold tracking-widest text-[#7c3aed] uppercase">Today's Word</span>
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-stone-700 mb-4">
+                  오늘의 말씀이<br />준비 중입니다.
+                </h1>
+              </div>
+            )}
+          </div>
+        </header>
+
+        {/* Welcome Section: JOOSUNG CHURCH & Sermon */}
+        <section className="py-24 bg-[#52575D] relative overflow-hidden shadow-2xl border-t border-white/5">
+          <div className="absolute top-0 right-0 -mr-32 -mt-32 w-[30rem] h-[30rem] bg-black/20 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+              <div className="order-2 lg:order-1">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="w-8 h-px bg-yellow-400"></span>
+                  <span className="text-yellow-400 font-bold tracking-widest text-sm uppercase">Welcome to</span>
+                </div>
+                <h2 className="text-5xl md:text-6xl lg:text-7xl font-display uppercase leading-[0.9] tracking-tight mb-8">
+                  <span className="block text-white">JOOSUNG</span>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-500">Church</span>
+                </h2>
+                <div className="w-12 h-1 bg-[#7c3aed] rounded-full mb-8"></div>
+                <p className="text-lg md:text-xl text-gray-200 max-w-md mb-10 leading-relaxed font-light">
+                  하나님이 이루어 가시는 공동체.<br />
+                  우리는 예수님만 닮아갑니다.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <button onClick={() => router.push('/worship')} className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#52575D] font-bold rounded-full hover:bg-gray-100 transition-colors shadow-xl shadow-black/10 hover:-translate-y-1">
+                    <Play size={20} fill="currentColor" /> 예배 안내
+                  </button>
+                </div>
+              </div>
+
+              <div className="order-1 lg:order-2 flex justify-center lg:justify-end relative">
+                <div className="relative w-72 h-72 sm:w-96 sm:h-96 lg:w-[28rem] lg:h-[28rem]">
+                  <div className="absolute inset-0 border border-white/20 rounded-full scale-110"></div>
+                  <div className="absolute inset-0 border border-white/10 rounded-full scale-[1.2]"></div>
+                  <div className="w-full h-full rounded-full overflow-hidden border-4 border-[#52575D] shadow-2xl relative z-10 group cursor-pointer" onClick={() => (latestSermon?.linkUrl) && window.open(latestSermon.linkUrl, '_blank')}>
+                    <img alt="Worship atmosphere" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
+                      <div className="w-20 h-20 bg-[#7c3aed] backdrop-blur rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                        <Play fill="white" className="text-white w-10 h-10 ml-1.5" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute bottom-4 right-4 sm:-right-4 transform translate-y-4 bg-[#121215]/90 backdrop-blur-md border border-white/10 p-5 rounded-3xl shadow-2xl z-20 max-w-[240px]">
+                    <p className="text-[10px] text-yellow-400 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Latest Sermon
+                    </p>
+                    <p className="font-bold text-white leading-snug line-clamp-2 text-sm">{latestSermon?.title || "주님이 원하시는 참된 예배자"}</p>
+                  </div>
+                </div>
+              </div>
 
             </div>
           </div>
-        </motion.section>
+        </section>
 
-        {/* Blog Post Grid */}
-        <motion.section
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-          className="py-32 px-6 bg-gradient-to-br from-[#0f0f0f] via-[#1a1a1a] to-[#0a0a0a] text-white overflow-hidden relative"
-        >
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-[#d4af37]/10 blur-[150px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-1/3 h-1/2 bg-[#8b4513]/10 blur-[120px] pointer-events-none" />
+        {/* Quick Links Section */}
+        <section className="py-20 bg-[#333446] relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { title: "말씀 뽑기", desc: "매일 나에게 주시는 은혜의 말씀", icon: Gift, color: "text-rose-400 bg-rose-500/10 group-hover:bg-rose-500/20", onClick: () => setIsGraceModalOpen(true) },
+                { title: "설교 듣기", desc: "지난 주일 설교와 집회 메시지", icon: Mic, color: "text-blue-400 bg-blue-500/10 group-hover:bg-blue-500/20", onClick: () => router.push('/sermon') },
+                { title: "예배 안내", desc: "주일, 수요 및 예배 시간 안내", icon: BookOpen, color: "text-emerald-400 bg-emerald-500/10 group-hover:bg-emerald-500/20", onClick: () => router.push('/worship') },
+                { title: "주보 보기", desc: "매주 발행되는 주보를 편하게 확인", icon: FileText, color: "text-amber-400 bg-amber-500/10 group-hover:bg-amber-500/20", onClick: () => router.push('/bulletin') }
+              ].map((item, i) => (
+                <button
+                  key={i}
+                  onClick={item.onClick}
+                  className="group p-8 bg-[#121215] border border-white/5 hover:border-white/20 rounded-3xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-[#121215]/50 text-left w-full h-full flex flex-col"
+                >
+                  <div className={`p-4 rounded-2xl w-fit mb-6 transition-colors ${item.color}`}>
+                    <item.icon size={32} className="transition-transform duration-300 group-hover:scale-110" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                  <p className="text-sm text-gray-400 leading-relaxed font-light">{item.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
 
-          <div className="container mx-auto max-w-7xl relative z-10">
-            <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
-              <motion.div
-                className="space-y-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <span className="text-[#d4af37] text-[10px] font-black tracking-[0.4em] uppercase inline-block animate-pulse">Garden of Grace</span>
-                <h2 className="font-serif text-5xl md:text-7xl font-bold leading-tight bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent">은혜의 정원</h2>
-                <p className="text-white/50 text-lg font-light max-w-xl leading-relaxed pt-2">네이버 블로그와 커뮤니티를 통해 전하는 주성교회의 따뜻한 일상을 전해드립니다.</p>
-              </motion.div>
-              <motion.a
-                href={CHURCH_DATA.contact.blog}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-4 text-white font-bold text-sm px-8 py-4 bg-white/5 hover:bg-gradient-to-r hover:from-[#d4af37] hover:to-[#cd7f32] hover:text-white rounded-full transition-all border border-white/10 hover:border-transparent backdrop-blur-md"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                블로그 전체보기 <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
-              </motion.a>
+        {/* Blog Section */}
+        <section className="py-24 bg-[#121215]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-4">
+              <h2 className="text-4xl font-display uppercase text-white">은혜의 정원</h2>
+              <a href={CHURCH_DATA.contact.blog} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-[#7c3aed] hover:text-[#6d28d9] flex items-center gap-1 transition-colors">
+                전체보기 <ArrowRight size={16} />
+              </a>
             </div>
 
             {blogPosts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {blogPosts.slice(0, 3).map((post, idx) => {
                   const placeholderImages = [
-                    "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80",
-                    "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c?auto=format&fit=crop&q=80",
-                    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80"
+                    "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80",
+                    "https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c?auto=format&fit=crop&q=80"
                   ];
-
-                  // '기도' 관련 포스트 커스텀 처리 (제목이 정확히 '기도'인 경우만)
                   const isTargetPrayerPost = post.title.trim() === '기도';
-
-                  // 기도 포스트일 경우 커스텀 이미지(성경책/묵상) 사용
                   const displayImage = isTargetPrayerPost
                     ? "https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?auto=format&fit=crop&q=80"
                     : (idx < 3 ? placeholderImages[idx] : placeholderImages[0]);
-
                   const linkUrl = isTargetPrayerPost
                     ? "https://blog.naver.com/joosung0416/223997530763"
                     : post.link;
 
                   return (
-                    <motion.a
+                    <a
                       key={idx}
                       href={linkUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1, duration: 0.5 }}
-                      className="group flex flex-col h-full bg-[#2a2a2a] rounded-[32px] overflow-hidden border border-white/5 hover:border-white/20 transition-all duration-500"
+                      className="flex flex-col h-full bg-[#121215] rounded-xl overflow-hidden border border-white/5 hover:shadow-lg hover:border-white/10 transition-all group"
                     >
-                      <div className="relative aspect-[4/3] overflow-hidden">
+                      <div className="h-48 overflow-hidden relative border-b border-white/5">
+                        <span className="absolute top-4 left-4 bg-black/70 backdrop-blur px-3 py-1 text-xs font-bold rounded-full z-10 text-white font-mono uppercase">
+                          {new Date(post.pubDate).toLocaleDateString()}
+                        </span>
                         <img
                           src={displayImage}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100"
                           alt={post.title}
                         />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                        <div className="absolute top-6 left-6 px-3 py-1 bg-black/50 backdrop-blur-md rounded-full text-[10px] text-white font-bold uppercase tracking-wider">
-                          {new Date(post.pubDate).toLocaleDateString()}
-                        </div>
                       </div>
-
-                      <div className="p-8 flex flex-col flex-1 relative">
-                        <div className="space-y-4 mb-8">
-                          <h3 className="text-xl font-bold text-white group-hover:text-[#c5a065] line-clamp-2 leading-snug transition-colors">
-                            {post.title}
-                          </h3>
-                          <p className="text-white/40 text-sm line-clamp-3 font-light leading-relaxed">
-                            {post.description}
-                          </p>
-                        </div>
-                        <div className="mt-auto flex items-center gap-2 text-[#c5a065] text-[10px] font-black uppercase tracking-widest group-hover:gap-4 transition-all">
-                          VIEW POST <ArrowRight size={12} />
-                        </div>
+                      <div className="p-6 flex-1 flex flex-col">
+                        <h3 className="text-xl font-bold text-white mb-3 line-clamp-1 group-hover:text-[#7c3aed] transition-colors">
+                          {post.title}
+                        </h3>
+                        <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-1 line-clamp-3">
+                          {post.description}
+                        </p>
+                        <span className="inline-flex items-center text-xs font-bold tracking-wider uppercase text-[#7c3aed] pb-1 w-fit group-hover:underline underline-offset-4">
+                          Read Article <ArrowRight size={12} className="ml-1" />
+                        </span>
                       </div>
-                    </motion.a>
+                    </a>
                   );
                 })}
               </div>
             ) : (
-              <div className="py-24 text-center bg-white/5 rounded-[48px] border border-dashed border-white/10">
-                <Loader2 className="animate-spin text-white/20 mx-auto mb-6" size={48} />
-                <p className="text-white/40 font-bold tracking-widest text-xs uppercase">Connecting to Naver Blog Feed...</p>
+              <div className="py-24 text-center bg-[#121215] rounded-xl border border-dashed border-white/10">
+                <Loader2 className="animate-spin text-[#7c3aed] mx-auto mb-6" size={48} />
+                <p className="text-gray-400 font-medium text-sm">블로그 소식을 불러오는 중입니다...</p>
               </div>
             )}
           </div>
-        </motion.section>
+        </section>
+
+
       </main>
 
-      {isAdmin && (
-        <div className="fixed bottom-10 right-10 z-[90] flex flex-col gap-4">
-          <button
-            onClick={() => setMainModalOpen(true)}
-            className="group flex items-center gap-4 px-8 py-5 bg-stone-900 text-white rounded-[24px] font-bold shadow-2xl hover:bg-[#8B4513] hover:scale-105 transition-all"
-          >
-            <Plus size={24} />
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 whitespace-nowrap">콘텐츠 등록</span>
-          </button>
-        </div>
-      )}
+      {
+        isAdmin && (
+          <div className="fixed bottom-10 right-10 z-[90] flex flex-col gap-4">
+            <button
+              onClick={() => setMainModalOpen(true)}
+              className="group flex items-center justify-center p-4 bg-[#8B4513] text-white rounded-full font-bold shadow-xl shadow-[#8B4513]/30 border border-[#8B4513]/20 hover:bg-stone-900 hover:scale-105 hover:shadow-2xl transition-all"
+            >
+              <Plus size={24} />
+            </button>
+          </div>
+        )
+      }
 
       <MainContentModal
         isOpen={isMainModalOpen}
@@ -669,7 +457,7 @@ export default function JusungChurchPage() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </div >
   );
 }
 
